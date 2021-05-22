@@ -12,8 +12,8 @@ What you will need to learn:
 
 * [How to deploy CIS](https://cloud.ibm.com/docs/cis?topic=cis-getting-started).
 * How to deploy an app on one of the platforms, pick one:
-..* [Code Engine](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800)
-..* [Gen2 IKS](https://ibm.github.io/kube101/)
-..* [Gen2 VSI](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-vpc-app-deploy)
-..* [ROKS](https://cloud.ibm.com/docs/openshift)
+  * [Code Engine](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800)
+  * [Gen2 IKS](https://ibm.github.io/kube101/)
+  * [Gen2 VSI](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-vpc-app-deploy)
+  * [ROKS](https://cloud.ibm.com/docs/openshift)
 * [How to connect the CIS instance to the app](https://cloud.ibm.com/docs/cis?topic=solution-tutorials-multi-region-k8s-cis).
