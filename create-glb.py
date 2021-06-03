@@ -13,15 +13,16 @@ def main():
     endpoint = os.getenv("API_ENDPOINT")
 
     name = "test-lb-pool1"
-    origins = [{"name": "app-server-1", "address": "www.test.com", "enabled": True, "weight":1}]
+    origins = [{"name": "app-server-1", "address": "www.gcat-interns-rock.com", "enabled": True, "weight":1}]
 
     monitor = GlobalLoadBalancerMonitorV1.new_instance(crn=crn, service_name="cis_services")
-    health_check = json.dumps(monitor.create_load_balancer_monitor(crn=crn, type="https", expected_body="alive").get_result(), indent=4)
-    print(health_check)
+    health_check = monitor.create_load_balancer_monitor(description="test-monitor", crn=crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
+    monitor_id = health_check["result"]["id"]
+    print("Monitor ID:", monitor_id)
 
-    # origin_pools = GlobalLoadBalancerPoolsV0.new_instance(crn=crn, service_name="cis_services")
-    # # resp = origin_pools.create_load_balancer_pool(name=name, origins=origins, enabled=True).get_result()
-    # resp = json.dumps(origin_pools.list_all_load_balancer_pools().get_result(), indent=4)
+    origin_pools = GlobalLoadBalancerPoolsV0.new_instance(crn=crn, service_name="cis_services")
+    resp = origin_pools.create_load_balancer_pool(name=name, origins=origins, enabled=True, monitor=monitor_id).get_result()
+    print("Origin Pools Response:", resp)
 
 if __name__ == "__main__":
     main()
