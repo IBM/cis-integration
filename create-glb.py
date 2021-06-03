@@ -27,9 +27,13 @@ def main():
 
     global_load_balancer = GlobalLoadBalancerV1.new_instance(crn=crn, zone_identifier=zone_identifier, service_name="cis_services")
     global_load_balancer.set_service_url(endpoint)
-    global_load_balancer_result = global_load_balancer.create_load_balancer(name="alpha1.example.com", default_pools=[origin_pool_id], fallback_pool=origin_pool_id, enabled=True, proxied=True).get_result()
-    global_load_balancer_id = global_load_balancer_result["result"]["id"]
-    print("Global Load Balancer ID:", global_load_balancer_id)
-
+    name_check_resp = global_load_balancer.list_all_load_balancers().get_result()
+    print(name_check_resp)
+    if name != name_check_resp["result"]["name"]:
+        global_load_balancer_result = global_load_balancer.create_load_balancer(name="alpha1.example.com", default_pools=[origin_pool_id], fallback_pool=origin_pool_id, enabled=True, proxied=True).get_result()
+        global_load_balancer_id = global_load_balancer_result["result"]["id"]
+        print("Global Load Balancer ID:", global_load_balancer_id)
+    else:
+        print("A global load balancer with this name already exists.")
 if __name__ == "__main__":
     main()
