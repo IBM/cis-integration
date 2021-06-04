@@ -17,7 +17,7 @@ def main():
     origins = [{"name": "app-server-1", "address": "gcat-interns-rock.com", "enabled": True, "weight":1}]
 
     monitor = GlobalLoadBalancerMonitorV1.new_instance(crn=crn, service_name="cis_services")
-    health_check = monitor.create_load_balancer_monitor(description="test-monitor-2", crn=crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
+    health_check = monitor.create_load_balancer_monitor(description="test-monitor-3", crn=crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
     monitor_id = health_check["result"]["id"]
     print("Monitor ID:", monitor_id)
 
@@ -53,7 +53,7 @@ def main():
         global_load_balancer_id = global_load_balancer_result["result"]["id"]
     else:
         print("A global load balancer with this name already exists.")
-        global_load_balancer_id = glb_dict[name]
+        global_load_balancer_id = glb_dict[load_bal_name]
         global_load_balancer.edit_load_balancer(global_load_balancer_id, name=load_bal_name, default_pools=[origin_pool_id], fallback_pool=origin_pool_id, enabled=True, proxied=True)
 
     print("Global Load Balancer ID:", global_load_balancer_id)
