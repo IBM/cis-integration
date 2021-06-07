@@ -7,23 +7,28 @@ from ibm_cloud_networking_services import GlobalLoadBalancerMonitorV1
 from ibm_cloud_networking_services import *
 
 def main():
+    # Setting up connection to project-specific .env file
     load_dotenv()
 
+    # Getting info from .env
     crn = os.getenv("CRN")
     zone_identifier = os.getenv("ZONE_ID")
     endpoint = os.getenv("API_ENDPOINT")
 
-    name = "test-lb-pool1"
-    origins = [{"name": "app-server-1", "address": "gcat-interns-rock.com", "enabled": True, "weight":1}]
-
+    # Setting up and creating the monitor (health check)
     monitor = GlobalLoadBalancerMonitorV1.new_instance(crn=crn, service_name="cis_services")
     health_check = monitor.create_load_balancer_monitor(description="test-monitor-3", crn=crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
     monitor_id = health_check["result"]["id"]
     print("Monitor ID:", monitor_id)
 
+    # Setting up and creating the origin pool
+    name = "test-lb-pool1"
+    origins = [{"name": "app-server-1", "address": "gcat-interns-rock.com", "enabled": True, "weight":1}]
+
     origin_pools = GlobalLoadBalancerPoolsV0.new_instance(crn=crn, service_name="cis_services")
     origin_pool_name_check_resp = origin_pools.list_all_load_balancer_pools().get_result()["result"]
     
+    # Checking to ensure that no currently present origin pool has the name we wish to use
     origin_pools_dict = {}
     for i in range(len(origin_pool_name_check_resp)):
         origin_pools_dict[origin_pool_name_check_resp[i]["name"]] = origin_pool_name_check_resp[i]["id"]
@@ -38,12 +43,14 @@ def main():
 
     print("Origin Pool ID:", origin_pool_id)
 
+    # Setting up and creating the global load balancer
     load_bal_name = "gcat-interns-rock.com"
 
     global_load_balancer = GlobalLoadBalancerV1.new_instance(crn=crn, zone_identifier=zone_identifier, service_name="cis_services")
     global_load_balancer.set_service_url(endpoint)
     glb_name_check_resp = global_load_balancer.list_all_load_balancers().get_result()["result"]
 
+    # Checking to ensure that no currently present global load balancer has the name we wish to use
     glb_dict = {}
     for i in range(len(glb_name_check_resp)):
         glb_dict[glb_name_check_resp[i]["name"]] = glb_name_check_resp[i]["id"]

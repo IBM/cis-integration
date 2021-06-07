@@ -1,3 +1,4 @@
+# Creating the monitor (health check) resource using Terraform
 resource "ibm_cis_healthcheck" "test" {
   cis_id           = "crn:v1:bluemix:public:internet-svcs:global:a/cdefe6d99f7ea459aacb25775fb88a33:d6097e79-fd41-4dd3-bdc9-342fe1b28073::"
   expected_codes   = "200"
@@ -11,6 +12,7 @@ resource "ibm_cis_healthcheck" "test" {
   follow_redirects = true
 }
 
+# Creating the origin pool resource using Terraform
 resource "ibm_cis_origin_pool" "example" {
     cis_id          = "crn:v1:bluemix:public:internet-svcs:global:a/cdefe6d99f7ea459aacb25775fb88a33:d6097e79-fd41-4dd3-bdc9-342fe1b28073::"
     name            = "test-pool-1"
@@ -26,6 +28,7 @@ resource "ibm_cis_origin_pool" "example" {
     monitor         = ibm_cis_healthcheck.test.monitor_id
 }
 
+# Creating the global load balancer resource using Terraform
 resource "ibm_cis_global_load_balancer" "example-glb" {
     cis_id            = "crn:v1:bluemix:public:internet-svcs:global:a/cdefe6d99f7ea459aacb25775fb88a33:d6097e79-fd41-4dd3-bdc9-342fe1b28073::"
     domain_id         = "f4604bfab1a024690e30bfd72ae36727"
@@ -36,12 +39,3 @@ resource "ibm_cis_global_load_balancer" "example-glb" {
     enabled           = true
     proxied           = true
 }
-
-# resource "ibm_dns_glb" "example_glb" {
-#     name                = "gcat-interns-rock.com"
-#     instance_id         = "crn:v1:bluemix:public:internet-svcs:global:a/cdefe6d99f7ea459aacb25775fb88a33:d6097e79-fd41-4dd3-bdc9-342fe1b28073::"
-#     zone_id             = "f4604bfab1a024690e30bfd72ae36727"
-#     default_pools       = [ibm_cis_origin_pool.example.pool_id]
-#     fallback_pool       = ibm_cis_origin_pool.example.pool_id
-#     enabled             = true
-# }
