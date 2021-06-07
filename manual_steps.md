@@ -7,8 +7,10 @@ Within the CIS console in the overview tab add your domain name and configure DN
 ![DNS Records in CIS Console](./images/dns-records.png)
 
 ## 2. Configure Load-Balancer on CIS Instance
-On the **Reliability** page create an origin pool. Provide it a name and address. This address would be the same as the URL in the previous step.
+On the **Reliability** page first create a HTTPS health check. Name it and select HTTPS. Configure additional properties as needed.
+![Health Check](./images/health-check.png)
 
+Also on the **Reliability** page create an origin pool. Provide it a name, address, and select the health check you created. This address would be the same as the URL in the previous step. 
 ![Origin Pool in CIS Console](./images/origin-pool.png)
 
 Next create a Load Balancer. Name it and add the origin pool you just created.
