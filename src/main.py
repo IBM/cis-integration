@@ -1,5 +1,9 @@
 import sys
 
+'''
+To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
+'''
+
 class Color:
    PURPLE = '\033[95m'
    CYAN = '\033[96m'
