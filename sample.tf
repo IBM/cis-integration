@@ -1,6 +1,6 @@
 # Creating the monitor (health check) resource using Terraform
 resource "ibm_cis_healthcheck" "test" {
-  cis_id           = [CRN]
+  cis_id           = CRN
   expected_codes   = "200"
   method           = "GET"
   timeout          = 2
@@ -14,11 +14,11 @@ resource "ibm_cis_healthcheck" "test" {
 
 # Creating the origin pool resource using Terraform
 resource "ibm_cis_origin_pool" "example" {
-    cis_id          = [CRN]
+    cis_id          = CRN
     name            = "test-pool-1"
     origins {
         name        = "app-server-1"
-        address     = [APP_NAME]
+        address     = APP_NAME
         enabled     = true
     }
     description     = "example origin pool"
@@ -30,9 +30,9 @@ resource "ibm_cis_origin_pool" "example" {
 
 # Creating the global load balancer resource using Terraform
 resource "ibm_cis_global_load_balancer" "example-glb" {
-    cis_id            = [CRN]
-    domain_id         = [DOMAIN_ID]
-    name              = [DOMAIN_NAME]
+    cis_id            = CRN
+    domain_id         = DOMAIN_ID
+    name              = DOMAIN_NAME
     fallback_pool_id  = ibm_cis_origin_pool.example.id
     default_pool_ids  = [ibm_cis_origin_pool.example.id]
     description       = "example load balancer using Terraform"
