@@ -1,4 +1,5 @@
 import sys
+import getpass
 
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
@@ -21,6 +22,7 @@ class IntegrationInfo:
     zone_id = ''
     api_endpoint = 'https://api.cis.cloud.ibm.com'
     app_url = ''
+    cis_api_key = ''
 
 def print_help():
     print(Color.BOLD + 'NAME:' + Color.END)
@@ -33,9 +35,10 @@ def print_help():
     print("\t--help, -h \t\t show help\n")
 
 def main():
-    if sys.argv[1] == '-h':
+    
+    if len(sys.argv) > 1 and sys.argv[1] == '-h':
         print_help()
-        exit()
+        sys.exit(1)
 
     try:
         IntegrationInfo.crn = sys.argv[1]
@@ -55,5 +58,5 @@ def main():
         print("You did not specify a application URL.")
         sys.exit(1)
 
-
+    IntegrationInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     
