@@ -26,7 +26,7 @@ class IntegrationInfo:
 
     # used to create .env file
     def create_envfile(self):
-        info = ["CRN="+"\""+self.crn+"\""+"\n", "ZONE_ID="+"\""+self.zone_id+"\""+"\n", "API_ENDPOIT="+"\""+self.api_endpoint+"\""+"\n", "CIS_SERVICES_APIKEY="+"\""+self.cis_api_key+"\""+"\n"]
+        info = ["CRN="+"\""+self.crn+"\""+"\n", "ZONE_ID="+"\""+self.zone_id+"\""+"\n", "API_ENDPOINT="+"\""+self.api_endpoint+"\""+"\n", "CIS_SERVICES_APIKEY="+"\""+self.cis_api_key+"\""+"\n"]
         file = open("credentials.env", "w")
         file.writelines(info)
         file.close()
