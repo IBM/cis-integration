@@ -23,10 +23,12 @@ class IntegrationInfo:
     api_endpoint = 'https://api.cis.cloud.ibm.com'
     app_url = ''
     cis_api_key = ''
+    schematics_url = 'https://us.schematics.cloud.ibm.com'
+    github_pat = ''
 
     # used to create .env file
     def create_envfile(self):
-        info = ["CRN="+"\""+self.crn+"\""+"\n", "ZONE_ID="+"\""+self.zone_id+"\""+"\n", "API_ENDPOINT="+"\""+self.api_endpoint+"\""+"\n", "CIS_SERVICES_APIKEY="+"\""+self.cis_api_key+"\""+"\n"]
+        info = ["CRN=\""+self.crn+"\"\n", "ZONE_ID=\""+self.zone_id+"\"\n", "API_ENDPOINT=\""+self.api_endpoint+"\"\n", "CIS_SERVICES_APIKEY=\""+self.cis_api_key+"\"\n", "SCHEMATICS_URL=\""+self.schematics_url+"\"\n", "GITHUB_PAT=\""+self.github_pat+"\"\n"]
         file = open("credentials.env", "w")
         file.writelines(info)
         file.close()
@@ -65,6 +67,13 @@ def main():
         UserInfo.app_url = sys.argv[3]
     except IndexError:
         print("You did not specify a application URL.")
+        sys.exit(1)
+
+    # temp variable github PAT while the project is private, will need to be removed once prject is public
+    try:
+        UserInfo.github_pat = sys.argv[4]
+    except IndexError:
+        print("You did not specify a GitHub PAT.")
         sys.exit(1)
 
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
