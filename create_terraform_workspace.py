@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from ibm_cloud_sdk_core import ApiException
 
 def main():
-    load_dotenv("./lucas_env.env")
+    load_dotenv("./credentials.env")
     apikey = os.getenv("CIS_SERVICES_APIKEY")
     schematics_url = os.getenv("SCHEMATICS_URL")
     github_PAT = os.getenv("GITHUB_PAT")
