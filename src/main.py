@@ -88,7 +88,7 @@ def main():
     
     # 2. Global Load Balancer
     user_GLB = GLB()
-    user_GLB.create_glb(UserInfo.cis_domain)
+    user_GLB.create_glb()
 
     # 3. TLS Certificate Configuration
     certcreate.main()
