@@ -46,7 +46,7 @@ class GLB:
         print("Origin Pool ID:", origin_pool_id)
 
         # Setting up and creating the global load balancer
-        load_bal_name = input("Enter a name for global load balancer: ")
+        load_bal_name = input("Enter a name for global load balancer (should be a hostname): ")
 
         global_load_balancer = GlobalLoadBalancerV1.new_instance(crn=crn, zone_identifier=zone_identifier, service_name="cis_services")
         global_load_balancer.set_service_url(endpoint)
