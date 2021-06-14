@@ -62,7 +62,7 @@ def main():
     try:
         UserInfo.hostname = sys.argv[3]
     except IndexError:
-        print("You did not specify a hostname.")
+        print("You did not specify a CIS hostname.")
         sys.exit(1)
 
     try:
@@ -79,7 +79,7 @@ def main():
         print("You did not specify a GitHub PAT.")
         sys.exit(1)
     '''
-    
+
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     UserInfo.create_envfile()
 
