@@ -1,21 +1,11 @@
 import sys
 import getpass
-
+import os
+import certcreate
+from functions import Color as Color
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
 '''
-
-class Color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
 
 class IntegrationInfo:
     crn = ''
@@ -26,11 +16,15 @@ class IntegrationInfo:
 
     # used to create .env file
     def create_envfile(self):
+        os.environ["CRN"] = self.crn
+        os.environ["ZONE_ID"] = self.zone_id
+        os.environ["API_ENDPOINT"] = self.api_endpoint
+        os.environ["CIS_SERVICES_APIKEY"] = self.cis_api_key
+
         info = ["CRN="+"\""+self.crn+"\""+"\n", "ZONE_ID="+"\""+self.zone_id+"\""+"\n", "API_ENDPOINT="+"\""+self.api_endpoint+"\""+"\n", "CIS_SERVICES_APIKEY="+"\""+self.cis_api_key+"\""+"\n"]
         file = open("credentials.env", "w")
         file.writelines(info)
         file.close()
-
 
 def print_help():
     print(Color.BOLD + 'NAME:' + Color.END)
@@ -44,7 +38,7 @@ def print_help():
 
 def main():
     UserInfo = IntegrationInfo()
-
+    
     if len(sys.argv) > 1 and sys.argv[1] == '-h':
         print_help()
         sys.exit(1)
@@ -69,3 +63,5 @@ def main():
 
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     UserInfo.create_envfile()
+   
+    certcreate.main()
