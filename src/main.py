@@ -13,6 +13,8 @@ class IntegrationInfo:
     api_endpoint = 'https://api.cis.cloud.ibm.com'
     app_url = ''
     cis_api_key = ''
+    schematics_url = 'https://us.schematics.cloud.ibm.com'
+    github_pat = ''     # might need to be removed later
 
     # used to create .env file
     def create_envfile(self):
@@ -21,7 +23,7 @@ class IntegrationInfo:
         os.environ["API_ENDPOINT"] = self.api_endpoint
         os.environ["CIS_SERVICES_APIKEY"] = self.cis_api_key
 
-        info = ["CRN="+"\""+self.crn+"\""+"\n", "ZONE_ID="+"\""+self.zone_id+"\""+"\n", "API_ENDPOINT="+"\""+self.api_endpoint+"\""+"\n", "CIS_SERVICES_APIKEY="+"\""+self.cis_api_key+"\""+"\n"]
+        info = ["CRN=\""+self.crn+"\"\n", "ZONE_ID=\""+self.zone_id+"\"\n", "API_ENDPOINT=\""+self.api_endpoint+"\"\n", "CIS_SERVICES_APIKEY=\""+self.cis_api_key+"\"\n", "SCHEMATICS_URL=\""+self.schematics_url+"\"\n", "GITHUB_PAT=\""+self.github_pat+"\"\n"]
         file = open("credentials.env", "w")
         file.writelines(info)
         file.close()
@@ -31,7 +33,7 @@ def print_help():
     print("\tcis-integration - a command line tool used to connect a CIS instance with an application deployed on Code Engine\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[enviornment variables] cis-integration [global options] [CIS CRN] [CIS ID] [APP URL]\n")
+    print("\t[enviornment variables] cis-integration [global options] [CIS CRN] [CIS ID] [APP URL] [GITHUB PAT]\n")
 
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
     print("\t--help, -h \t\t show help\n")
@@ -61,6 +63,14 @@ def main():
         print("You did not specify a application URL.")
         sys.exit(1)
 
+    # temp variable github PAT while the project is private, will need to be removed once prject is public
+    '''
+    try:
+        UserInfo.github_pat = sys.argv[4]
+    except IndexError:
+        print("You did not specify a GitHub PAT.")
+        sys.exit(1)
+    '''
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     UserInfo.create_envfile()
    
