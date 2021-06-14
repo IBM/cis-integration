@@ -60,7 +60,7 @@ def main():
         sys.exit(1)
     
     try:
-        UserInfo.app_url = sys.argv[3]
+        UserInfo.hostname = sys.argv[3]
     except IndexError:
         print("You did not specify a hostname.")
         sys.exit(1)
@@ -79,7 +79,11 @@ def main():
         print("You did not specify a GitHub PAT.")
         sys.exit(1)
     '''
+    print(UserInfo.hostname)
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     UserInfo.create_envfile()
+
+    user_GLB = GLB()
+    user_GLB.create_glb(UserInfo.hostname)
    
-    certcreate.main()
+    # certcreate.main()

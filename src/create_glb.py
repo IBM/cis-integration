@@ -7,7 +7,7 @@ from ibm_cloud_networking_services import GlobalLoadBalancerMonitorV1
 from ibm_cloud_networking_services import *
 
 class GLB:
-    def create_glb(hostname):
+    def create_glb(self, hostname):
         # Setting up connection to project-specific .env file
         load_dotenv()
 
