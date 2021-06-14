@@ -83,6 +83,13 @@ def main():
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     UserInfo.create_envfile()
 
+    # 1. Domain Name and DNS
+    
+    # 2. Global Load Balancer
     user_GLB = GLB()
     user_GLB.create_glb(UserInfo.hostname)
+
+    # 3. TLS Certificate Configuration
     certcreate.main()
+
+    # 4. Edge Functions
