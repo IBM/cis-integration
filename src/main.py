@@ -3,6 +3,7 @@ import getpass
 import os
 import certcreate
 from functions import Color as Color
+from create_glb import GLB
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
 '''
@@ -13,6 +14,7 @@ class IntegrationInfo:
     api_endpoint = 'https://api.cis.cloud.ibm.com'
     app_url = ''
     cis_api_key = ''
+    hostname = ''
     schematics_url = 'https://us.schematics.cloud.ibm.com'
     github_pat = ''     # might need to be removed later
 
@@ -33,7 +35,7 @@ def print_help():
     print("\tcis-integration - a command line tool used to connect a CIS instance with an application deployed on Code Engine\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[enviornment variables] cis-integration [global options] [CIS CRN] [CIS ID] [APP URL] [GITHUB PAT]\n")
+    print("\t[enviornment variables] cis-integration [global options] [CIS CRN] [CIS ID] [HOSTNAME] [APP URL] [GITHUB PAT]\n")
 
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
     print("\t--help, -h \t\t show help\n")
@@ -59,6 +61,12 @@ def main():
     
     try:
         UserInfo.app_url = sys.argv[3]
+    except IndexError:
+        print("You did not specify a hostname.")
+        sys.exit(1)
+
+    try:
+        UserInfo.app_url = sys.argv[4]
     except IndexError:
         print("You did not specify a application URL.")
         sys.exit(1)
