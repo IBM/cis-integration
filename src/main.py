@@ -3,6 +3,7 @@ import getpass
 import os
 import certcreate
 from functions import Color as Color
+from create_edge_function import EdgeFunctionCreator
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
 '''
@@ -73,5 +74,8 @@ def main():
     '''
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     UserInfo.create_envfile()
+
+    userEdgeFunction = EdgeFunctionCreator()
+    userEdgeFunction.create_edge_function()
    
     certcreate.main()
