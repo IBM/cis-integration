@@ -5,7 +5,7 @@ import src.certcreate
 from src.functions import Color as Color
 from src.create_glb import GLB
 from src.dns_creator import DNSCreator
-
+from src.create_edge_function import EdgeFunctionCreator
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
 '''
@@ -98,3 +98,5 @@ def main():
     src.certcreate.main()
 
     # 4. Edge Functions
+    userEdgeFunction = EdgeFunctionCreator()
+    userEdgeFunction.create_edge_function()
