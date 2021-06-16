@@ -6,6 +6,7 @@ from functions import Color as Color
 from create_glb import GLB
 from dns_creator import DNSCreator
 from create_edge_function import EdgeFunctionCreator
+
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
 '''
@@ -15,10 +16,13 @@ class IntegrationInfo:
     zone_id = ''
     api_endpoint = 'https://api.cis.cloud.ibm.com'
     app_url = ''
+    resource_group = ''
+    cis_name = ''
     cis_api_key = ''
     cis_domain = ''
     schematics_url = 'https://us.schematics.cloud.ibm.com'
     github_pat = ''     # might need to be removed later
+    terraforming = None
 
     # used to create .env file
     def create_envfile(self):
@@ -39,36 +43,57 @@ def print_help():
     print("\tcis-integration - a command line tool used to connect a CIS instance with an application deployed on Code Engine\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[enviornment variables] cis-integration [global options] [CIS CRN] [CIS ID] [CIS Domain] [CODE ENGINE APP URL] [GITHUB PAT]\n")
+    print("\t[python implementation]\t\tcis-integration [global options] [CIS CRN] [CIS ID] [CIS DOMAIN] [CODE ENGINE APP URL] [GITHUB PAT]")
+    print("\t[terraform implementation]\tcis-integration [global options] [RESOURCE GROUP] [CIS NAME] [CIS DOMAIN] [CODE ENGINE APP URL]\n")
 
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
     print("\t--help, -h \t\t show help\n")
 
 def handle_args():
-    terraforming = True
+    UserInfo = IntegrationInfo()
+
+    UserInfo.terraforming = True
     try:
         sys.argv.index('--terraform')
     except ValueError:
-        terraforming = False
+        UserInfo.terraforming = False
 
-    UserInfo = IntegrationInfo()
+    try:
+        env_index = sys.argv.index('--env')
+        return UserInfo.terraforming
+    except:
+        pass
+
     args = [arg for arg in sys.argv if arg[0] != '-']
 
     if len(sys.argv) > 1 and sys.argv[1] == '-h':
         print_help()
         sys.exit(1)
 
-    try:
-        UserInfo.crn = args[1]
-    except IndexError:
-        print("You did not specify a CIS CRN.")
-        sys.exit(1)
+    if UserInfo.terraforming:
+        try:
+            UserInfo.resource_group = args[1]
+        except IndexError:
+            print("You did not specify a resource group.")
+            sys.exit(1)
+        
+        try:
+            UserInfo.cis_name = args[2]
+        except:
+            print("You did not specify a CIS Name.")
+            sys.exit(1)
+    else:
+        try:
+            UserInfo.crn = args[1]
+        except IndexError:
+            print("You did not specify a CIS CRN.")
+            sys.exit(1)
 
-    try:
-        UserInfo.zone_id = args[2]
-    except IndexError:
-        print("You did not specify a CIS Zone_ID.")
-        sys.exit(1)
+        try:
+            UserInfo.zone_id = args[2]
+        except IndexError:
+            print("You did not specify a CIS Zone_ID.")
+            sys.exit(1)
     
     try:
         UserInfo.cis_domain = args[3]
@@ -83,23 +108,21 @@ def handle_args():
         sys.exit(1)
 
     # temp variable github PAT while the project is private, will need to be removed once prject is public
-    '''
+
     try:
-        UserInfo.github_pat = sys.argv[4]
+        UserInfo.github_pat = args[5]
     except IndexError:
         print("You did not specify a GitHub PAT.")
         sys.exit(1)
-    '''
 
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     UserInfo.create_envfile()
 
-    return terraforming
+    return UserInfo.terraforming
 
 def main():
     terraforming = handle_args()
-    print(terraforming)
-
+    
     # 1. Domain Name and DNS
     user_DNS = DNSCreator()
     user_DNS.create_records()
