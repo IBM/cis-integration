@@ -1,11 +1,11 @@
 import sys
 import getpass
 import os
-import src.certcreate
-from src.functions import Color as Color
-from src.create_glb import GLB
-from src.dns_creator import DNSCreator
-from src.create_edge_function import EdgeFunctionCreator
+import certcreate
+from functions import Color as Color
+from create_glb import GLB
+from dns_creator import DNSCreator
+from create_edge_function import EdgeFunctionCreator
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
 '''
@@ -95,7 +95,7 @@ def main():
     user_GLB.create_glb()
 
     # 3. TLS Certificate Configuration
-    src.certcreate.main()
+    certcreate.main()
 
     # 4. Edge Functions
     userEdgeFunction = EdgeFunctionCreator()
