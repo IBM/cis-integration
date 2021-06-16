@@ -9,9 +9,7 @@ def main():
     crn = os.getenv("CRN")
     zone_id = os.getenv("ZONE_ID")
     endpoint = os.getenv("API_ENDPOINT")
-
-    string = input("Enter hostname(s). Seperate hostnames by space if neccesary: ")
-    hostNames=string.split()
+    hostNames=[os.getenv("CIS.DOMAIN"),"*."+os.getenv("CIS.DOMAIN")]
  
     # create instance
     cert = SslCertificateApiV1.new_instance(
