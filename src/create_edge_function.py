@@ -24,7 +24,13 @@ class EdgeFunctionCreator:
         # Executing the edge function action request
         action_response = requests.request("PUT", url=action_url, headers=action_headers, data=action_payload)
 
-        print("Uploading edge function action:", 'OK' if action_response.json()["success"] else 'Failed with status code ' + str(action_response.status_code))
+        if action_response.json()["success"]:
+            print("Successfully created edge function action")
+        elif action_response.status_code == 409:
+            print("Did not create edge function action. Action already exists")
+        else:
+            print("Failed to create edge function action with status code " + str(action_response.status_code))
+
 
         trigger_url = "https://api.cis.cloud.ibm.com/v1/" + crn + "/zones/" + zone_id + "/workers/routes"
 
@@ -41,7 +47,13 @@ class EdgeFunctionCreator:
         # Executing the 1st edge function trigger request
         trigger_response_1 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_1)
 
-        print("Uploading edge function trigger 1:", 'OK' if trigger_response_1.json()["success"] else 'Failed with status code ' + str(trigger_response_1.status_code))
+        if trigger_response_1.json()["success"]:
+            print("Successfully created edge function action")
+        elif trigger_response_1.status_code == 409:
+            print("Did not create edge function action. Action already exists")
+        else:
+            print("Failed to create edge function action with status code " + str(trigger_response_1.status_code))
+
         # Trigger 2 handles the root domain of the CIS domain
         trigger_payload_2 = json.dumps({
             "pattern": domain,
@@ -50,7 +62,13 @@ class EdgeFunctionCreator:
         # Executing the 2nd edge function trigger request
         trigger_response_2 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_2)
 
-        print("Uploading edge function trigger 2:", 'OK' if trigger_response_2.json()["success"] else 'Failed with status code ' + str(trigger_response_2.status_code))
+        if trigger_response_2.json()["success"]:
+            print("Successfully created edge function action")
+        elif trigger_response_2.status_code == 409:
+            print("Did not create edge function action. Action already exists")
+        else:
+            print("Failed to create edge function action with status code " + str(trigger_response_2.status_code))
+
 
     def request_token(self, apikey: str):
         """
