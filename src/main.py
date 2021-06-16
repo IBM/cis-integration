@@ -26,14 +26,27 @@ class IntegrationInfo:
 
     # used to create .env file
     def create_envfile(self):
-        os.environ["CRN"] = self.crn
-        os.environ["ZONE_ID"] = self.zone_id
+        if not self.terraforming:
+            os.environ["CRN"] = self.crn
+            os.environ["ZONE_ID"] = self.zone_id
+        else:
+            os.environ["RESOURCE_GROUP"] = self.resource_group
+            os.environ["CIS_NAME"] = self.cis_name
+
         os.environ["API_ENDPOINT"] = self.api_endpoint
         os.environ["CIS_SERVICES_APIKEY"] = self.cis_api_key
         os.environ["CIS_DOMAIN"] = self.cis_domain
         os.environ["APP_URL"] = self.app_url
 
-        info = ["CRN=\""+self.crn+"\"\n", "ZONE_ID=\""+self.zone_id+"\"\n", "API_ENDPOINT=\""+self.api_endpoint+"\"\n", "CIS_SERVICES_APIKEY=\""+self.cis_api_key+"\"\n", "CIS_DOMAIN=\""+self.cis_domain+"\"\n", "SCHEMATICS_URL=\""+self.schematics_url+"\"\n", "GITHUB_PAT=\""+self.github_pat+"\"\n", "APP_URL=\""+self.app_url+"\"\n"]
+        if not self.terraforming:
+            info = [f"CRN=\"{self.crn}\"\n", f"ZONE_ID=\"{self.zone_id}\"\n"]
+        else:
+            info = [f"RESOURCE_GROUP=\"{self.resource_group}\"\n", f"CIS_NAME=\"{self.cis_name}\"\n"]
+        
+        common = [f"API_ENDPOINT=\"{self.api_endpoint}\"\n", f"CIS_SERVICES_APIKEY=\"{self.cis_api_key}\"\n", f"CIS_DOMAIN=\"{self.cis_domain}\"\n", f"SCHEMATICS_URL=\"{self.schematics_url}\"\n", f"GITHUB_PAT=\"{self.github_pat}\"\n", f"APP_URL=\"{self.app_url}\"\n"]
+        for item in common:
+            info.append(common)
+
         file = open("credentials.env", "w")
         file.writelines(info)
         file.close()
