@@ -29,7 +29,7 @@ class IntegrationInfo:
         os.environ["CIS_DOMAIN"] = self.cis_domain
         os.environ["APP_URL"] = self.app_url
 
-        info = ["CRN=\""+self.crn+"\"\n", "ZONE_ID=\""+self.zone_id+"\"\n", "API_ENDPOINT=\""+self.api_endpoint+"\"\n", "CIS_SERVICES_APIKEY=\""+self.cis_api_key+"\"\n", "CIS_DOMAIN=\""+self.cis_domain+"\"\n", "SCHEMATICS_URL=\""+self.schematics_url+"\"\n", "GITHUB_PAT=\""+self.github_pat+"\"\n"]
+        info = ["CRN=\""+self.crn+"\"\n", "ZONE_ID=\""+self.zone_id+"\"\n", "API_ENDPOINT=\""+self.api_endpoint+"\"\n", "CIS_SERVICES_APIKEY=\""+self.cis_api_key+"\"\n", "CIS_DOMAIN=\""+self.cis_domain+"\"\n", "SCHEMATICS_URL=\""+self.schematics_url+"\"\n", "GITHUB_PAT=\""+self.github_pat+"\"\n", "APP_URL=\""+self.app_url+"\"\n"]
         file = open("credentials.env", "w")
         file.writelines(info)
         file.close()
