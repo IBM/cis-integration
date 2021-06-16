@@ -43,33 +43,40 @@ def print_help():
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
     print("\t--help, -h \t\t show help\n")
 
-def main():
+def handle_args():
+    terraforming = True
+    try:
+        sys.argv.index('--terraform')
+    except ValueError:
+        terraforming = False
+
     UserInfo = IntegrationInfo()
-    
+    args = [arg for arg in sys.argv if arg[0] != '-']
+
     if len(sys.argv) > 1 and sys.argv[1] == '-h':
         print_help()
         sys.exit(1)
 
     try:
-        UserInfo.crn = sys.argv[1]
+        UserInfo.crn = args[1]
     except IndexError:
         print("You did not specify a CIS CRN.")
         sys.exit(1)
 
     try:
-        UserInfo.zone_id = sys.argv[2]
+        UserInfo.zone_id = args[2]
     except IndexError:
         print("You did not specify a CIS Zone_ID.")
         sys.exit(1)
     
     try:
-        UserInfo.cis_domain = sys.argv[3]
+        UserInfo.cis_domain = args[3]
     except IndexError:
         print("You did not specify a CIS Domain.")
         sys.exit(1)
 
     try:
-        UserInfo.app_url = sys.argv[4]
+        UserInfo.app_url = args[4]
     except IndexError:
         print("You did not specify a application URL.")
         sys.exit(1)
@@ -85,6 +92,12 @@ def main():
 
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     UserInfo.create_envfile()
+
+    return terraforming
+
+def main():
+    terraforming = handle_args()
+    print(terraforming)
 
     # 1. Domain Name and DNS
     user_DNS = DNSCreator()
