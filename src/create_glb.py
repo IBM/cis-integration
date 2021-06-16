@@ -47,8 +47,6 @@ class GLB:
         print("Origin Pool ID:", origin_pool_id)
 
         # Setting up and creating the global load balancer
-        load_bal_name = input("Enter a name for global load balancer (should be a hostname): ")
-
         global_load_balancer = GlobalLoadBalancerV1.new_instance(crn=crn, zone_identifier=zone_identifier, service_name="cis_services")
         global_load_balancer.set_service_url(endpoint)
         glb_name_check_resp = global_load_balancer.list_all_load_balancers().get_result()["result"]
@@ -58,12 +56,12 @@ class GLB:
         for i in range(len(glb_name_check_resp)):
             glb_dict[glb_name_check_resp[i]["name"]] = glb_name_check_resp[i]["id"]
 
-        if load_bal_name not in glb_dict:
-            global_load_balancer_result = global_load_balancer.create_load_balancer(name=load_bal_name, default_pools=[origin_pool_id], fallback_pool=origin_pool_id, enabled=True, proxied=True).get_result()
+        if hostname not in glb_dict:
+            global_load_balancer_result = global_load_balancer.create_load_balancer(name=hostname, default_pools=[origin_pool_id], fallback_pool=origin_pool_id, enabled=True, proxied=True).get_result()
             global_load_balancer_id = global_load_balancer_result["result"]["id"]
         else:
             print("A global load balancer with this name already exists.")
-            global_load_balancer_id = glb_dict[load_bal_name]
-            global_load_balancer.edit_load_balancer(global_load_balancer_id, name=load_bal_name, default_pools=[origin_pool_id], fallback_pool=origin_pool_id, enabled=True, proxied=True)
+            global_load_balancer_id = glb_dict[hostname]
+            global_load_balancer.edit_load_balancer(global_load_balancer_id, name=hostname, default_pools=[origin_pool_id], fallback_pool=origin_pool_id, enabled=True, proxied=True)
 
         print("Global Load Balancer ID:", global_load_balancer_id)
