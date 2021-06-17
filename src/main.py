@@ -2,10 +2,12 @@ import sys
 import getpass
 import os
 import certcreate
+from dotenv.main import load_dotenv
 from functions import Color as Color
 from create_glb import GLB
 from dns_creator import DNSCreator
 from create_edge_function import EdgeFunctionCreator
+from create_terraform_workspace import WorkspaceCreator
 
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
@@ -60,39 +62,13 @@ class IntegrationInfo:
         return result
 
     def read_envfile(self, filename):
-        env_vars = {}
         try:
             file = open(filename, "r")
         except FileNotFoundError:
             print("Env file doesn't exist!")
             sys.exit(1)
 
-        info = file.read().split("\n")
-
-        for item in info:
-            try:
-                item.index('=')
-                broken_item = item.split('=')
-                broken_item[1] = self.remove_quotes(broken_item[1])
-                env_vars[broken_item[0]] = broken_item[1]
-            except ValueError:
-                pass
-
-        try:
-            if not self.terraforming:
-                os.environ["CRN"] = env_vars["CRN"]
-                os.environ["ZONE_ID"] = env_vars["ZONE_ID"]
-            else:
-                os.environ["RESOURCE_GROUP"] = env_vars["RESOURCE_GROUP"]
-                os.environ["CIS_NAME"] = env_vars["CIS_NAME"]
-
-            os.environ["API_ENDPOINT"] = env_vars["API_ENDPOINT"]
-            os.environ["CIS_SERVICES_APIKEY"] = env_vars["CIS_SERVICES_APIKEY"]
-            os.environ["CIS_DOMAIN"] = env_vars["CIS_DOMAIN"]
-            os.environ["APP_URL"] = env_vars["APP_URL"]
-        except:
-            print("Missing one or more necessary attributes in .env!")
-            sys.exit(1)            
+        load_dotenv(filename)          
 
 def print_help():
     print(Color.BOLD + 'NAME:' + Color.END)
@@ -191,18 +167,22 @@ def handle_args():
 
 def main():
     terraforming = handle_args()
-    
-    # 1. Domain Name and DNS
-    user_DNS = DNSCreator()
-    user_DNS.create_records()
 
-    # 2. Global Load Balancer
-    user_GLB = GLB()
-    user_GLB.create_glb()
+    if terraforming:
+        work_creator = WorkspaceCreator()
+        work_creator.create_terraform_workspace()
+    else:
+        # 1. Domain Name and DNS
+        user_DNS = DNSCreator()
+        user_DNS.create_records()
 
-    # 3. TLS Certificate Configuration
-    certcreate.main()
+        # 2. Global Load Balancer
+        user_GLB = GLB()
+        user_GLB.create_glb()
 
-    # 4. Edge Functions
-    userEdgeFunction = EdgeFunctionCreator()
-    userEdgeFunction.create_edge_function()
+        # 3. TLS Certificate Configuration
+        certcreate.main()
+
+        # 4. Edge Functions
+        userEdgeFunction = EdgeFunctionCreator()
+        userEdgeFunction.create_edge_function()
