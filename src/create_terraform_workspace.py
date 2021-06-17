@@ -11,34 +11,68 @@ class WorkspaceCreator:
         apikey = os.getenv("CIS_SERVICES_APIKEY")
         schematics_url = os.getenv("SCHEMATICS_URL")
         github_PAT = os.getenv("GITHUB_PAT")
+        app_url = os.getenv("APP_URL")
+        cis_domain = os.getenv("CIS_DOMAIN")
+        resource_group = os.getenv("RESOURCE_GROUP")
+        cis_name = os.getenv("CIS_NAME")
         authenticator = IAMAuthenticator(apikey)
         schematics_service = SchematicsV1(authenticator = authenticator)
         schematics_service.set_service_url(schematics_url)
         r_token = self.request_token(apikey)
 
         # Setting up the necessary information to create the workspace
-        workspace_variable_request_model = {}
-        workspace_variable_request_model['name'] = 'ibmcloud_api_key'
-        workspace_variable_request_model['value'] = apikey
-        workspace_variable_request_model['secure'] = True
+        workspace_apikey_variable_request = {}
+        workspace_apikey_variable_request['name'] = 'ibmcloud_api_key'
+        workspace_apikey_variable_request['value'] = apikey
+        workspace_apikey_variable_request['secure'] = True
+
+        workspace_cis_name_variable_request = {}
+        workspace_cis_name_variable_request['name'] = 'cis_name'
+        workspace_cis_name_variable_request['value'] = cis_name
+
+        workspace_resource_group_variable_request = {}
+        workspace_resource_group_variable_request['name'] = 'resource_group'
+        workspace_resource_group_variable_request['value'] = resource_group
+
+        workspace_app_url_variable_request = {}
+        workspace_app_url_variable_request['name'] = 'app_url'
+        workspace_app_url_variable_request['value'] = app_url
+
+        workspace_www_variable_request = {}
+        workspace_www_variable_request['name'] = 'www_domain'
+        workspace_www_variable_request['value'] = 'www.' + cis_domain
+
+        workspace_domain_variable_request = {}
+        workspace_domain_variable_request['name'] = 'cis_domain'
+        workspace_domain_variable_request['value'] = cis_domain
+
+        workspace_action_variable_request = {}
+        workspace_action_variable_request['name'] = 'action_name'
+        workspace_action_variable_request['value'] = cis_domain.replace('.', '-')
 
         template_source_data_request_model = {}
-        template_source_data_request_model['folder'] = 'cert-create'
+        template_source_data_request_model['folder'] = 'src/terraform'
         template_source_data_request_model['type'] = 'terraform_v0.14.40'
-        template_source_data_request_model['variablestore'] = [workspace_variable_request_model]
+        template_source_data_request_model['variablestore'] = [workspace_apikey_variable_request,
+                                                               workspace_resource_group_variable_request,
+                                                               workspace_cis_name_variable_request,
+                                                               workspace_app_url_variable_request,
+                                                               workspace_domain_variable_request,
+                                                               workspace_www_variable_request,
+                                                               workspace_action_variable_request]
 
         template_repo_request_model = {}
         template_repo_request_model['url'] = 'https://github.ibm.com/GCAT/cis-integration'
 
         # Creating the workspace and connecting to the github repo
         workspace_response = schematics_service.create_workspace(
-            description="Testing creating a workspace using a python script", 
-            name="test-code-workspace-1",
+            description="Workspace for building resources for the CIS instance using terraform", 
+            name="temp-workspace",
             template_data=[template_source_data_request_model],
             template_repo=template_repo_request_model,
             type=['terraform_v0.14.40'],
             location="us-south",
-            resource_group="Interns-2021",
+            resource_group=workspace_resource_group_variable_request,
             x_github_token=github_PAT,
         ).get_result()
 
