@@ -50,6 +50,7 @@ class IntegrationInfo:
         for item in common:
             info.append(item)
 
+
         file = open("credentials.env", "w")
         file.writelines(info)
         file.close()
