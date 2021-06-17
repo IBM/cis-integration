@@ -34,6 +34,7 @@ class IntegrationInfo:
         else:
             os.environ["RESOURCE_GROUP"] = self.resource_group
             os.environ["CIS_NAME"] = self.cis_name
+            os.environ["GITHUB_PAT"] = self.github_pat
 
         os.environ["API_ENDPOINT"] = self.api_endpoint
         os.environ["CIS_SERVICES_APIKEY"] = self.cis_api_key
@@ -135,6 +136,12 @@ def handle_args():
         except:
             print("You did not specify a CIS Name.")
             sys.exit(1)
+        
+        try:
+            UserInfo.github_pat = args[5]
+        except IndexError:
+            print("You did not specify a GitHub PAT.")
+            sys.exit(1)
     else:
         try:
             UserInfo.crn = args[1]
@@ -159,13 +166,6 @@ def handle_args():
         UserInfo.app_url = args[4]
     except IndexError:
         print("You did not specify a application URL.")
-        sys.exit(1)
-
-    # temp variable github PAT while the project is private, will need to be removed once prject is public
-    try:
-        UserInfo.github_pat = args[5]
-    except IndexError:
-        print("You did not specify a GitHub PAT.")
         sys.exit(1)
         
     # determining API key and creating the .env file
