@@ -4,7 +4,7 @@ language: python
   - "3.8"
   - "3.9"
 before_install:
-  - pip3 install mapping
+  - pip3 install Mapping
 install: 
   - pip3 install -e ./src
 
