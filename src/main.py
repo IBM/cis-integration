@@ -70,7 +70,21 @@ class IntegrationInfo:
             print("Env file doesn't exist!")
             sys.exit(1)
 
-        load_dotenv(filename)          
+        load_dotenv(filename)
+
+        if not self.terraforming:
+            if os.getenv("CRN") is None or os.getenv("ZONE_ID") is None:
+                print("Missing one or more necessary attributes in .env!")
+                sys.exit(1)
+        else:
+            if os.getenv("RESOURCE_GROUP") is None or os.getenv("CIS_NAME") is None or os.getenv("GITHUB_PAT") is None:
+                print("Missing one or more necessary attributes in .env!")
+                sys.exit(1)
+        
+        if os.getenv("API_ENDPOINT") is None or os.getenv("CIS_SERVICES_APIKEY") is None or os.getenv("CIS_DOMAIN") is None or os.getenv("APP_URL") is None:
+            print("Missing one or more necessary attributes in .env!")
+            sys.exit(1)
+                   
 
 # method used to display the command usage if user uses `-h` or `--help`
 def print_help():
