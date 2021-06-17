@@ -14,14 +14,12 @@ class WorkspaceCreator:
         cis_domain = os.getenv("CIS_DOMAIN")
         resource_group = os.getenv("RESOURCE_GROUP")
         cis_name = os.getenv("CIS_NAME")
-
         authenticator = IAMAuthenticator(apikey)
         schematics_service = SchematicsV1(authenticator = authenticator)
         schematics_service.set_service_url(schematics_url)
         r_token = self.request_token(apikey)
 
         # Setting up the necessary information to create the workspace
-
         workspace_apikey_variable_request = {}
         workspace_apikey_variable_request['name'] = 'ibmcloud_api_key'
         workspace_apikey_variable_request['value'] = apikey
@@ -67,14 +65,17 @@ class WorkspaceCreator:
 
         # Creating the workspace and connecting to the github repo
         workspace_response = schematics_service.create_workspace(
-
             description="Workspace for building resources for the CIS instance using terraform", 
             name="temp-workspace",
-
             template_data=[template_source_data_request_model],
             type=['terraform_v0.14.40'],
             location="us-south",
+<<<<<<< HEAD
             resource_group=resource_group,
+=======
+            resource_group=workspace_resource_group_variable_request,
+            x_github_token=github_PAT,
+>>>>>>> c5eadaf (working on terraform files to better align with what the CLI needs)
         ).get_result()
 
         print('Successfully created the workspace!')
