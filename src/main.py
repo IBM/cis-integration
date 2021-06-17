@@ -45,11 +45,54 @@ class IntegrationInfo:
         
         common = [f"API_ENDPOINT=\"{self.api_endpoint}\"\n", f"CIS_SERVICES_APIKEY=\"{self.cis_api_key}\"\n", f"CIS_DOMAIN=\"{self.cis_domain}\"\n", f"SCHEMATICS_URL=\"{self.schematics_url}\"\n", f"GITHUB_PAT=\"{self.github_pat}\"\n", f"APP_URL=\"{self.app_url}\"\n"]
         for item in common:
-            info.append(common)
+            info.append(item)
 
         file = open("credentials.env", "w")
         file.writelines(info)
         file.close()
+
+    def remove_quotes(self, item):
+        result = item
+        if result[0] == '"':
+            result = result[1:]
+        if result[-1] == '"':
+            result = result[:-1]
+        return result
+
+    def read_envfile(self, filename):
+        env_vars = {}
+        try:
+            file = open(filename, "r")
+        except FileNotFoundError:
+            print("Env file doesn't exist!")
+            sys.exit(1)
+
+        info = file.read().split("\n")
+
+        for item in info:
+            try:
+                item.index('=')
+                broken_item = item.split('=')
+                broken_item[1] = self.remove_quotes(broken_item[1])
+                env_vars[broken_item[0]] = broken_item[1]
+            except ValueError:
+                pass
+
+        try:
+            if not self.terraforming:
+                os.environ["CRN"] = env_vars["CRN"]
+                os.environ["ZONE_ID"] = env_vars["ZONE_ID"]
+            else:
+                os.environ["RESOURCE_GROUP"] = env_vars["RESOURCE_GROUP"]
+                os.environ["CIS_NAME"] = env_vars["CIS_NAME"]
+
+            os.environ["API_ENDPOINT"] = env_vars["API_ENDPOINT"]
+            os.environ["CIS_SERVICES_APIKEY"] = env_vars["CIS_SERVICES_APIKEY"]
+            os.environ["CIS_DOMAIN"] = env_vars["CIS_DOMAIN"]
+            os.environ["APP_URL"] = env_vars["APP_URL"]
+        except:
+            print("Missing one or more necessary attributes in .env!")
+            sys.exit(1)            
 
 def print_help():
     print(Color.BOLD + 'NAME:' + Color.END)
@@ -73,9 +116,22 @@ def handle_args():
 
     try:
         env_index = sys.argv.index('--env')
-        return UserInfo.terraforming
     except:
-        pass
+        env_index = -1
+
+    if env_index != -1:
+        if env_index == len(sys.argv) - 1:
+            print("No env file found!")
+            sys.exit(1)
+
+        env_file = sys.argv[env_index + 1]
+        if env_file[-4:] != '.env':
+            print("Not an env file!")
+            sys.exit(1)
+
+        UserInfo.read_envfile(env_file)
+
+        return UserInfo.terraforming
 
     args = [arg for arg in sys.argv if arg[0] != '-']
 
