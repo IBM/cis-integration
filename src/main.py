@@ -162,7 +162,7 @@ def handle_args():
             sys.exit(1)
         
         try:
-            UserInfo.github_pat = args.path
+            UserInfo.github_pat = args.pat
         except IndexError:
             print("You did not specify a GitHub PAT.")
             sys.exit(1)
