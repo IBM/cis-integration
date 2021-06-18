@@ -76,7 +76,7 @@ class WorkspaceCreator:
             template_repo=template_repo_request_model,
             type=['terraform_v0.14.40'],
             location="us-south",
-            resource_group=workspace_resource_group_variable_request,
+            resource_group=resource_group,
             x_github_token=github_PAT,
         ).get_result()
 
