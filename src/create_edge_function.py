@@ -48,11 +48,11 @@ class EdgeFunctionCreator:
         trigger_response_1 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_1)
 
         if trigger_response_1.json()["success"]:
-            print("Successfully created edge function action")
+            print("Successfully created edge function trigger")
         elif trigger_response_1.status_code == 409:
-            print("Did not create edge function action. Action already exists")
+            print("Did not create edge function trigger. Trigger already exists")
         else:
-            print("Failed to create edge function action with status code " + str(trigger_response_1.status_code))
+            print("Failed to create edge function trigger with status code " + str(trigger_response_1.status_code))
 
         # Trigger 2 handles the root domain of the CIS domain
         trigger_payload_2 = json.dumps({
@@ -63,11 +63,11 @@ class EdgeFunctionCreator:
         trigger_response_2 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_2)
 
         if trigger_response_2.json()["success"]:
-            print("Successfully created edge function action")
+            print("Successfully created edge function trigger")
         elif trigger_response_2.status_code == 409:
-            print("Did not create edge function action. Action already exists")
+            print("Did not create edge function trigger. Trigger already exists")
         else:
-            print("Failed to create edge function action with status code " + str(trigger_response_2.status_code))
+            print("Failed to create edge function trigger with status code " + str(trigger_response_2.status_code))
 
 
     def request_token(self, apikey: str):
