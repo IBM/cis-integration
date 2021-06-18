@@ -94,15 +94,31 @@ def print_help():
     print("\tcis-integration - a command line tool used to connect a CIS instance with an application deployed on Code Engine\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[python implementation]\t\tcis-integration [global options] [CIS CRN] [CIS ID] [CIS DOMAIN] [CODE ENGINE APP URL] [GITHUB PAT]")
-    print("\t[terraform implementation]\tcis-integration [global options] --terraform [RESOURCE GROUP] [CIS NAME] [CIS DOMAIN] [CODE ENGINE APP URL]\n")
+    print("\t[python implementation]\t\tcis-integration [positional arguments] [global options] [-c CIS CRN] [-z CIS ZONE ID] [-d CIS DOMAIN] [-a CODE ENGINE APP URL]")
+    print("\t[terraform implementation]\tcis-integration [positional arguments] [global options] --terraform [-r RESOURCE GROUP] [-n CIS NAME] [-d CIS DOMAIN] [-a CODE ENGINE APP URL] [-p GITHUB PAT]")
+    print("\t[use existing credentials.env file]\tcis-integration [positional arguments] [global options] --env\n")
+
+    print(Color.BOLD + "POSITIONAL ARGUMENTS (required):" + Color.END)
+    print("\t{code-engine,ce} \t\t connect a Code Engine application to the CIS instance\n")
 
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
-    print("\t--help, -h \t\t show help\n")
+    print("\t--help, -h \t\t show help")
+    print("\t--env, -e \t\t use an already existing credentials.env file")
+    print("\t--terraform, -t \t build resources for CIS instance using terraform\n")
+
+    print(Color.BOLD + "OPTIONAL ARGUMENTS:" + Color.END)
+    print("\t--crn, -c \t\t CRN of the CIS instance")
+    print("\t--zone_id, -z \t\t Zone ID of the CIS instance")
+    print("\t--cis_domain, -d \t domain name of the CIS instance")
+    print("\t--app_url, -a \t\t URL of the application")
+    print("\t--resource_group, -r \t resource group associated with the CIS instance")
+    print("\t--name, -n \t\t name of the CIS instance")
+    print("\t--pat, -p \t\t GitHub PAT\n")
 
 # handles the arguments given for both the python and terraform command options
 def handle_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("-h","--help",action='store_true')
     parser.add_argument("platform",\
         choices=["code-engine","ce"])
     parser.add_argument("-c","--crn")
@@ -113,12 +129,16 @@ def handle_args():
     parser.add_argument("-t","--terraform",action='store_true')
     parser.add_argument("-r","--resource_group")
     parser.add_argument("-n","--name")
-    parser.add_argument("-p","--path")
+    parser.add_argument("-p","--pat")
     
 
     parser.add_argument("-e","--env", action='store_true')
     
     args=parser.parse_args()
+
+    if args.help:
+        print_help()
+        sys.exit(1)
 
     UserInfo = IntegrationInfo()
     UserInfo.terraforming = False
