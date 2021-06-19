@@ -13,6 +13,7 @@ idna==2.10
 iniconfig==1.1.1
 itsdangerous==2.0.1
 Jinja2==3.0.1
+-e git+https://github.ibm.com/GCAT/cis-integration.git@6a0ee62cbfdb3ba78b43a94cbe8866a92963d961#egg=main.py&subdirectory=src
 mapping==0.1.6
 MarkupSafe==2.0.1
 numpy==1.20.3

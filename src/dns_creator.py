@@ -4,16 +4,18 @@ from ibm_cloud_networking_services import DnsRecordsV1
 
 class DNSCreator:
     
-    def create_records(self):
+    def __init__(self, crn, zone_id, endpoint):
         load_dotenv("./credentials.env")
         # read crn, zone id and end-point from environment
-        crn = os.getenv("CRN")
-        zone_id = os.getenv("ZONE_ID")
-        endpoint = os.getenv("API_ENDPOINT")
+        self.crn = crn
+        self.zone_id = zone_id
+        self.endpoint = endpoint
+
+    def create_records(self):
         # create instance
         record = DnsRecordsV1.new_instance(
-            crn=crn, zone_identifier=zone_id, service_name="cis_services")
-        record.set_service_url(endpoint)
+            crn=self.crn, zone_identifier=self.zone_id, service_name="cis_services")
+        record.set_service_url(self.endpoint)
         record_type = 'CNAME'
         root_name = '@' # creating a root DNS record
         www_name = 'www' # creating a www DNS record
