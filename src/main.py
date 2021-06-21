@@ -4,6 +4,7 @@ import os
 import certcreate
 from dotenv.main import load_dotenv
 from functions import Color as Color
+from functions import healthCheck as healthCheck
 from create_glb import GLB
 from dns_creator import DNSCreator
 from create_edge_function import EdgeFunctionCreator
@@ -210,3 +211,11 @@ def main():
         # 4. Edge Functions
         userEdgeFunction = EdgeFunctionCreator()
         userEdgeFunction.create_edge_function()
+
+    hostUrl="https://"+os.environ["CIS_DOMAIN"]
+
+    healthCheck(hostUrl)
+
+    hostUrl="https://www."+os.environ["CIS_DOMAIN"]
+
+    healthCheck(hostUrl)
