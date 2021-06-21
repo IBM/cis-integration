@@ -12,9 +12,9 @@ filelock==3.0.12
 ibm-cloud-networking-services==0.6.0
 ibm-cloud-sdk-core==3.10.0
 ibm-code-engine-sdk==0.1.0
+ibm-schematics==1.0.1
 identify==2.2.8
 idna==2.10
--e git+https://github.ibm.com/GCAT/cis-integration.git@130747fc2bc27af34718139fbaa89c75ef73870d#egg=main.py&subdirectory=src
 nodeenv==1.6.0
 packaging==20.9
 pre-commit==2.13.0
