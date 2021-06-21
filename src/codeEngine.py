@@ -66,7 +66,7 @@ class IntegrationInfo:
             result = result[:-1]
         return result
 
-    def read_envfile(self, filename):
+    def read_envfile(self, filename,args):
         try:
             file = open(filename, "r")
         except FileNotFoundError:
@@ -79,16 +79,28 @@ class IntegrationInfo:
             if os.getenv("CRN") is None or os.getenv("ZONE_ID") is None:
                 print("Missing one or more necessary attributes in .env!")
                 sys.exit(1)
+            else:
+                args.crn=os.getenv("CRN")
+                args.zone_id=os.getenv("ZONE_ID")
+
         else:
             if os.getenv("RESOURCE_GROUP") is None or os.getenv("CIS_NAME") is None or os.getenv("GITHUB_PAT") is None:
                 print("Missing one or more necessary attributes in .env!")
                 sys.exit(1)
+            else:
+                args.resource_group=os.getenv("RESOURCE_GROUP")
+                args.name=os.getenv("CIS_NAME")
+                args.pat=os.getenv("GITHUB_PAT")
         
         if os.getenv("API_ENDPOINT") is None or os.getenv("CIS_SERVICES_APIKEY") is None or os.getenv("CIS_DOMAIN") is None or os.getenv("APP_URL") is None:
             print("Missing one or more necessary attributes in .env!")
             sys.exit(1)
-                   
-
+        else:
+            args.cis_domain=os.getenv("CIS_DOMAIN")
+            args.app_url=os.getenv("APP_URL")
+            self.cis_api_key=os.getenv("CIS_SERVICES_APIKEY")
+            self.api_endpoint=os.getenv("API_ENDPOINT")
+                
 # method used to display the command usage if user uses `-h` or `--help`
 def print_help():
     print(Color.BOLD + 'NAME:' + Color.END)
@@ -124,8 +136,8 @@ def handle_args(args):
     if args.terraform:
         UserInfo.terraforming = True
     if args.env:
-        print("read env")
-        UserInfo.read_envfile("credentials.env")
+        UserInfo.read_envfile("credentials.env",args)
+        print(UserInfo.crn)
 
     # terraforming vs. not terraforming
     if UserInfo.terraforming:
@@ -192,7 +204,7 @@ def CodeEngine(args):
         user_GLB.create_glb()
 
         # 3. TLS Certificate Configuration
-        certcreate.main()
+        certcreate.create_cert()
 
         # 4. Edge Functions
         userEdgeFunction = EdgeFunctionCreator()
