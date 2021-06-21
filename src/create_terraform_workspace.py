@@ -70,12 +70,8 @@ class WorkspaceCreator:
             template_data=[template_source_data_request_model],
             type=['terraform_v0.14.40'],
             location="us-south",
-<<<<<<< HEAD
-            resource_group=resource_group,
-=======
             resource_group=workspace_resource_group_variable_request,
             x_github_token=github_PAT,
->>>>>>> c5eadaf (working on terraform files to better align with what the CLI needs)
         ).get_result()
 
         print('Successfully created the workspace!')
