@@ -3,15 +3,13 @@ from functions import Color as Color
 from dotenv import load_dotenv
 from ibm_cloud_networking_services import SslCertificateApiV1
 
-def main():
+def create_cert():
     load_dotenv()
     # read crn, zone id and end-point from environment
     crn = os.getenv("CRN")
     zone_id = os.getenv("ZONE_ID")
     endpoint = os.getenv("API_ENDPOINT")
-
-    string = input("Enter hostname(s). Seperate hostnames by space if neccesary: ")
-    hostNames=string.split()
+    hostNames=[os.getenv("CIS_DOMAIN"),"*."+os.getenv("CIS_DOMAIN")]
  
     # create instance
     cert = SslCertificateApiV1.new_instance(
@@ -24,6 +22,3 @@ def main():
         print(Color.GREEN+"Certificate created"+Color.END)
     except:
         print(Color.RED+"ERROR: Unable to create certificate. Make sure hostname(s) match custom domain name"+Color.END)
-
-if __name__ == "__main__":
-    main()

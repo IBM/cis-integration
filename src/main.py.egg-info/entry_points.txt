@@ -1,3 +1,4 @@
 [console_scripts]
+ci = main:main
 cis-integration = main:main
 

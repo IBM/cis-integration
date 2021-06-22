@@ -1,16 +1,18 @@
 
+# Creating the www DNS Record
 resource "ibm_cis_dns_record" "test_dns_www_record" {
     cis_id  = data.ibm_cis.cis_instance.id
-    domain_id = data.ibm_cis_domain.cis_instance_domain.id
+    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id
     name    = "www"
     type    = "CNAME"
     content = var.app_url
     proxied = true
 }
 
+# Creating the root DNS Record
 resource "ibm_cis_dns_record" "test_dns_root_record" {
     cis_id  = data.ibm_cis.cis_instance.id
-    domain_id = data.ibm_cis_domain.cis_instance_domain.id
+    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id
     name    = "@"
     type    = "CNAME"
     content = var.app_url
@@ -28,8 +30,8 @@ output "cname_root_record_output" {
 # Ordering a TLS certificate
 resource "ibm_cis_certificate_order" "test" {
     cis_id    = data.ibm_cis.cis_instance.id        # placeholder 
-    domain_id = data.ibm_cis_domain.cis_instance_domain.id  # placeholder
-    hosts     = var.cis_domain   # placeholder
+    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id  # placeholder
+    hosts     = [var.cis_domain]   # placeholder
 }
 
 # Creating the monitor (health check) resource using Terraform
@@ -65,7 +67,7 @@ resource "ibm_cis_origin_pool" "example" {
 # Creating the global load balancer resource using Terraform
 resource "ibm_cis_global_load_balancer" "example-glb" {
     cis_id            = data.ibm_cis.cis_instance.id        # placeholder
-    domain_id         = data.ibm_cis_domain.cis_instance_domain.id      # placeholder
+    domain_id         = data.ibm_cis_domain.cis_instance_domain.domain_id      # placeholder
     name              = var.cis_domain     # placeholder
     fallback_pool_id  = ibm_cis_origin_pool.example.id
     default_pool_ids  = [ibm_cis_origin_pool.example.id]
@@ -95,7 +97,7 @@ resource "ibm_cis_edge_functions_trigger" "test_trigger2" {
 # Add a Edge Functions Action to the domain
 resource "ibm_cis_edge_functions_action" "test_action" {
   cis_id      = data.ibm_cis.cis_instance.id
-  domain_id   = data.ibm_cis_domain.cis_instance_domain.id
+  domain_id   = data.ibm_cis_domain.cis_instance_domain.domain_id
   action_name = var.action_name # change . to - in cis_domain
   script      = file("./edge_function_method.js")
 }

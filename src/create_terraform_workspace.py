@@ -55,12 +55,13 @@ class WorkspaceCreator:
         
         template_source_data_request_model['type'] = 'terraform_v0.14.40'
         template_source_data_request_model['variablestore'] = [workspace_apikey_variable_request,
-                                                                workspace_resource_group_variable_request,
-                                                                workspace_cis_name_variable_request,
-                                                                workspace_app_url_variable_request,
-                                                                workspace_domain_variable_request,
-                                                                workspace_www_variable_request,
-                                                                workspace_action_variable_request]
+                                                               workspace_resource_group_variable_request,
+                                                               workspace_cis_name_variable_request,
+                                                               workspace_app_url_variable_request,
+                                                               workspace_domain_variable_request,
+                                                               workspace_www_variable_request,
+                                                               workspace_action_variable_request]
+
 
         
 

@@ -7,7 +7,8 @@ setup (
     version='0.0.1',
     entry_points={
         'console_scripts': [
-            'cis-integration=main:main'
+            'cis-integration=main:main',
+            'ci=main:main'
         ]
     }
 )
