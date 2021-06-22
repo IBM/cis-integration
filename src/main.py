@@ -1,14 +1,16 @@
 import sys
 import getpass
 import os
-import certcreate
+
+from ibm_cloud_networking_services.ssl_certificate_api_v1 import Certificate
+from .certcreate import CertificateCreator
 from dotenv.main import load_dotenv
-from functions import Color as Color
-from functions import healthCheck as healthCheck
-from create_glb import GLB
-from dns_creator import DNSCreator
-from create_edge_function import EdgeFunctionCreator
-from create_terraform_workspace import WorkspaceCreator
+from .functions import Color as Color
+from .functions import healthCheck as healthCheck
+from .create_glb import GLB
+from .dns_creator import DNSCreator
+from .create_edge_function import EdgeFunctionCreator
+from .create_terraform_workspace import WorkspaceCreator
 
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
@@ -206,7 +208,8 @@ def main():
         user_GLB.create_glb()
 
         # 3. TLS Certificate Configuration
-        certcreate.main()
+        cert_creator = CertificateCreator
+        cert_creator.create_certificate()
 
         # 4. Edge Functions
         userEdgeFunction = EdgeFunctionCreator()
@@ -219,3 +222,6 @@ def main():
     hostUrl="https://www."+os.environ["CIS_DOMAIN"]
 
     healthCheck(hostUrl)
+
+if __name__ == '__main__':
+    main()

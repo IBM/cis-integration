@@ -5,5 +5,5 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 COPY . .
-RUN pip3 install -e ./src/ -t /usr/local/bin/
+RUN python3 setup.py install
 CMD [ "bash" ]

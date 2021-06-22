@@ -5,9 +5,10 @@ from setuptools import setup
 setup (
     name='main.py',
     version='0.0.1',
+    packages=["src"],
     entry_points={
         'console_scripts': [
-            'cis-integration=main:main'
+            'cis-integration=src.main:main'
         ]
     }
 )
