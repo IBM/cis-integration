@@ -1,3 +1,3 @@
 #!/bin/bash
-pip3 install -e ./src/ -t /usr/local/bin/
-python install_check.py
+python3 setup.py develop
+python3 install_check.py
