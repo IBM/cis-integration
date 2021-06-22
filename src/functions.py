@@ -81,31 +81,43 @@ class IntegrationInfo:
             print("Env file doesn't exist!")
             sys.exit(1)
 
-        load_dotenv(filename)
+        # load_dotenv(filename)
+        env_vars = {}
+        lines = file.readlines()
+        for line in lines:
+            if line[-1] == '\n':
+                line = line[:-1]
+            components = line.split("=")
+
+            if components[1][0] == '"':
+                components[1] = components[1][1:]
+            if components[1][-1] == '"':
+                components[1] = components[1][:-1]
+            
+            env_vars[components[0]] = components[1]
 
         if not self.terraforming:
-            if os.getenv("CRN") is None or os.getenv("ZONE_ID") is None:
+            if "CRN" not in env_vars or "ZONE_ID" not in env_vars:
                 print("Missing one or more necessary attributes in .env!")
                 sys.exit(1)
             else:
-                args.crn=os.getenv("CRN")
-                args.zone_id=os.getenv("ZONE_ID")
-
+                args.crn=env_vars["CRN"]
+                args.zone_id=env_vars["ZONE_ID"]
         else:
-            if os.getenv("RESOURCE_GROUP") is None or os.getenv("CIS_NAME") is None or os.getenv("GITHUB_PAT") is None:
+            if "RESOURCE_GROUP" not in env_vars or "CIS_NAME" not in env_vars or "GITHUB_PAT" not in env_vars:
                 print("Missing one or more necessary attributes in .env!")
                 sys.exit(1)
             else:
-                args.resource_group=os.getenv("RESOURCE_GROUP")
-                args.name=os.getenv("CIS_NAME")
-                args.pat=os.getenv("GITHUB_PAT")
+                args.resource_group=env_vars["RESOURCE_GROUP"]
+                args.name=env_vars["CIS_NAME"]
+                args.pat=env_vars["GITHUB_PAT"]
         
-        if os.getenv("API_ENDPOINT") is None or os.getenv("CIS_SERVICES_APIKEY") is None or os.getenv("CIS_DOMAIN") is None or os.getenv("APP_URL") is None:
+        if "API_ENDPOINT" not in env_vars or "CIS_SERVICES_APIKEY" not in env_vars or "CIS_DOMAIN" not in env_vars or "APP_URL" not in env_vars:
             print("Missing one or more necessary attributes in .env!")
             sys.exit(1)
         else:
-            args.cis_domain=os.getenv("CIS_DOMAIN")
-            args.app_url=os.getenv("APP_URL")
-            self.cis_api_key=os.getenv("CIS_SERVICES_APIKEY")
-            self.api_endpoint=os.getenv("API_ENDPOINT")
+            args.cis_domain=env_vars["CIS_DOMAIN"]
+            args.app_url=env_vars["APP_URL"]
+            self.cis_api_key=env_vars["CIS_SERVICES_APIKEY"]
+            self.api_endpoint=env_vars["API_ENDPOINT"]
    
