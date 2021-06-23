@@ -1,6 +1,10 @@
 <<<<<<< HEAD
 import argparse
+<<<<<<< HEAD
 from src.codeEngine import CodeEngine
+=======
+from .codeEngine import CodeEngine
+>>>>>>> f31b443 (small refactor updates)
 def main():
     parser = argparse.ArgumentParser()
 
