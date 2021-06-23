@@ -8,7 +8,8 @@ setup (
     packages=["src"],
     entry_points={
         'console_scripts': [
-            'cis-integration=src.main:main'
+            'cis-integration=src.main:main',
+            'ci=src.main:main'
         ]
     }
 )
