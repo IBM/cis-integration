@@ -1,3 +1,4 @@
+
 # Creating the www DNS Record
 resource "ibm_cis_dns_record" "test_dns_www_record" {
     cis_id  = data.ibm_cis.cis_instance.id
