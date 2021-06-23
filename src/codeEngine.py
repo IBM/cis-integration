@@ -52,8 +52,9 @@ def handle_args(args):
     if args.terraform:
         UserInfo.terraforming = True
     if args.env:
-        UserInfo.read_envfile("credentials.env",args)
-        print(UserInfo.crn)
+        UserInfo.read_envfile("credentials.env", args)
+        print(UserInfo)
+        return UserInfo
 
     # terraforming vs. not terraforming
     if UserInfo.terraforming:
@@ -102,12 +103,12 @@ def handle_args(args):
     if not args.env:
         UserInfo.create_envfile()
 
-    return UserInfo.terraforming
+    return UserInfo
 
 def CodeEngine(args):
-    terraforming = handle_args(args)
+    UserInfo = handle_args(args)
 
-    if terraforming: # handle the case of using terraform
+    if UserInfo.terraforming: # handle the case of using terraform
         work_creator = WorkspaceCreator()
         work_creator.create_terraform_workspace()
     else: # handle the case of using python
@@ -127,10 +128,10 @@ def CodeEngine(args):
         userEdgeFunction = EdgeFunctionCreator()
         userEdgeFunction.create_edge_function()
 
-    hostUrl="https://"+os.environ["CIS_DOMAIN"]
+    hostUrl="https://"+UserInfo.cis_domain
 
     healthCheck(hostUrl)
 
-    hostUrl="https://www."+os.environ["CIS_DOMAIN"]
+    hostUrl="https://www."+UserInfo.cis_domain
 
     healthCheck(hostUrl)
