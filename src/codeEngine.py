@@ -53,7 +53,6 @@ def handle_args(args):
         UserInfo.terraforming = True
     if args.env:
         UserInfo.read_envfile("credentials.env", args)
-        print(UserInfo)
         return UserInfo
 
     # terraforming vs. not terraforming
