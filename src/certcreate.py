@@ -1,5 +1,5 @@
 import os
-from functions import Color as Color
+from .functions import Color as Color
 from dotenv import load_dotenv
 from ibm_cloud_networking_services import SslCertificateApiV1
 
