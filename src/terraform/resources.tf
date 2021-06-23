@@ -1,8 +1,4 @@
 
-<<<<<<< HEAD
-# Creating the www DNS Record
-=======
->>>>>>> c5eadaf (working on terraform files to better align with what the CLI needs)
 resource "ibm_cis_dns_record" "test_dns_www_record" {
     cis_id  = data.ibm_cis.cis_instance.id
     domain_id = data.ibm_cis_domain.cis_instance_domain.id
