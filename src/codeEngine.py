@@ -1,15 +1,15 @@
 import sys
 import getpass
 import os
-import certcreate
 
-from functions import IntegrationInfo as IntegrationInfo
-from functions import Color as Color
-from functions import healthCheck as healthCheck
-from create_glb import GLB
-from dns_creator import DNSCreator
-from create_edge_function import EdgeFunctionCreator
-from create_terraform_workspace import WorkspaceCreator
+from .certcreate import CertificateCreator
+from .functions import IntegrationInfo as IntegrationInfo
+from .functions import Color as Color
+from .functions import healthCheck as healthCheck
+from .create_glb import GLB
+from .dns_creator import DNSCreator
+from .create_edge_function import EdgeFunctionCreator
+from .create_terraform_workspace import WorkspaceCreator
 
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
@@ -119,7 +119,8 @@ def CodeEngine(args):
         user_GLB.create_glb()
 
         # 3. TLS Certificate Configuration
-        certcreate.create_cert()
+        cert_creator = CertificateCreator()
+        cert_creator.create_certificate()
 
         # 4. Edge Functions
         userEdgeFunction = EdgeFunctionCreator()

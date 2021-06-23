@@ -1,5 +1,5 @@
 import argparse
-from codeEngine import CodeEngine
+from .codeEngine import CodeEngine
 def main():
     parser = argparse.ArgumentParser()
 
