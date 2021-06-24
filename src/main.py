@@ -15,7 +15,6 @@ def main():
     ce_parser.add_argument("-t","--terraform", action='store_true')
     ce_parser.add_argument("-r","--resource_group")
     ce_parser.add_argument("-n","--name")
-    ce_parser.add_argument("-p","--pat")
     ce_parser.add_argument("-e","--env", action='store_true')
     ce_parser.add_argument("-h","--help", action='store_true')
 

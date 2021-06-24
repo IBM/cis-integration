@@ -19,15 +19,18 @@ To get python script to run globally run following command: $ pip3 install -e /p
 # method used to display the command usage if user uses `-h` or `--help`
 def print_help():
     print(Color.BOLD + 'NAME:' + Color.END)
-    print("\tcis-integration - a command line tool used to connect a CIS instance with an application deployed on Code Engine\n")
+    print("\tcis-integration - a command line tool used to connect a CIS instance with an application deployed on Code Engine")
+    print("\t- call this tool with either 'cis-integration' or 'ci'\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[python implementation]\t\tcis-integration [global options] [CIS CRN] [CIS ID] [CIS DOMAIN] [CODE ENGINE APP URL] ")
-    print("\t[terraform implementation]\tcis-integration [global options] --terraform [RESOURCE GROUP] [CIS NAME] [CIS DOMAIN] [CODE ENGINE APP URL] [GITHUB PAT]\n")
+    print("\t[python implementation]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ID] -d [CIS DOMAIN] -a [APP URL] ")
+    print("\t[terraform implementation]\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]\n")
+    
+    print(Color.BOLD + "POSITIONAL ARGUMENTS:" + Color.END)
+    print("\tcode-engine, ce \t\t connect a Code Engine app\n")
 
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
     print("\t--help, -h \t\t show help")
-    print("\t--env, -e \t\t use an already existing credentials.env file")
     print("\t--terraform, -t \t build resources for CIS instance using terraform\n")
 
     print(Color.BOLD + "OPTIONAL ARGUMENTS:" + Color.END)
@@ -37,7 +40,6 @@ def print_help():
     print("\t--app_url, -a \t\t URL of the application")
     print("\t--resource_group, -r \t resource group associated with the CIS instance")
     print("\t--name, -n \t\t name of the CIS instance")
-    print("\t--pat, -p \t\t GitHub PAT\n")
 
 # handles the arguments given for both the python and terraform command options
 def handle_args(args):
@@ -50,9 +52,6 @@ def handle_args(args):
     UserInfo.terraforming = False
     if args.terraform:
         UserInfo.terraforming = True
-    if args.env:
-        UserInfo.read_envfile("credentials.env",args)
-        print(UserInfo.crn)
 
     # terraforming vs. not terraforming
     if UserInfo.terraforming:
@@ -67,11 +66,6 @@ def handle_args(args):
             print("You did not specify a CIS Name.")
             sys.exit(1)
         
-        
-        UserInfo.github_pat = args.pat
-        if UserInfo.github_pat is None:
-            print("You did not specify a GitHub PAT.")
-            sys.exit(1)
     else:
         UserInfo.crn=args.crn
         if UserInfo.crn is None:
