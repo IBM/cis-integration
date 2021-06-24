@@ -48,7 +48,7 @@ For general information on how to use the tool, run the following command in the
 $ cis-integration code-engine --help
 ```
 
-This tool offers two options to connect the CIS instance to the application. You may choose to build the resources needed for your CIS instance using either Python or [Terraform](https://www.terraform.io/) scripts. 
+This tool offers two options to connect the CIS instance to the application. You may choose to build the resources needed for your CIS instance using either Python or [Terraform](https://www.terraform.io/) scripts. If you choose to use Terraform, this tool will build an [IBM Schematics](https://cloud.ibm.com/docs/schematics?topic=schematics-about-schematics) workspace to run the Terraform code. Note that Terraform is currently unable to ensure that the TLS mode for TLS certificates is in End-to-end CA Signed or check for duplicate certificates.
 
 Regardless of the option you choose, the tool will require you to input some information about your CIS instance and Code Engine application. You can find this information by going to https://cloud.ibm.com and logging into your IBM Cloud account. Navigate to the "Resource list" tab and locate your CIS instance and Code Engine app.
 
