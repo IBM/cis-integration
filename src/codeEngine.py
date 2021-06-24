@@ -52,7 +52,8 @@ def handle_args(args):
     if args.terraform:
         UserInfo.terraforming = True
     if args.env:
-        UserInfo.read_envfile("credentials.env")
+        UserInfo.read_envfile("credentials.env", args)
+        print(UserInfo)
         return UserInfo
 
     # terraforming vs. not terraforming
@@ -112,20 +113,26 @@ def CodeEngine(args):
         work_creator.create_terraform_workspace()
     else: # handle the case of using python
         # 1. Domain Name and DNS
-        user_DNS = DNSCreator()
-        user_DNS.create_records()
+        user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint)
+        user_DNS.create_root_record()
+        user_DNS.create_www_record()
 
         # 2. Global Load Balancer
-        user_GLB = GLB()
-        user_GLB.create_glb()
+        user_GLB = GLB(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        user_GLB.create_load_balancer_monitor()
+        user_GLB.create_origin_pool()
+        user_GLB.create_global_load_balancer()
 
         # 3. TLS Certificate Configuration
-        cert_creator = CertificateCreator()
+        cert_creator = CertificateCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         cert_creator.create_certificate()
 
         # 4. Edge Functions
-        userEdgeFunction = EdgeFunctionCreator()
-        userEdgeFunction.create_edge_function()
+        userEdgeFunction = EdgeFunctionCreator(UserInfo.crn, UserInfo.app_url, UserInfo.cis_api_key, UserInfo.zone_id, UserInfo.cis_domain)
+        userEdgeFunction.create_edge_function_action()
+        userEdgeFunction.create_edge_function_trigger()
+        userEdgeFunction.create_edge_function_wild_card_trigger()
+        userEdgeFunction.create_edge_function_www_trigger()
 
     hostUrl="https://"+UserInfo.cis_domain
 
