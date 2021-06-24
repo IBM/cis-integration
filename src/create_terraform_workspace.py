@@ -71,7 +71,6 @@ class WorkspaceCreator:
             type=['terraform_v0.14.40'],
             location="us-south",
             resource_group=workspace_resource_group_variable_request,
-            x_github_token=github_PAT,
         ).get_result()
 
         print('Successfully created the workspace!')
