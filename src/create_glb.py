@@ -23,6 +23,7 @@ class GLB:
         health_check = monitor.create_load_balancer_monitor(description="test-monitor-3", crn=self.crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
         monitor_id = health_check["result"]["id"]
         print("Monitor ID:", monitor_id)
+        return health_check
 
     def create_origin_pool(self):
         # Setting up and creating the origin pool
@@ -47,6 +48,7 @@ class GLB:
             origin_pools.edit_load_balancer_pool(origin_pool_id, name=name, origins=origins, enabled=True, monitor=self.monitor_id)
 
         print("Origin Pool ID:", origin_pool_id)
+        return origin_pool_result
 
     def create_global_load_balancer(self):
         # Setting up and creating the global load balancer
@@ -68,3 +70,4 @@ class GLB:
             global_load_balancer.edit_load_balancer(global_load_balancer_id, name=self.hostname, default_pools=[self.origin_pool_id], fallback_pool=self.origin_pool_id, enabled=True, proxied=True)
 
         print("Global Load Balancer ID:", global_load_balancer_id)
+        return global_load_balancer_result

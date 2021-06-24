@@ -16,7 +16,7 @@ class EdgeFunctionCreator:
         action_url = "https://api.cis.cloud.ibm.com/v1/" + self.crn + "/workers/scripts/" + self.fn_name
         
         # The javascript for the edge function action
-        action_payload = "addEventListener('fetch', (event) => {\n    const mutable_request = new Request(event.request);\n    event.respondWith(redirectAndLog(mutable_request));\n});\n\nasync function redirectAndLog(request) {\n    const response = await redirectOrPass(request);\n    return response;\n}\n\nasync function getSite(request, site) {\n    const url = new URL(request.url);\n    // let our servers know what origin the request came from\n    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host\n    request.headers.set('X-Forwarded-Host', url.hostname);\n    request.headers.set('host', site);\n    url.hostname = site;\n    url.protocol = \"https:\";\n    response = fetch(url.toString(), request);\n    console.log('Got getSite Request to ' + site, response);\n    return response;\n}\n\nasync function redirectOrPass(request) {\n    const urlObject = new URL(request.url);\n\n    let response = null;\n\n    try {\n        console.log('Got MAIN request', request);\n\n        response = await getSite(request, '"+ app_url + "');\n        console.log('Got MAIN response', response.status);\n        return response;\n\n    } catch (error) {\n        // if no action found, play the regular request\n        console.log('Got Error', error);\n        return await fetch(request);\n\n    }\n\n}\n"
+        action_payload = "addEventListener('fetch', (event) => {\n    const mutable_request = new Request(event.request);\n    event.respondWith(redirectAndLog(mutable_request));\n});\n\nasync function redirectAndLog(request) {\n    const response = await redirectOrPass(request);\n    return response;\n}\n\nasync function getSite(request, site) {\n    const url = new URL(request.url);\n    // let our servers know what origin the request came from\n    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host\n    request.headers.set('X-Forwarded-Host', url.hostname);\n    request.headers.set('host', site);\n    url.hostname = site;\n    url.protocol = \"https:\";\n    response = fetch(url.toString(), request);\n    console.log('Got getSite Request to ' + site, response);\n    return response;\n}\n\nasync function redirectOrPass(request) {\n    const urlObject = new URL(request.url);\n\n    let response = null;\n\n    try {\n        console.log('Got MAIN request', request);\n\n        response = await getSite(request, '"+ self.app_url + "');\n        console.log('Got MAIN response', response.status);\n        return response;\n\n    } catch (error) {\n        // if no action found, play the regular request\n        console.log('Got Error', error);\n        return await fetch(request);\n\n    }\n\n}\n"
         # Headers for the action http request
         action_headers = {
             'Content-Type': 'application/javascript',
@@ -33,7 +33,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function action with status code " + str(action_response.status_code))
 
-        return action_response
+        return action_response.json
 
     def create_edge_function_trigger(self):
 
@@ -59,7 +59,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function action with status code " + str(trigger_response_1.status_code))
         
-        return trigger_response_1
+        return trigger_response_1.json
 
     def create_edge_function_www_trigger(self):
 
@@ -86,7 +86,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function action with status code " + str(trigger_response_2.status_code))
 
-        return trigger_response_2
+        return trigger_response_2.json
 
     def create_edge_function_wild_card_trigger(self):
 
@@ -113,7 +113,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function action with status code " + str(trigger_response_3.status_code))
 
-        return trigger_response_3
+        return trigger_response_3.json
 
 
     def request_token(self, apikey: str):
