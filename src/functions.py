@@ -1,5 +1,4 @@
 import requests
-import os
 import sys
 from dotenv.main import load_dotenv
 
@@ -23,6 +22,7 @@ def healthCheck(hostUrl):
    except:
       print(Color.YELLOW+hostUrl,"is not up yet. May take a few minutes to start."+Color.END)
 
+# A way to load variables from the "credentials.env" file without risk of overwriting env variables in the current session
 def load_vars(filename):
     try:
         file = open(filename, "r")
@@ -46,6 +46,7 @@ def load_vars(filename):
     
     return env_vars
    
+# Keeping track of all of the necessary attributes that result from the integration of Internet Services and an application
 class IntegrationInfo:
     crn = ''
     zone_id = ''

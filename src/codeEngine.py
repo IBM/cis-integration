@@ -52,7 +52,7 @@ def handle_args(args):
     if args.terraform:
         UserInfo.terraforming = True
     if args.env:
-        UserInfo.read_envfile("credentials.env", args)
+        UserInfo.read_envfile("credentials.env")
         return UserInfo
 
     # terraforming vs. not terraforming
