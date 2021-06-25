@@ -16,6 +16,8 @@ class GLB:
         self.zone_identifier = zone_identifier
         self.endpoint = api_endpoint
         self.hostname = domain
+        self.monitor_id = ''
+        self.origin_pool_id = ''
 
     def create_load_balancer_monitor(self):
         # Setting up and creating the monitor (health check)
