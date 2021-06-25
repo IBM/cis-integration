@@ -50,9 +50,9 @@ resource "ibm_cis_healthcheck" "test" {
 # Creating the origin pool resource using Terraform
 resource "ibm_cis_origin_pool" "example" {
     cis_id          = data.ibm_cis.cis_instance.id       
-    name            = "default pool"
+    name            = "default-pool"
     origins {
-        name        = "default origin"
+        name        = "default-origin"
         address     = var.app_url     
         enabled     = true
     }
