@@ -44,7 +44,7 @@ class WorkspaceCreator:
 
         workspace_wild_variable_request = {}
         workspace_wild_variable_request['name'] = 'wild_domain'
-        workspace_wild_variable_request['value'] = '*.' + cis_domain
+        workspace_wild_variable_request['value'] = '*.' + self.cis_domain
 
         workspace_domain_variable_request = {}
         workspace_domain_variable_request['name'] = 'cis_domain'
@@ -76,7 +76,7 @@ class WorkspaceCreator:
             template_data=[template_source_data_request_model],
             type=['terraform_v0.14.40'],
             location="us-south",
-            resource_group=workspace_resource_group_variable_request,
+            resource_group=self.resource_group,
         ).get_result()
 
         print('Successfully created the workspace!')
