@@ -45,14 +45,14 @@ class GLB:
 
         if name not in origin_pools_dict:
             origin_pool_result = origin_pools.create_load_balancer_pool(name=name, origins=origins, enabled=True, monitor=self.monitor_id).get_result()
-            origin_pool_id = origin_pool_result["result"]["id"]
+            self.origin_pool_id = origin_pool_result["result"]["id"]
         else:
             print("A origin pool with that name already exists.")
-            origin_pool_id = origin_pools_dict[name]
-            origin_pools.edit_load_balancer_pool(origin_pool_id, name=name, origins=origins, enabled=True, monitor=self.monitor_id)
+            self.origin_pool_id = origin_pools_dict[name]
+            origin_pools.edit_load_balancer_pool(self.origin_pool_id, name=name, origins=origins, enabled=True, monitor=self.monitor_id)
 
-        print("Origin Pool ID:", origin_pool_id)
-        return origin_pool_result
+        print("Origin Pool ID:", self.origin_pool_id)
+        return self.origin_pool_result
 
     def create_global_load_balancer(self):
         # Setting up and creating the global load balancer
