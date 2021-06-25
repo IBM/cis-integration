@@ -57,7 +57,6 @@ class IntegrationInfo:
     cis_api_key = ''
     cis_domain = ''
     schematics_url = 'https://us.schematics.cloud.ibm.com'
-    github_pat = ''     # might need to be removed later
     terraforming = False
 
     # used to create .env file
@@ -68,6 +67,7 @@ class IntegrationInfo:
             info = [f"RESOURCE_GROUP=\"{self.resource_group}\"\n", f"CIS_NAME=\"{self.cis_name}\"\n"]
         
         common = [f"API_ENDPOINT=\"{self.api_endpoint}\"\n", f"CIS_SERVICES_APIKEY=\"{self.cis_api_key}\"\n", f"CIS_DOMAIN=\"{self.cis_domain}\"\n", f"APP_URL=\"{self.app_url}\"\n", f"SCHEMATICS_URL=\"{self.schematics_url}\"\n"]
+
         for item in common:
             info.append(item)
 
@@ -94,6 +94,7 @@ class IntegrationInfo:
             else:
                 self.resource_group=env_vars["RESOURCE_GROUP"]
                 self.cis_name=env_vars["CIS_NAME"]
+
         
         if "API_ENDPOINT" not in env_vars or "CIS_SERVICES_APIKEY" not in env_vars or "CIS_DOMAIN" not in env_vars or "APP_URL" not in env_vars:
             print("Missing one or more necessary attributes in .env!")

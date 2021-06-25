@@ -42,20 +42,20 @@ resource "ibm_cis_healthcheck" "test" {
   type             = "https"
   interval         = 60
   retries          = 3
-  description      = "example health check"
+  description      = "default health check"
   follow_redirects = true
 }
 
 # Creating the origin pool resource using Terraform
 resource "ibm_cis_origin_pool" "example" {
     cis_id          = data.ibm_cis.cis_instance.id       # placeholder
-    name            = "test-pool-1"
+    name            = "default pool"
     origins {
-        name        = "app-server-1"
+        name        = "default origin"
         address     = var.app_url     # placeholder
         enabled     = true
     }
-    description     = "example origin pool"
+    description     = "origin pool created with cis-integration tool"
     enabled = true
     minimum_origins = 1
     check_regions   = ["WEU"]
@@ -64,12 +64,12 @@ resource "ibm_cis_origin_pool" "example" {
 
 # Creating the global load balancer resource using Terraform
 resource "ibm_cis_global_load_balancer" "example-glb" {
-    cis_id            = data.ibm_cis.cis_instance.id        # placeholder
-    domain_id         = data.ibm_cis_domain.cis_instance_domain.id      # placeholder
-    name              = var.cis_domain     # placeholder
+    cis_id            = data.ibm_cis.cis_instance.id        
+    domain_id         = data.ibm_cis_domain.cis_instance_domain.domain_id      
+    name              = var.cis_domain     
     fallback_pool_id  = ibm_cis_origin_pool.example.id
     default_pool_ids  = [ibm_cis_origin_pool.example.id]
-    description       = "example load balancer using Terraform"
+    description       = "global load balancer created with cis-integration tool"
     enabled           = true
     proxied           = true
 }
