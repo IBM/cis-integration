@@ -6,48 +6,49 @@ from dotenv import load_dotenv
 from ibm_cloud_sdk_core import ApiException
 
 class WorkspaceCreator:
+    def __init__(self, cis_api_key, schematics_url, app_url, cis_domain, resource_group, cis_name):
+        self.cis_api_key = cis_api_key
+        self.schematics_url = schematics_url
+        self.app_url = app_url
+        self.cis_domain = cis_domain
+        self.resource_group = resource_group
+        self.cis_name = cis_name
+
     def create_terraform_workspace(self):
-        load_dotenv("./credentials.env")
-        apikey = os.getenv("CIS_SERVICES_APIKEY")
-        schematics_url = os.getenv("SCHEMATICS_URL")
-        app_url = os.getenv("APP_URL")
-        cis_domain = os.getenv("CIS_DOMAIN")
-        resource_group = os.getenv("RESOURCE_GROUP")
-        cis_name = os.getenv("CIS_NAME")
-        authenticator = IAMAuthenticator(apikey)
+        authenticator = IAMAuthenticator(self.cis_api_key)
         schematics_service = SchematicsV1(authenticator = authenticator)
-        schematics_service.set_service_url(schematics_url)
-        r_token = self.request_token(apikey)
+        schematics_service.set_service_url(self.schematics_service)
+        r_token = self.request_token(self.cis_api_key)
 
         # Setting up the necessary information to create the workspace
         workspace_apikey_variable_request = {}
         workspace_apikey_variable_request['name'] = 'ibmcloud_api_key'
-        workspace_apikey_variable_request['value'] = apikey
+        workspace_apikey_variable_request['value'] = self.cis_api_key
         workspace_apikey_variable_request['secure'] = True
 
         workspace_cis_name_variable_request = {}
         workspace_cis_name_variable_request['name'] = 'cis_name'
-        workspace_cis_name_variable_request['value'] = cis_name
+        workspace_cis_name_variable_request['value'] = self.cis_name
 
         workspace_resource_group_variable_request = {}
         workspace_resource_group_variable_request['name'] = 'resource_group'
-        workspace_resource_group_variable_request['value'] = resource_group
+        workspace_resource_group_variable_request['value'] = self.resource_group
 
         workspace_app_url_variable_request = {}
         workspace_app_url_variable_request['name'] = 'app_url'
-        workspace_app_url_variable_request['value'] = app_url
+        workspace_app_url_variable_request['value'] = self.app_url
 
         workspace_www_variable_request = {}
         workspace_www_variable_request['name'] = 'www_domain'
-        workspace_www_variable_request['value'] = 'www.' + cis_domain
+        workspace_www_variable_request['value'] = 'www.' + self.cis_domain
 
         workspace_domain_variable_request = {}
         workspace_domain_variable_request['name'] = 'cis_domain'
-        workspace_domain_variable_request['value'] = cis_domain
+        workspace_domain_variable_request['value'] = self.cis_domain
 
         workspace_action_variable_request = {}
         workspace_action_variable_request['name'] = 'action_name'
-        workspace_action_variable_request['value'] = cis_domain.replace('.', '-')
+        workspace_action_variable_request['value'] = self.cis_domain.replace('.', '-')
 
         template_source_data_request_model = {}
         
@@ -77,7 +78,7 @@ class WorkspaceCreator:
         workspace_activity_plan_result = None
         keepgoing = True
 
-        terra = self.build_tar(app_url)
+        terra = self.build_tar(self.app_url)
 
         file = open(terra, "rb")
         while keepgoing:
