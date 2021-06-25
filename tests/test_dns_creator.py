@@ -141,6 +141,13 @@ def test_both_exist(monkeypatch):
     assert www_record.result["result"]["name"] == "www"
     assert www_record.result["result"]["content"] == "test-url.com"
 
+class MockDNSRecords:
+    pass
+
+def test_neither_exist(monkeypatch):
+    monkeypatch.setattr()
+    pass
+
 def dns_creator():
     return DNSCreator(
         crn="testString",
