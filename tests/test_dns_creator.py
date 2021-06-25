@@ -6,6 +6,13 @@ from pathlib import Path
 from requests.models import Response
 from src.dns_creator import DNSCreator
 
+class MockDNSRecords:
+    pass
+
+def test_neither_exist(monkeypatch):
+    monkeypatch.setattr()
+    pass
+
 def dns_creator():
     return DNSCreator(
         crn="crn:v1:bluemix:public:internet-svcs:global:a/cdefe6d99f7ea459aacb25775fb88a33:d6097e79-fd41-4dd3-bdc9-342fe1b28073::",

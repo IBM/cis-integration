@@ -16,19 +16,23 @@ class GLB:
         self.zone_identifier = zone_identifier
         self.endpoint = api_endpoint
         self.hostname = domain
+        self.monitor_id = ''
+        self.origin_pool_id = ''
 
     def create_load_balancer_monitor(self):
         # Setting up and creating the monitor (health check)
+
         monitor = GlobalLoadBalancerMonitorV1.new_instance(crn=self.crn, service_name="cis_services")
-        health_check = monitor.create_load_balancer_monitor(description="test-monitor-3", crn=self.crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
-        monitor_id = health_check["result"]["id"]
-        print("Monitor ID:", monitor_id)
+        health_check = monitor.create_load_balancer_monitor(description="default health check", crn=self.crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
+        self.monitor_id = health_check["result"]["id"]
+        print("Monitor ID:", self.monitor_id)
         return health_check
 
     def create_origin_pool(self):
         # Setting up and creating the origin pool
-        name = input("Enter a name for origin pool: ")
-        origin_name = input("Enter origin name: ")
+
+        name = 'default-pool'
+        origin_name = 'default-origin'
         origins = [{"name": origin_name, "address": self.hostname, "enabled": True, "weight":1}]
 
         origin_pools = GlobalLoadBalancerPoolsV0.new_instance(crn=self.crn, service_name="cis_services")
@@ -41,13 +45,13 @@ class GLB:
 
         if name not in origin_pools_dict:
             origin_pool_result = origin_pools.create_load_balancer_pool(name=name, origins=origins, enabled=True, monitor=self.monitor_id).get_result()
-            origin_pool_id = origin_pool_result["result"]["id"]
+            self.origin_pool_id = origin_pool_result["result"]["id"]
         else:
             print("A origin pool with that name already exists.")
-            origin_pool_id = origin_pools_dict[name]
-            origin_pools.edit_load_balancer_pool(origin_pool_id, name=name, origins=origins, enabled=True, monitor=self.monitor_id)
+            self.origin_pool_id = origin_pools_dict[name]
+            origin_pool_result = origin_pools.edit_load_balancer_pool(self.origin_pool_id, name=name, origins=origins, enabled=True, monitor=self.monitor_id)
 
-        print("Origin Pool ID:", origin_pool_id)
+        print("Origin Pool ID:", self.origin_pool_id)
         return origin_pool_result
 
     def create_global_load_balancer(self):
@@ -67,7 +71,7 @@ class GLB:
         else:
             print("A global load balancer with this name already exists.")
             global_load_balancer_id = glb_dict[self.hostname]
-            global_load_balancer.edit_load_balancer(global_load_balancer_id, name=self.hostname, default_pools=[self.origin_pool_id], fallback_pool=self.origin_pool_id, enabled=True, proxied=True)
+            global_load_balancer_result = global_load_balancer.edit_load_balancer(global_load_balancer_id, name=self.hostname, default_pools=[self.origin_pool_id], fallback_pool=self.origin_pool_id, enabled=True, proxied=True)
 
         print("Global Load Balancer ID:", global_load_balancer_id)
         return global_load_balancer_result
