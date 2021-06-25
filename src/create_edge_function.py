@@ -57,7 +57,7 @@ class EdgeFunctionCreator:
         else:
             print(Color.RED+"ERROR: Failed to create edge function trigger with status code " + str(trigger_response_1.status_code)+Color.END)
         
-        return trigger_response_1.json
+        return trigger_response_1
 
     def create_edge_function_www_trigger(self):
 
@@ -84,7 +84,7 @@ class EdgeFunctionCreator:
         else:
             print(Color.RED+"ERROR: Failed to create edge function trigger with status code " + str(trigger_response_2.status_code)+Color.END)
 
-        return trigger_response_2.json
+        return trigger_response_2
 
     def create_edge_function_wild_card_trigger(self):
 
