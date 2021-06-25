@@ -20,8 +20,8 @@ class GLB:
     def create_load_balancer_monitor(self):
         # Setting up and creating the monitor (health check)
 
-        monitor = GlobalLoadBalancerMonitorV1.new_instance(crn=crn, service_name="cis_services")
-        health_check = monitor.create_load_balancer_monitor(description="default health check", crn=crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
+        monitor = GlobalLoadBalancerMonitorV1.new_instance(crn=self.crn, service_name="cis_services")
+        health_check = monitor.create_load_balancer_monitor(description="default health check", crn=self.crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
         monitor_id = health_check["result"]["id"]
         print("Monitor ID:", monitor_id)
         return health_check
