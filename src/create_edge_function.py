@@ -55,9 +55,9 @@ class EdgeFunctionCreator:
         if trigger_response_1.json()["success"]:
             print("Successfully created edge function trigger")
         elif trigger_response_1.status_code == 409:
-            print("Did not create edge function trigger. Action already exists")
+            print("Did not create edge function trigger. Trigger already exists")
         else:
-            print("Failed to create edge function action with status code " + str(trigger_response_1.status_code))
+            print("Failed to create edge function trigger with status code " + str(trigger_response_1.status_code))
         
         return trigger_response_1.json
 
@@ -82,9 +82,9 @@ class EdgeFunctionCreator:
         if trigger_response_2.json()["success"]:
             print("Successfully created edge function trigger")
         elif trigger_response_2.status_code == 409:
-            print("Did not create edge function trigger. Action already exists")
+            print("Did not create edge function trigger. Trigger already exists")
         else:
-            print("Failed to create edge function action with status code " + str(trigger_response_2.status_code))
+            print("Failed to create edge function trigger with status code " + str(trigger_response_2.status_code))
 
         return trigger_response_2.json
 
@@ -109,9 +109,9 @@ class EdgeFunctionCreator:
         if trigger_response_3.json()["success"]:
             print("Successfully created edge function trigger")
         elif trigger_response_3.status_code == 409:
-            print("Did not create edge function trigger. Action already exists")
+            print("Did not create edge function trigger. Trigger already exists")
         else:
-            print("Failed to create edge function action with status code " + str(trigger_response_3.status_code))
+            print("Failed to create edge function trigger with status code " + str(trigger_response_3.status_code))
 
         return trigger_response_3.json
 
