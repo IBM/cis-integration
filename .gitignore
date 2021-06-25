@@ -38,3 +38,12 @@ Thumbs.db
 
 ######################
 *.env
+*.egg
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build Files #
+###############
+build/*

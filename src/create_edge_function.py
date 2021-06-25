@@ -1,4 +1,4 @@
-import requests, os, json
+import requests, json
 from dotenv import load_dotenv
 
 class EdgeFunctionCreator:
@@ -51,11 +51,11 @@ class EdgeFunctionCreator:
         trigger_response_1 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_1)
 
         if trigger_response_1.json()["success"]:
-            print("Successfully created edge function action")
+            print("Successfully created edge function trigger")
         elif trigger_response_1.status_code == 409:
-            print("Did not create edge function action. Action already exists")
+            print("Did not create edge function trigger. Trigger already exists")
         else:
-            print("Failed to create edge function action with status code " + str(trigger_response_1.status_code))
+            print("Failed to create edge function trigger with status code " + str(trigger_response_1.status_code))
         
         return trigger_response_1.json
 
@@ -78,11 +78,40 @@ class EdgeFunctionCreator:
         trigger_response_2 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_2)
 
         if trigger_response_2.json()["success"]:
-            print("Successfully created edge function action")
+            print("Successfully created edge function trigger")
         elif trigger_response_2.status_code == 409:
-            print("Did not create edge function action. Action already exists")
+            print("Did not create edge function trigger. Trigger already exists")
         else:
-            print("Failed to create edge function action with status code " + str(trigger_response_2.status_code))
+            print("Failed to create edge function trigger with status code " + str(trigger_response_2.status_code))
+
+        return trigger_response_2.json
+
+    def create_edge_function_wild_card_trigger(self):
+
+        trigger_url = "https://api.cis.cloud.ibm.com/v1/" + self.crn + "/zones/" + self.zone_id + "/workers/routes"
+
+        trigger_headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'x-auth-user-token': 'Bearer ' + self.token
+        }
+
+        # Trigger 2 handles the root domain of the CIS domain
+        trigger_payload_3 = json.dumps({
+            "pattern": "*." + self.domain,
+            "script": self.fn_name
+        })
+        # Executing the 2nd edge function trigger request
+        trigger_response_3 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_3)
+
+        if trigger_response_3.json()["success"]:
+            print("Successfully created edge function trigger")
+        elif trigger_response_3.status_code == 409:
+            print("Did not create edge function trigger. Trigger already exists")
+        else:
+            print("Failed to create edge function trigger with status code " + str(trigger_response_3.status_code))
+
+        return trigger_response_3.json
 
         return trigger_response_2.json
 
@@ -120,7 +149,6 @@ class EdgeFunctionCreator:
         the workspace.
         
         param: apikey is the client's IBM Cloud Apikey
-
         returns: the generated access token
         """
         data={'grant_type': 'urn:ibm:params:oauth:grant-type:apikey', 'apikey': apikey}
