@@ -4,6 +4,7 @@ variable "resource_group" {}
 variable "app_url" {}
 variable "cis_domain" {}
 variable "www_domain" {}
+variable "wild_domain" {}
 variable "action_name" {}
 
 provider "ibm" {
