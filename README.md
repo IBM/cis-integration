@@ -88,6 +88,18 @@ $ cis-integration code-engine --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [
 
 **Note:** For the origin pool, origin name, and health check resources, this tool builds them using generic names. If you would like to change these later, navigate to the "Reliability" tab of your CIS instance and click on the "Global load balancers" tab. You can find your origin pools and health checks here and edit them manually.
 
+### Code Engine `--env` global option
+The `--env` global option allows for parameters to be passed through a fille named `credentials.env` instead of through command line arguments. The format of this file is import, please see below on how to format this file with the needed information.
+```
+CRN="<CIS_CRN>"
+ZONE_ID="<CIS_ID>"
+API_ENDPOINT="https://api.cis.cloud.ibm.com"
+CIS_SERVICES_APIKEY="<YOUR_CIS_SERVICES_APIKEY>"
+CIS_NAME="<CIS_INSTANCE_NAME>"
+RESOURCE_GROUP="<YOUR_IBM_CLOUD_RESOURCE_GROUP>"
+APP_URL="<CODE_ENGINE_APP_URL>"
+```
+
 ## Resources
 - [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started).
 - [Deploy Code Engine application](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800)
