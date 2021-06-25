@@ -1,3 +1,4 @@
+import os
 import sys
 import getpass
 
@@ -54,8 +55,7 @@ def handle_args(args):
         UserInfo.terraforming = True
 
     if args.env:
-        UserInfo.read_envfile("credentials.env", args)
-        print(UserInfo)
+        UserInfo.read_envfile("credentials.env")
         return UserInfo
 
 
@@ -105,15 +105,15 @@ def handle_args(args):
 
 def CodeEngine(args):
     UserInfo = handle_args(args)
+    os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
 
     if UserInfo.terraforming: # handle the case of using terraform
         work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name)
         work_creator.create_terraform_workspace()
     else: # handle the case of using python
         # 1. Domain Name and DNS
-        user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint)
-        user_DNS.create_root_record()
-        user_DNS.create_www_record()
+        user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
+        user_DNS.create_records()
 
         # 2. Global Load Balancer
         user_GLB = GLB(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)

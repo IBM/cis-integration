@@ -1,16 +1,17 @@
-
+# Creating the www DNS Record
 resource "ibm_cis_dns_record" "test_dns_www_record" {
     cis_id  = data.ibm_cis.cis_instance.id
-    domain_id = data.ibm_cis_domain.cis_instance_domain.id
+    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id
     name    = "www"
     type    = "CNAME"
     content = var.app_url
     proxied = true
 }
 
+# Creating the root DNS Record
 resource "ibm_cis_dns_record" "test_dns_root_record" {
     cis_id  = data.ibm_cis.cis_instance.id
-    domain_id = data.ibm_cis_domain.cis_instance_domain.id
+    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id
     name    = "@"
     type    = "CNAME"
     content = var.app_url
@@ -103,7 +104,7 @@ resource "ibm_cis_edge_functions_trigger" "test_trigger3" {
 # Add a Edge Functions Action to the domain
 resource "ibm_cis_edge_functions_action" "test_action" {
   cis_id      = data.ibm_cis.cis_instance.id
-  domain_id   = data.ibm_cis_domain.cis_instance_domain.id
+  domain_id   = data.ibm_cis_domain.cis_instance_domain.domain_id
   action_name = var.action_name # change . to - in cis_domain
   script      = file("./edge_function_method.js")
 }
@@ -121,5 +122,3 @@ data "ibm_cis" "cis_instance" {
   name              = var.cis_name
   resource_group_id = data.ibm_resource_group.group.id
 }
-
-
