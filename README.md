@@ -8,7 +8,7 @@ The goal of this project is to automate CIS integration for IBM Cloud applicatio
 This command line tool currently supports [Code Engine](https://www.ibm.com/cloud/code-engine) applications and has been configured for MacOS. In order to connect a Code Engine app to a CIS instance, numerous resources must be set up within CIS, namely: DNS records, a TLS certificate, a Global Load Balancer, Origin Pool, and Health Check Monitor, and an Edge Function.
 
 Before using this application:
-* [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started).
+* [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
 * Deploy a [Code Engine](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800) application
 
 ## Installation
@@ -104,7 +104,7 @@ Example usage
 cis-integration code-engine --env
 ```
 ## Resources
-- [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started).
+- [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
 - [Deploy Code Engine application](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800)
 - [Python](https://www.python.org/downloads/)
 - [Docker](https://docs.docker.com/get-docker/)
