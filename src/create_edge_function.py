@@ -31,7 +31,7 @@ class EdgeFunctionCreator:
         else:
             print(Color.RED+"ERROR: Failed to create edge function action with status code " + str(action_response.status_code)+Color.END)
 
-        return action_response.json
+        return action_response
 
     def create_edge_function_trigger(self):
 
