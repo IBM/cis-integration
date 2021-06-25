@@ -29,14 +29,14 @@ output "cname_root_record_output" {
 
 # Ordering a TLS certificate
 resource "ibm_cis_certificate_order" "test" {
-    cis_id    = data.ibm_cis.cis_instance.id        # placeholder 
-    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id  # placeholder
-    hosts     = [var.cis_domain]   # placeholder
+    cis_id    = data.ibm_cis.cis_instance.id          
+    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id  
+    hosts     = [var.cis_domain, var.wild_domain]   
 }
 
 # Creating the monitor (health check) resource using Terraform
 resource "ibm_cis_healthcheck" "test" {
-  cis_id           = data.ibm_cis.cis_instance.id       # placeholder
+  cis_id           = data.ibm_cis.cis_instance.id       
   expected_codes   = "200"
   method           = "GET"
   timeout          = 2
@@ -50,17 +50,17 @@ resource "ibm_cis_healthcheck" "test" {
 
 # Creating the origin pool resource using Terraform
 resource "ibm_cis_origin_pool" "example" {
-    cis_id          = data.ibm_cis.cis_instance.id       # placeholder
+    cis_id          = data.ibm_cis.cis_instance.id       
     name            = "default pool"
     origins {
         name        = "default origin"
-        address     = var.app_url     # placeholder
+        address     = var.app_url     
         enabled     = true
     }
     description     = "origin pool created with cis-integration tool"
     enabled = true
     minimum_origins = 1
-    check_regions   = ["WEU"]
+    check_regions   = ["ENAM"]
     monitor         = ibm_cis_healthcheck.test.monitor_id
 }
 
@@ -92,6 +92,14 @@ resource "ibm_cis_edge_functions_trigger" "test_trigger2" {
   domain_id   = ibm_cis_edge_functions_action.test_action.domain_id
   action_name = ibm_cis_edge_functions_action.test_action.action_name
   pattern_url = var.www_domain # add www to cis_domain
+}
+
+# Add a Edge Functions Trigger to the domain
+resource "ibm_cis_edge_functions_trigger" "test_trigger3" {
+  cis_id      = ibm_cis_edge_functions_action.test_action.cis_id
+  domain_id   = ibm_cis_edge_functions_action.test_action.domain_id
+  action_name = ibm_cis_edge_functions_action.test_action.action_name
+  pattern_url = var.wild_domain # add * to cis_domain
 }
 
 # Add a Edge Functions Action to the domain
