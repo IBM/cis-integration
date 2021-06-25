@@ -7,7 +7,7 @@ class CertificateCreator:
 
     def __init__(self, crn, zone_id, endpoint, domain):
         self.crn = crn
-        self.one_id = zone_id
+        self.zone_id = zone_id
         self.endpoint = endpoint
         self.hostNames=[domain,"*."+domain]
 
