@@ -57,7 +57,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function trigger with status code " + str(trigger_response_1.status_code))
         
-        return trigger_response_1.json
+        return trigger_response_1
 
     def create_edge_function_www_trigger(self):
 
@@ -84,7 +84,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function trigger with status code " + str(trigger_response_2.status_code))
 
-        return trigger_response_2.json
+        return trigger_response_2
 
     def create_edge_function_wild_card_trigger(self):
 
@@ -111,37 +111,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function trigger with status code " + str(trigger_response_3.status_code))
 
-        return trigger_response_3.json
-
-        return trigger_response_2.json
-
-    def create_edge_function_wild_card_trigger(self):
-
-        trigger_url = "https://api.cis.cloud.ibm.com/v1/" + self.crn + "/zones/" + self.zone_id + "/workers/routes"
-
-        trigger_headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'x-auth-user-token': 'Bearer ' + self.token
-        }
-
-        # Trigger 2 handles the root domain of the CIS domain
-        trigger_payload_3 = json.dumps({
-            "pattern": "*." + self.domain,
-            "script": self.fn_name
-        })
-        # Executing the 2nd edge function trigger request
-        trigger_response_3 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_3)
-
-        if trigger_response_3.json()["success"]:
-            print("Successfully created edge function action")
-        elif trigger_response_3.status_code == 409:
-            print("Did not create edge function action. Action already exists")
-        else:
-            print("Failed to create edge function action with status code " + str(trigger_response_3.status_code))
-
-        return trigger_response_3.json
-
+        return trigger_response_3
 
     def request_token(self, apikey: str):
         """

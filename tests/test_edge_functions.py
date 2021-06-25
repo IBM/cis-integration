@@ -86,7 +86,7 @@ def test_create_edge_www_trigger(monkeypatch):
     result = test_edge_function.create_edge_function_www_trigger()
     assert result.json()["success"] == True
 
-def test_create_edge_trigger(monkeypatch):
+def test_create_edge_wild_card_trigger(monkeypatch):
     # Any arguments may be passed and mock_get() will always return our
     # mocked object, which only has the .json() method.
     def mock_put(*args, **kwargs):
