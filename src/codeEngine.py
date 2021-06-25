@@ -1,6 +1,5 @@
 import sys
 import getpass
-import os
 
 
 from src.certcreate import CertificateCreator

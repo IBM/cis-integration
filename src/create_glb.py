@@ -52,7 +52,7 @@ class GLB:
             origin_pools.edit_load_balancer_pool(self.origin_pool_id, name=name, origins=origins, enabled=True, monitor=self.monitor_id)
 
         print("Origin Pool ID:", self.origin_pool_id)
-        return self.origin_pool_result
+        return origin_pool_result
 
     def create_global_load_balancer(self):
         # Setting up and creating the global load balancer

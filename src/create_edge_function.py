@@ -1,4 +1,4 @@
-import requests, os, json
+import requests, json
 from dotenv import load_dotenv
 
 class EdgeFunctionCreator:

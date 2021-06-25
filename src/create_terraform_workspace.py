@@ -17,7 +17,7 @@ class WorkspaceCreator:
     def create_terraform_workspace(self):
         authenticator = IAMAuthenticator(self.cis_api_key)
         schematics_service = SchematicsV1(authenticator = authenticator)
-        schematics_service.set_service_url(self.schematics_service)
+        schematics_service.set_service_url(self.schematics_url)
         r_token = self.request_token(self.cis_api_key)
 
         # Setting up the necessary information to create the workspace
