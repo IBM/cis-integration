@@ -28,12 +28,10 @@ class EdgeFunctionCreator:
 
         if action_response.json()["success"]:
             print("Successfully created edge function action")
-        elif action_response.status_code == 409:
-            print("Did not create edge function action. Action already exists")
         else:
             print("Failed to create edge function action with status code " + str(action_response.status_code))
 
-        return action_response.json
+        return action_response
 
     def create_edge_function_trigger(self):
 
