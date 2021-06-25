@@ -8,7 +8,7 @@ The goal of this project is to automate CIS integration for IBM Cloud applicatio
 This command line tool currently supports [Code Engine](https://www.ibm.com/cloud/code-engine) applications and has been configured for MacOS. In order to connect a Code Engine app to a CIS instance, numerous resources must be set up within CIS, namely: DNS records, a TLS certificate, a Global Load Balancer, Origin Pool, and Health Check Monitor, and an Edge Function.
 
 Before using this application:
-* [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started).
+* [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
 * Deploy a [Code Engine](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800) application
 
 ## Installation
@@ -88,8 +88,23 @@ $ cis-integration code-engine --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [
 
 **Note:** For the origin pool, origin name, and health check resources, this tool builds them using generic names. If you would like to change these later, navigate to the "Reliability" tab of your CIS instance and click on the "Global load balancers" tab. You can find your origin pools and health checks here and edit them manually.
 
+### Code Engine `--env` global option
+The `--env` global option allows for parameters to be passed through a file named `credentials.env` instead of through command line arguments. The format of this file is important, please see below on how to format this file with the needed information. `credentials.env` must be present in the current working directory.
+```
+CRN="<CIS_CRN>"
+ZONE_ID="<CIS_ID>"
+API_ENDPOINT="https://api.cis.cloud.ibm.com"
+CIS_SERVICES_APIKEY="<YOUR_CIS_SERVICES_APIKEY>"
+CIS_NAME="<CIS_INSTANCE_NAME>"
+RESOURCE_GROUP="<YOUR_IBM_CLOUD_RESOURCE_GROUP>"
+APP_URL="<CODE_ENGINE_APP_URL>"
+```
+Example usage
+```
+cis-integration code-engine --env
+```
 ## Resources
-- [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started).
+- [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
 - [Deploy Code Engine application](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800)
 - [Python](https://www.python.org/downloads/)
 - [Docker](https://docs.docker.com/get-docker/)
