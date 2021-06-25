@@ -59,23 +59,6 @@ class IntegrationInfo:
     schematics_url = 'https://us.schematics.cloud.ibm.com'
     terraforming = False
 
-    # used to create .env file
-    def create_envfile(self):
-        if not self.terraforming:
-            info = [f"CRN=\"{self.crn}\"\n", f"ZONE_ID=\"{self.zone_id}\"\n"]
-        else:
-            info = [f"RESOURCE_GROUP=\"{self.resource_group}\"\n", f"CIS_NAME=\"{self.cis_name}\"\n"]
-        
-        common = [f"API_ENDPOINT=\"{self.api_endpoint}\"\n", f"CIS_SERVICES_APIKEY=\"{self.cis_api_key}\"\n", f"CIS_DOMAIN=\"{self.cis_domain}\"\n", f"APP_URL=\"{self.app_url}\"\n", f"SCHEMATICS_URL=\"{self.schematics_url}\"\n"]
-
-        for item in common:
-            info.append(item)
-
-
-        file = open("credentials.env", "w")
-        file.writelines(info)
-        file.close()
-
     # loads .env file if it exists
     def read_envfile(self, filename):
         env_vars = load_vars(filename)

@@ -98,9 +98,6 @@ def handle_args(args):
     # determining API key and creating the .env file
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
 
-    if not args.env:
-        UserInfo.create_envfile()
-
     return UserInfo
 
 def CodeEngine(args):
