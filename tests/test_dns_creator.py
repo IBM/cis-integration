@@ -1,23 +1,62 @@
 from _pytest.monkeypatch import resolve
 import pytest
-import os
+import json
 from dotenv import load_dotenv
 from pathlib import Path
 from requests.models import Response
 from src.dns_creator import DNSCreator
+from ibm_cloud_networking_services.dns_records_v1 import DnsRecordsV1
+from ibm_cloud_sdk_core.detailed_response import DetailedResponse
 
-class MockDNSRecords:
-    pass
+# custom class to be a mock DNS Records object
+# will override the DnsRecordsV1 object in dns_creator.py
+class MockDNSRecordsV1Neither:
+
+    # mock set_service_url() serves as a useless mock method
+    def set_service_url(self, url):
+        pass
+
+    # mock list_all_dns_records() creates a fake list of dns records
+    def list_all_dns_records(self):
+        return DetailedResponse(response={"result": []})
+
+    # create_dns_records() creates a fake DNS record for testing
+    def create_dns_record(self, type, name, content, proxied):
+        return DetailedResponse(response={"result": { "id": "testId", "name": name, "type": type, "content": content, "proxied": True}})
+
+#################################################
+##### TO DO
+##### - neither records exist
+##### - both records exist
+##### - one record exists
+#################################################
 
 def test_neither_exist(monkeypatch):
-    monkeypatch.setattr()
-    pass
+
+    # Any arguments may be passed and mock_get() will always return our
+    # mocked object
+    def mock_get(*args, **kwargs):
+        return MockDNSRecordsV1Neither()
+
+    monkeypatch.setattr(DnsRecordsV1, "new_instance", mock_get)
+    creator = dns_creator()
+    root_record, www_record = creator.create_records()
+
+    assert root_record.result["result"]["type"] == "CNAME"
+    assert root_record.result["result"]["name"] == "@"
+    assert root_record.result["result"]["content"] == "test-url.com"
+
+    assert www_record.result["result"]["type"] == "CNAME"
+    assert www_record.result["result"]["name"] == "www"
+    assert root_record.result["result"]["content"] == "test-url.com"
+
 
 def dns_creator():
     return DNSCreator(
-        crn="crn:v1:bluemix:public:internet-svcs:global:a/cdefe6d99f7ea459aacb25775fb88a33:d6097e79-fd41-4dd3-bdc9-342fe1b28073::",
-        zone_id="f4604bfab1a024690e30bfd72ae36727",
-        endpoint="https://api.cis.cloud.ibm.com"
+        crn="testString",
+        zone_id="testString",
+        api_endpoint="test-endpoint.com",
+        app_url="test-url.com"
     )
 
 def test_create_root_record():
