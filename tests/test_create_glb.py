@@ -94,7 +94,7 @@ def test_create_global_load_balancer(monkeypatch):
 
     monkeypatch.setattr(GlobalLoadBalancerV1, "new_instance", mock_get)
     creator = glb_creator()
-    monitor = creator.create_origin_pool()
+    monitor = creator.create_global_load_balancer()
 
     assert monitor.result["result"]["name"] == "gcat-interns-rock.com"
     assert monitor.result["result"]["enabled"] == True
