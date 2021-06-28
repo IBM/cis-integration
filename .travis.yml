@@ -5,6 +5,6 @@ python:
   - "3.9"
 install:
   - pip3 install -r requirements.txt
-  - pip3 install -e ./src
+  - pip3 install -e .
 script:
   - pytest
