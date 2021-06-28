@@ -32,7 +32,6 @@ qdldl==0.1.5.post0
 requests==2.25.1
 scipy==1.6.3
 scs==2.1.4
-six==1.15.0
 toml==0.10.2
 urllib3==1.26.5
 Werkzeug==2.0.1
