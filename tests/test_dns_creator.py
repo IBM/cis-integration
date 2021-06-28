@@ -84,11 +84,6 @@ class MockDNSRecordsV1Both:
 
                 return DetailedResponse(response={"result": item})
 
-#################################################
-##### TO DO
-##### - both records exist
-#################################################
-
 def test_neither_exist(monkeypatch):
 
     # Any arguments may be passed and mock_get() will always return our
