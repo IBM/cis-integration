@@ -1,6 +1,5 @@
 import requests
 import sys
-from dotenv.main import load_dotenv
 
 class Color:
    PURPLE = '\033[95m'

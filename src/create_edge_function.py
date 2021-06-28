@@ -1,5 +1,5 @@
 import requests, json
-from dotenv import load_dotenv
+from src.functions import Color as Color
 
 class EdgeFunctionCreator:
     def __init__(self, crn, app_url, apikey, zone_id, domain):
@@ -27,11 +27,11 @@ class EdgeFunctionCreator:
         action_response = requests.request("PUT", url=action_url, headers=action_headers, data=action_payload)
 
         if action_response.json()["success"]:
-            print("Successfully created edge function action")
+            print(Color.GREEN+"SUCCESS: Created edge function action"+Color.END)
         elif action_response.status_code == 409:
-            print("Did not create edge function action. Action already exists")
+            print(Color.YELLOW+"WARNING: Did not create edge function action. Action already exists"+Color.END)
         else:
-            print("Failed to create edge function action with status code " + str(action_response.status_code))
+            print(Color.RED+"ERROR: Failed to create edge function action with status code " + str(action_response.status_code)+Color.END)
 
         return action_response.json
 
@@ -53,11 +53,11 @@ class EdgeFunctionCreator:
         trigger_response_1 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_1)
 
         if trigger_response_1.json()["success"]:
-            print("Successfully created edge function trigger")
+            print(Color.GREEN+"SUCCESS: Created edge function trigger"+Color.END)
         elif trigger_response_1.status_code == 409:
-            print("Did not create edge function trigger. Trigger already exists")
+            print(Color.YELLOW+"WARNING: Did not create edge function trigger. Trigger already exists"+Color.END)
         else:
-            print("Failed to create edge function trigger with status code " + str(trigger_response_1.status_code))
+            print(Color.RED+"ERROR: Failed to create edge function trigger with status code " + str(trigger_response_1.status_code)+Color.END)
         
         return trigger_response_1.json
 
@@ -80,11 +80,11 @@ class EdgeFunctionCreator:
         trigger_response_2 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_2)
 
         if trigger_response_2.json()["success"]:
-            print("Successfully created edge function trigger")
+            print(Color.GREEN+"SUCCESS: Created edge function trigger"+Color.END)
         elif trigger_response_2.status_code == 409:
-            print("Did not create edge function trigger. Trigger already exists")
+            print(Color.YELLOW+"WARNING: Did not create edge function trigger. Trigger already exists"+Color.END)
         else:
-            print("Failed to create edge function trigger with status code " + str(trigger_response_2.status_code))
+            print(Color.RED+"ERROR: Failed to create edge function trigger with status code " + str(trigger_response_2.status_code)+Color.END)
 
         return trigger_response_2.json
 
@@ -107,11 +107,11 @@ class EdgeFunctionCreator:
         trigger_response_3 = requests.request("POST", url=trigger_url, headers=trigger_headers, data=trigger_payload_3)
 
         if trigger_response_3.json()["success"]:
-            print("Successfully created edge function trigger")
+            print(Color.GREEN+"SUCCESS: Created edge function trigger"+Color.END)
         elif trigger_response_3.status_code == 409:
-            print("Did not create edge function trigger. Trigger already exists")
+            print(Color.YELLOW+"WARNING: Did not create edge function trigger. Trigger already exists"+Color.END)
         else:
-            print("Failed to create edge function trigger with status code " + str(trigger_response_3.status_code))
+            print(Color.RED+"ERROR: Failed to create edge function trigger with status code " + str(trigger_response_3.status_code)+Color.RED)
 
         return trigger_response_3.json
 
