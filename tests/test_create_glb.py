@@ -32,20 +32,20 @@ def test_create_load_balancer_monitor(monkeypatch):
     creator = glb_creator()
     monitor = creator.create_load_balancer_monitor()
 
-    assert monitor.result["result"]["description"] == "default health check"
-    assert monitor.result["result"]["type"] == "https"
-    assert monitor.result["result"]["expected_codes"] == "2xx"
-    assert monitor.result["result"]["follow_redirects"] == True
+    assert monitor["result"]["description"] == "default health check"
+    assert monitor["result"]["type"] == "https"
+    assert monitor["result"]["expected_codes"] == "2xx"
+    assert monitor["result"]["follow_redirects"] == True
 
 
 # custom class to be a mock Global Load Balancer Pools object
 # will override the GlobalLoadBalancerPoolsV0 object in create_glb.py
 class MockGlobalLoadBalancerPoolsV0:
     
-    def list_all_load_balancer_pools():
+    def list_all_load_balancer_pools(self):
         return DetailedResponse(response={"result": []})
 
-    def create_load_balancer_pool(self, origin_pool_id, name, origins, enabled, monitor):
+    def create_load_balancer_pool(self, name, origins, enabled, monitor):
         return DetailedResponse(response={"result": { "id": "testId", "name": name, "enabled": enabled, "monitor": monitor, "origins": origins}})
 
     # create_load_balancer_monitor() creates a fake Load Balancer Monitor for testing
@@ -62,11 +62,11 @@ def test_create_origin_pool(monkeypatch):
 
     monkeypatch.setattr(GlobalLoadBalancerPoolsV0, "new_instance", mock_get)
     creator = glb_creator()
-    monitor = creator.create_origin_pool()
+    pool = creator.create_origin_pool()
 
-    assert monitor.result["result"]["name"] == 'default-pool'
-    assert monitor.result["result"]["enabled"] == True
-    assert monitor.result["result"]["origins"] == [{"name": 'default-origin', "address": "gcat-interns-rock.com", "enabled": True, "weight":1}]
+    assert pool["result"]["name"] == 'default-pool'
+    assert pool["result"]["enabled"] == True
+    assert pool["result"]["origins"] == [{"name": 'default-origin', "address": "gcat-interns-rock.com", "enabled": True, "weight":1}]
 
 
 class MockGlobalLoadBalancerV1:
@@ -75,7 +75,7 @@ class MockGlobalLoadBalancerV1:
     def set_service_url(self, url):
         pass
     
-    def list_all_load_balancers():
+    def list_all_load_balancers(self):
         return DetailedResponse(response={"result": []})
 
     def create_load_balancer(self, name, default_pools, fallback_pool, enabled=True, proxied=True):
@@ -94,11 +94,11 @@ def test_create_global_load_balancer(monkeypatch):
 
     monkeypatch.setattr(GlobalLoadBalancerV1, "new_instance", mock_get)
     creator = glb_creator()
-    monitor = creator.create_global_load_balancer()
+    glb = creator.create_global_load_balancer()
 
-    assert monitor.result["result"]["name"] == "gcat-interns-rock.com"
-    assert monitor.result["result"]["enabled"] == True
-    assert monitor.result["result"]["proxied"] == True
+    assert glb["result"]["name"] == "gcat-interns-rock.com"
+    assert glb["result"]["enabled"] == True
+    assert glb["result"]["proxied"] == True
 
 def glb_creator():
     return GLB(
