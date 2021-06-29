@@ -38,12 +38,12 @@ class DNSCreator:
         if create_root_record:
             root_record = self.create_root_record(record, record_type, root_name)
         print("Record created!\nRecord name: " + root_record.result["result"]["name"] + "\nRecord ID: " + root_record.result["result"]["id"] + "\n")
-        
 
-        # creating a DNS record for the www subdomain if one does not exist already
         if create_www_record:
             www_record = self.create_www_record(record, record_type, www_name)
         print("Record created!\nRecord name: " + www_record.result["result"]["name"] + "\nRecord ID: " + www_record.result["result"]["id"] + "\n")
+
+        return (root_record, www_record)
 
     def create_root_record(self, record, record_type, root_name):
         root_record = record.create_dns_record(type=record_type, name=root_name, content=self.content, proxied=True)

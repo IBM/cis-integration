@@ -28,12 +28,10 @@ class EdgeFunctionCreator:
 
         if action_response.json()["success"]:
             print("Successfully created edge function action")
-        elif action_response.status_code == 409:
-            print("Did not create edge function action. Action already exists")
         else:
             print("Failed to create edge function action with status code " + str(action_response.status_code))
 
-        return action_response.json
+        return action_response
 
     def create_edge_function_trigger(self):
 
@@ -59,7 +57,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function trigger with status code " + str(trigger_response_1.status_code))
         
-        return trigger_response_1.json
+        return trigger_response_1
 
     def create_edge_function_www_trigger(self):
 
@@ -86,7 +84,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function trigger with status code " + str(trigger_response_2.status_code))
 
-        return trigger_response_2.json
+        return trigger_response_2
 
     def create_edge_function_wild_card_trigger(self):
 
@@ -113,8 +111,7 @@ class EdgeFunctionCreator:
         else:
             print("Failed to create edge function trigger with status code " + str(trigger_response_3.status_code))
 
-        return trigger_response_3.json
-
+        return trigger_response_3
 
     def request_token(self, apikey: str):
         """
