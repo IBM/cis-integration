@@ -1,5 +1,4 @@
 from .functions import Color as Color
-from dotenv import load_dotenv
 from ibm_cloud_networking_services import SslCertificateApiV1
 
 class CertificateCreator:
@@ -17,7 +16,7 @@ class CertificateCreator:
         cert.set_service_url(self.endpoint)
         try:
             resp = cert.change_ssl_setting(value="strict")
-            print(Color.GREEN+"Successfully set TLS mode to End-to-end CA Signed (strict)"+Color.END)
+            print(Color.GREEN+"SUCCESS: Set TLS mode to End-to-end CA Signed (strict)"+Color.END)
         except:
             print(Color.RED+"ERROR: Unable to set mode TLS mode to End-to-end CA Signed (strict)"+Color.END)
 
@@ -39,6 +38,6 @@ class CertificateCreator:
 
         try:
             resp = cert.order_certificate(x_correlation_id="1864", type="dedicated", hosts=self.hostNames)
-            print(Color.GREEN+"Successfully created certificate"+Color.END)
+            print(Color.GREEN+"SUCCESS: Created certificate"+Color.END)
         except:
             print(Color.RED+"ERROR: Unable to create certificate. Make sure hostname(s) match custom domain name"+Color.END)

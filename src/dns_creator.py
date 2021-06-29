@@ -1,5 +1,5 @@
-from dotenv import load_dotenv
 from ibm_cloud_networking_services import DnsRecordsV1
+from src.functions import Color as Color
 
 class DNSCreator:
     def __init__(self, crn, zone_id, api_endpoint, app_url):
@@ -37,11 +37,12 @@ class DNSCreator:
         # create a new root record if one does not already exist
         if create_root_record:
             root_record = self.create_root_record(record, record_type, root_name)
-        print("Record created!\nRecord name: " + root_record.result["result"]["name"] + "\nRecord ID: " + root_record.result["result"]["id"] + "\n")
+        print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + root_record.result["result"]["name"] + "\nDNS Record ID: " + root_record.result["result"]["id"] + "\n")
+        
 
         if create_www_record:
             www_record = self.create_www_record(record, record_type, www_name)
-        print("Record created!\nRecord name: " + www_record.result["result"]["name"] + "\nRecord ID: " + www_record.result["result"]["id"] + "\n")
+        print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + www_record.result["result"]["name"] + "\nDNS Record ID: " + www_record.result["result"]["id"] + "\n")
 
         return (root_record, www_record)
 

@@ -1,10 +1,8 @@
-import os
-import json
-from dotenv import load_dotenv
 from ibm_cloud_networking_services import GlobalLoadBalancerPoolsV0
 from ibm_cloud_networking_services import GlobalLoadBalancerV1
 from ibm_cloud_networking_services import GlobalLoadBalancerMonitorV1
 from ibm_cloud_networking_services import *
+from src.functions import Color as Color
 
 class GLB:
     def __init__(self, crn, zone_identifier, api_endpoint, domain):
@@ -25,7 +23,7 @@ class GLB:
         monitor = GlobalLoadBalancerMonitorV1.new_instance(crn=self.crn, service_name="cis_services")
         health_check = monitor.create_load_balancer_monitor(description="default health check", crn=self.crn, type="https", expected_codes="2xx", follow_redirects=True).get_result()
         self.monitor_id = health_check["result"]["id"]
-        print("Monitor ID:", self.monitor_id)
+        print(Color.GREEN+"SUCCESS: Monitor created ID:", self.monitor_id+Color.END)
         return health_check
 
     def create_origin_pool(self):
@@ -47,11 +45,11 @@ class GLB:
             origin_pool_result = origin_pools.create_load_balancer_pool(name=name, origins=origins, enabled=True, monitor=self.monitor_id).get_result()
             self.origin_pool_id = origin_pool_result["result"]["id"]
         else:
-            print("A origin pool with that name already exists.")
+            print(Color.YELLOW+"WARNING: An origin pool with that name already exists."+Color.END)
             self.origin_pool_id = origin_pools_dict[name]
             origin_pool_result = origin_pools.edit_load_balancer_pool(self.origin_pool_id, name=name, origins=origins, enabled=True, monitor=self.monitor_id)
 
-        print("Origin Pool ID:", self.origin_pool_id)
+        print(Color.GREEN+"SUCCESS: Origin Pool created with ID:", self.origin_pool_id+Color.END)
         return origin_pool_result
 
     def create_global_load_balancer(self):
@@ -69,9 +67,9 @@ class GLB:
             global_load_balancer_result = global_load_balancer.create_load_balancer(name=self.hostname, default_pools=[self.origin_pool_id], fallback_pool=self.origin_pool_id, enabled=True, proxied=True).get_result()
             global_load_balancer_id = global_load_balancer_result["result"]["id"]
         else:
-            print("A global load balancer with this name already exists.")
+            print(Color.YELLOW+"WARNING: A global load balancer with this name already exists."+Color.END)
             global_load_balancer_id = glb_dict[self.hostname]
             global_load_balancer_result = global_load_balancer.edit_load_balancer(global_load_balancer_id, name=self.hostname, default_pools=[self.origin_pool_id], fallback_pool=self.origin_pool_id, enabled=True, proxied=True)
 
-        print("Global Load Balancer ID:", global_load_balancer_id)
+        print(Color.GREEN+"SUCCESS: Global Load Balancer with ID:", global_load_balancer_id+Color.END)
         return global_load_balancer_result
