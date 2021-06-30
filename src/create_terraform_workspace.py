@@ -1,11 +1,11 @@
 
 from ibm_schematics.schematics_v1 import SchematicsV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-import os, requests, time, tarfile, json
-from dotenv import load_dotenv
+import os, requests, time, tarfile
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import ResourceControllerV2
 from ibm_cloud_networking_services import ZonesV1, GlobalLoadBalancerPoolsV0, GlobalLoadBalancerV1, DnsRecordsV1
+from src.functions import Color as Color
 
 class WorkspaceCreator:
     def __init__(self, cis_api_key, schematics_url, app_url, cis_domain, resource_group, cis_name, api_endpoint):
@@ -30,69 +30,63 @@ class WorkspaceCreator:
             exit()
 
         pool_name = self.pool_check()
-
         keepgoing = self.glb_check()
-        
-        keepgoing = self.dns_check()
-        
-        keepgoing = self.edge_check(r_token["access_token"])
-
-        # Setting up the necessary information to create the workspace
-        workspace_apikey_variable_request = {}
-        workspace_apikey_variable_request['name'] = 'ibmcloud_api_key'
-        workspace_apikey_variable_request['value'] = self.cis_api_key
-        workspace_apikey_variable_request['secure'] = True
-
-        workspace_cis_name_variable_request = {}
-        workspace_cis_name_variable_request['name'] = 'cis_name'
-        workspace_cis_name_variable_request['value'] = self.cis_name
-
-        workspace_resource_group_variable_request = {}
-        workspace_resource_group_variable_request['name'] = 'resource_group'
-        workspace_resource_group_variable_request['value'] = self.resource_group
-
-        workspace_app_url_variable_request = {}
-        workspace_app_url_variable_request['name'] = 'app_url'
-        workspace_app_url_variable_request['value'] = self.app_url
-
-        workspace_www_variable_request = {}
-        workspace_www_variable_request['name'] = 'www_domain'
-        workspace_www_variable_request['value'] = 'www.' + self.cis_domain
-
-        workspace_wild_variable_request = {}
-        workspace_wild_variable_request['name'] = 'wild_domain'
-        workspace_wild_variable_request['value'] = '*.' + self.cis_domain
-
-        workspace_domain_variable_request = {}
-        workspace_domain_variable_request['name'] = 'cis_domain'
-        workspace_domain_variable_request['value'] = self.cis_domain
-
-        workspace_action_variable_request = {}
-        workspace_action_variable_request['name'] = 'action_name'
-        workspace_action_variable_request['value'] = self.cis_domain.replace('.', '-')
-
-        workspace_pool_variable_request = {}
-        workspace_pool_variable_request['name'] = 'pool_name'
-        workspace_pool_variable_request['value'] = pool_name
-
-        template_source_data_request_model = {}
-        
-        template_source_data_request_model['type'] = 'terraform_v0.14.40'
-        template_source_data_request_model['variablestore'] = [workspace_apikey_variable_request,
-                                                               workspace_resource_group_variable_request,
-                                                               workspace_cis_name_variable_request,
-                                                               workspace_app_url_variable_request,
-                                                               workspace_domain_variable_request,
-                                                               workspace_www_variable_request,
-                                                               workspace_action_variable_request,
-                                                               workspace_wild_variable_request,
-                                                               workspace_pool_variable_request]
-
-
-        
+        keepgoing = self.dns_check(keepgoing)
+        keepgoing = self.edge_check(r_token["access_token"], keepgoing)
 
         # Creating the workspace and connecting to the github repo
         if keepgoing:
+            # Setting up the necessary information to create the workspace
+            workspace_apikey_variable_request = {}
+            workspace_apikey_variable_request['name'] = 'ibmcloud_api_key'
+            workspace_apikey_variable_request['value'] = self.cis_api_key
+            workspace_apikey_variable_request['secure'] = True
+
+            workspace_cis_name_variable_request = {}
+            workspace_cis_name_variable_request['name'] = 'cis_name'
+            workspace_cis_name_variable_request['value'] = self.cis_name
+
+            workspace_resource_group_variable_request = {}
+            workspace_resource_group_variable_request['name'] = 'resource_group'
+            workspace_resource_group_variable_request['value'] = self.resource_group
+
+            workspace_app_url_variable_request = {}
+            workspace_app_url_variable_request['name'] = 'app_url'
+            workspace_app_url_variable_request['value'] = self.app_url
+
+            workspace_www_variable_request = {}
+            workspace_www_variable_request['name'] = 'www_domain'
+            workspace_www_variable_request['value'] = 'www.' + self.cis_domain
+
+            workspace_wild_variable_request = {}
+            workspace_wild_variable_request['name'] = 'wild_domain'
+            workspace_wild_variable_request['value'] = '*.' + self.cis_domain
+
+            workspace_domain_variable_request = {}
+            workspace_domain_variable_request['name'] = 'cis_domain'
+            workspace_domain_variable_request['value'] = self.cis_domain
+
+            workspace_action_variable_request = {}
+            workspace_action_variable_request['name'] = 'action_name'
+            workspace_action_variable_request['value'] = self.cis_domain.replace('.', '-')
+
+            workspace_pool_variable_request = {}
+            workspace_pool_variable_request['name'] = 'pool_name'
+            workspace_pool_variable_request['value'] = pool_name
+
+            template_source_data_request_model = {}
+            
+            template_source_data_request_model['type'] = 'terraform_v0.14.40'
+            template_source_data_request_model['variablestore'] = [workspace_apikey_variable_request,
+                                                                workspace_resource_group_variable_request,
+                                                                workspace_cis_name_variable_request,
+                                                                workspace_app_url_variable_request,
+                                                                workspace_domain_variable_request,
+                                                                workspace_www_variable_request,
+                                                                workspace_action_variable_request,
+                                                                workspace_wild_variable_request,
+                                                                workspace_pool_variable_request]
+
             workspace_response = schematics_service.create_workspace(
                 description="Workspace for building resources for the CIS instance using terraform", 
                 name="temp-workspace",
@@ -102,7 +96,7 @@ class WorkspaceCreator:
                 resource_group=self.resource_group,
             ).get_result()
 
-            print('Successfully created the workspace!')
+            print(Color.GREEN + 'SUCCESS: Successfully created the workspace!' + Color.END)
         workspace_activity_plan_result = None
         #keepgoing = True
 
@@ -124,12 +118,12 @@ class WorkspaceCreator:
                         print('Uploading tar file...')
                         time.sleep(2)
                     else:
-                        print("Error {0}: ".format(ae.http_response.status_code) + ae.message)
+                        print(Color.RED + "ERROR {0}: ".format(ae.http_response.status_code) + ae.message + Color.END)
                         keepgoing = False
                         break
 
 
-            print("Uploaded tar file!")
+            print(Color.GREEN + "SUCCESS: Uploaded tar file!" + Color.END)
 
         # Generate a plan from the imported terraform files
         while keepgoing:
@@ -150,13 +144,13 @@ class WorkspaceCreator:
                     time.sleep(2)
                 else:
                     # Some other error occurred so we need to break out of the loop and end execution
-                    print("Error {0}: ".format(ae.http_response.status_code) + ae.message)
+                    print(Color.RED + "ERROR {0}: ".format(ae.http_response.status_code) + ae.message + Color.END)
                     keepgoing = False
                     break
         
         # Now we apply the plan if it was successfully generated
         if keepgoing:
-            print('Plan Generated! Applying:')
+            print(Color.GREEN + 'SUCCESS: Plan Generated! Applying:' + Color.END)
             # This command will also throw an ApiException while the plan is still finalizing,
             # so we just wait for it to finish
             while keepgoing:
@@ -172,7 +166,7 @@ class WorkspaceCreator:
                         print('Building the resources....')
                         time.sleep(2)
                     else:
-                        print("Error {0}: ".format(ae.http_response.status_code) + ae.message)
+                        print(Color.RED + "ERROR {0}: ".format(ae.http_response.status_code) + ae.message + Color.END)
                         keepgoing = False
                         break
         while keepgoing:
@@ -208,7 +202,7 @@ class WorkspaceCreator:
                 if resource["name"] == self.cis_name:
                     self.crn = resource["id"]
         else:
-            print("Could not find a CIS instance with the name " + self.cis_name)
+            print(Color.RED + "ERROR: Could not find a CIS instance with the name " + self.cis_name + Color.END)
             return False
         zone = ZonesV1.new_instance(
             crn=self.crn, service_name="cis_services"
@@ -250,12 +244,11 @@ class WorkspaceCreator:
         glb_response = glb.list_all_load_balancers().get_result()
         for balancer in glb_response["result"]:
             if balancer["name"] == self.cis_domain:
-                print("A global load balancer connected to " + self.cis_domain + " already exists. Remove this resource and try again")
+                print(Color.RED + "ERROR: A global load balancer connected to " + self.cis_domain + " already exists. Remove this resource and try again" + Color.END)
                 return False
         return True
     
-    def dns_check(self) -> bool:
-        keepgoing = True
+    def dns_check(self, keepgoing: bool) -> bool:
         records = DnsRecordsV1.new_instance(
             crn=self.crn, zone_identifier=self.zone_id, service_name="cis_services"
         )
@@ -263,15 +256,14 @@ class WorkspaceCreator:
         record_response = records.list_all_dns_records().get_result()
         for record in record_response["result"]:
             if record["name"] == self.cis_domain:
-                print("A CNAME DNS record with the name " + self.cis_domain + " already exists. Remove this resource and try again")
+                print(Color.RED + "ERROR: A CNAME DNS record with the name " + self.cis_domain + " already exists. Remove this resource and try again" + Color.END)
                 keepgoing = False
             if record["name"] == "www." + self.cis_domain:
-                print("A CNAME DNS record with the name www." + self.cis_domain + " already exists. Remove this resource and try again")
+                print(Color.RED + "ERROR: A CNAME DNS record with the name www." + self.cis_domain + " already exists. Remove this resource and try again" + Color.END)
                 keepgoing = False
         return keepgoing
 
-    def edge_check(self, access_token: str) -> bool:
-        keepgoing = True
+    def edge_check(self, access_token: str, keepgoing: bool) -> bool:
         
         edge_url = "https://api.cis.cloud.ibm.com/v1/" + self.crn + "/zones/" + self.zone_id + "/workers/routes"
 
@@ -284,13 +276,13 @@ class WorkspaceCreator:
         edge_response = requests.request("GET", edge_url, headers=edge_headers)
         for trigger in edge_response.json()['result']:
             if trigger["pattern"] == '*.' + self.cis_domain:
-                print("An edge function trigger matching the pattern *." + self.cis_domain + " already exists. Remove this resource and try again")
+                print(Color.RED + "ERROR: An edge function trigger matching the pattern *." + self.cis_domain + " already exists. Remove this resource and try again" + Color.END)
                 keepgoing = False
             elif trigger["pattern"] == 'www.' + self.cis_domain:
-                print("An edge function trigger matching the pattern www." + self.cis_domain + " already exists. Remove this resource and try again")
+                print(Color.RED + "ERROR: An edge function trigger matching the pattern www." + self.cis_domain + " already exists. Remove this resource and try again" + Color.END)
                 keepgoing = False
             elif trigger["pattern"] == self.cis_domain:
-                print("An edge function trigger matching the pattern " + self.cis_domain + " already exists. Remove this resource and try again")
+                print(Color.RED + "ERROR: An edge function trigger matching the pattern " + self.cis_domain + " already exists. Remove this resource and try again" + Color.END)
                 keepgoing = False
         return keepgoing        
 
