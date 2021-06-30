@@ -170,6 +170,7 @@ class WorkspaceCreator:
                         print(Color.RED + "ERROR {0}: ".format(ae.http_response.status_code) + ae.message + Color.END)
                         keepgoing = False
                         break
+                        
         while keepgoing:
             print("Checking workspace status...")
             status = self.action_status(
