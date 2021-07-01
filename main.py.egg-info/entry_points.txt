@@ -1,0 +1,4 @@
+[console_scripts]
+ci = src.main:main
+cis-integration = src.main:main
+

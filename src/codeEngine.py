@@ -1,6 +1,7 @@
+import os
 import sys
 import getpass
-import os
+
 
 from src.certcreate import CertificateCreator
 from src.functions import IntegrationInfo as IntegrationInfo
@@ -19,15 +20,18 @@ To get python script to run globally run following command: $ pip3 install -e /p
 # method used to display the command usage if user uses `-h` or `--help`
 def print_help():
     print(Color.BOLD + 'NAME:' + Color.END)
-    print("\tcis-integration - a command line tool used to connect a CIS instance with an application deployed on Code Engine\n")
+    print("\tcis-integration - a command line tool used to connect a CIS instance with an application deployed on Code Engine")
+    print("\t- call this tool with either 'cis-integration' or 'ci'\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[python implementation]\t\tcis-integration [global options] [CIS CRN] [CIS ID] [CIS DOMAIN] [CODE ENGINE APP URL] ")
-    print("\t[terraform implementation]\tcis-integration [global options] --terraform [RESOURCE GROUP] [CIS NAME] [CIS DOMAIN] [CODE ENGINE APP URL] [GITHUB PAT]\n")
+    print("\t[python implementation]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ID] -d [CIS DOMAIN] -a [APP URL] ")
+    print("\t[terraform implementation]\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]\n")
+    
+    print(Color.BOLD + "POSITIONAL ARGUMENTS:" + Color.END)
+    print("\tcode-engine, ce \t\t connect a Code Engine app\n")
 
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
     print("\t--help, -h \t\t show help")
-    print("\t--env, -e \t\t use an already existing credentials.env file")
     print("\t--terraform, -t \t build resources for CIS instance using terraform\n")
 
     print(Color.BOLD + "OPTIONAL ARGUMENTS:" + Color.END)
@@ -37,7 +41,6 @@ def print_help():
     print("\t--app_url, -a \t\t URL of the application")
     print("\t--resource_group, -r \t resource group associated with the CIS instance")
     print("\t--name, -n \t\t name of the CIS instance")
-    print("\t--pat, -p \t\t GitHub PAT\n")
 
 # handles the arguments given for both the python and terraform command options
 def handle_args(args):
@@ -50,9 +53,11 @@ def handle_args(args):
     UserInfo.terraforming = False
     if args.terraform:
         UserInfo.terraforming = True
+
     if args.env:
-        UserInfo.read_envfile("credentials.env",args)
-        print(UserInfo.crn)
+        UserInfo.read_envfile("credentials.env")
+        return UserInfo
+
 
     # terraforming vs. not terraforming
     if UserInfo.terraforming:
@@ -67,11 +72,6 @@ def handle_args(args):
             print("You did not specify a CIS Name.")
             sys.exit(1)
         
-        
-        UserInfo.github_pat = args.pat
-        if UserInfo.github_pat is None:
-            print("You did not specify a GitHub PAT.")
-            sys.exit(1)
     else:
         UserInfo.crn=args.crn
         if UserInfo.crn is None:
@@ -98,38 +98,41 @@ def handle_args(args):
     # determining API key and creating the .env file
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
 
-    if not args.env:
-        UserInfo.create_envfile()
-
-    return UserInfo.terraforming
+    return UserInfo
 
 def CodeEngine(args):
-    terraforming = handle_args(args)
+    UserInfo = handle_args(args)
+    os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
 
-    if terraforming: # handle the case of using terraform
-        work_creator = WorkspaceCreator()
+    if UserInfo.terraforming: # handle the case of using terraform
+        work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name)
         work_creator.create_terraform_workspace()
     else: # handle the case of using python
         # 1. Domain Name and DNS
-        user_DNS = DNSCreator()
+        user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
 
         # 2. Global Load Balancer
-        user_GLB = GLB()
-        user_GLB.create_glb()
+        user_GLB = GLB(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        user_GLB.create_load_balancer_monitor()
+        user_GLB.create_origin_pool()
+        user_GLB.create_global_load_balancer()
 
         # 3. TLS Certificate Configuration
-        cert_creator = CertificateCreator()
+        cert_creator = CertificateCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         cert_creator.create_certificate()
 
         # 4. Edge Functions
-        userEdgeFunction = EdgeFunctionCreator()
-        userEdgeFunction.create_edge_function()
+        userEdgeFunction = EdgeFunctionCreator(UserInfo.crn, UserInfo.app_url, UserInfo.cis_api_key, UserInfo.zone_id, UserInfo.cis_domain)
+        userEdgeFunction.create_edge_function_action()
+        userEdgeFunction.create_edge_function_trigger()
+        userEdgeFunction.create_edge_function_wild_card_trigger()
+        userEdgeFunction.create_edge_function_www_trigger()
 
-    hostUrl="https://"+os.environ["CIS_DOMAIN"]
+    hostUrl="https://"+UserInfo.cis_domain
 
     healthCheck(hostUrl)
 
-    hostUrl="https://www."+os.environ["CIS_DOMAIN"]
+    hostUrl="https://www."+UserInfo.cis_domain
 
     healthCheck(hostUrl)

@@ -1,4 +1,3 @@
-
 # Creating the www DNS Record
 resource "ibm_cis_dns_record" "test_dns_www_record" {
     cis_id  = data.ibm_cis.cis_instance.id
@@ -29,14 +28,14 @@ output "cname_root_record_output" {
 
 # Ordering a TLS certificate
 resource "ibm_cis_certificate_order" "test" {
-    cis_id    = data.ibm_cis.cis_instance.id        # placeholder 
-    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id  # placeholder
-    hosts     = [var.cis_domain]   # placeholder
+    cis_id    = data.ibm_cis.cis_instance.id          
+    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id  
+    hosts     = [var.cis_domain, var.wild_domain]   
 }
 
 # Creating the monitor (health check) resource using Terraform
 resource "ibm_cis_healthcheck" "test" {
-  cis_id           = data.ibm_cis.cis_instance.id       # placeholder
+  cis_id           = data.ibm_cis.cis_instance.id       
   expected_codes   = "200"
   method           = "GET"
   timeout          = 2
@@ -44,34 +43,34 @@ resource "ibm_cis_healthcheck" "test" {
   type             = "https"
   interval         = 60
   retries          = 3
-  description      = "example health check"
+  description      = "default health check"
   follow_redirects = true
 }
 
 # Creating the origin pool resource using Terraform
 resource "ibm_cis_origin_pool" "example" {
-    cis_id          = data.ibm_cis.cis_instance.id       # placeholder
-    name            = "test-pool-1"
+    cis_id          = data.ibm_cis.cis_instance.id       
+    name            = "default-pool"
     origins {
-        name        = "app-server-1"
-        address     = var.app_url     # placeholder
+        name        = "default-origin"
+        address     = var.app_url     
         enabled     = true
     }
-    description     = "example origin pool"
+    description     = "origin pool created with cis-integration tool"
     enabled = true
     minimum_origins = 1
-    check_regions   = ["WEU"]
+    check_regions   = ["ENAM"]
     monitor         = ibm_cis_healthcheck.test.monitor_id
 }
 
 # Creating the global load balancer resource using Terraform
 resource "ibm_cis_global_load_balancer" "example-glb" {
-    cis_id            = data.ibm_cis.cis_instance.id        # placeholder
-    domain_id         = data.ibm_cis_domain.cis_instance_domain.domain_id      # placeholder
-    name              = var.cis_domain     # placeholder
+    cis_id            = data.ibm_cis.cis_instance.id        
+    domain_id         = data.ibm_cis_domain.cis_instance_domain.domain_id      
+    name              = var.cis_domain     
     fallback_pool_id  = ibm_cis_origin_pool.example.id
     default_pool_ids  = [ibm_cis_origin_pool.example.id]
-    description       = "example load balancer using Terraform"
+    description       = "global load balancer created with cis-integration tool"
     enabled           = true
     proxied           = true
 }
@@ -92,6 +91,14 @@ resource "ibm_cis_edge_functions_trigger" "test_trigger2" {
   domain_id   = ibm_cis_edge_functions_action.test_action.domain_id
   action_name = ibm_cis_edge_functions_action.test_action.action_name
   pattern_url = var.www_domain # add www to cis_domain
+}
+
+# Add a Edge Functions Trigger to the domain
+resource "ibm_cis_edge_functions_trigger" "test_trigger3" {
+  cis_id      = ibm_cis_edge_functions_action.test_action.cis_id
+  domain_id   = ibm_cis_edge_functions_action.test_action.domain_id
+  action_name = ibm_cis_edge_functions_action.test_action.action_name
+  pattern_url = var.wild_domain # add * to cis_domain
 }
 
 # Add a Edge Functions Action to the domain
@@ -115,5 +122,3 @@ data "ibm_cis" "cis_instance" {
   name              = var.cis_name
   resource_group_id = data.ibm_resource_group.group.id
 }
-
-
