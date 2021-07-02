@@ -8,7 +8,7 @@ from ibm_cloud_networking_services import ZonesV1, GlobalLoadBalancerPoolsV0, Gl
 from src.functions import Color as Color
 
 class WorkspaceCreator:
-    def __init__(self, cis_api_key, schematics_url, app_url, cis_domain, resource_group, cis_name, api_endpoint):
+    def __init__(self, cis_api_key, schematics_url, app_url, cis_domain, resource_group, cis_name, api_endpoint, verbose):
         self.cis_api_key = cis_api_key
         self.schematics_url = schematics_url
         self.app_url = app_url
@@ -18,6 +18,7 @@ class WorkspaceCreator:
         self.api_endpoint = api_endpoint
         self.crn = ''
         self.zone_id = ''
+        self.verbose = verbose
 
     def create_terraform_workspace(self):
         authenticator = IAMAuthenticator(self.cis_api_key)
@@ -178,14 +179,20 @@ class WorkspaceCreator:
             )
             
             if status.json()["status"] == "COMPLETED" or status.json()["status"] == "FAILED":
-                time.sleep(10)
-                apply_log = self.apply_response(
-                w_id=workspace_response["id"],
-                a_id=workspace_activity_apply_result["activityid"],
-                t_id=workspace_response["template_data"][0]["id"],
-                access_token=r_token["access_token"]
-                )
-                print(apply_log)
+                if self.verbose:
+                    apply_log = self.apply_response(
+                    w_id=workspace_response["id"],
+                    a_id=workspace_activity_apply_result["activityid"],
+                    t_id=workspace_response["template_data"][0]["id"],
+                    access_token=r_token["access_token"]
+                    )
+                    print(apply_log)
+                elif status.json()["status"] == "COMPLETED":
+                    print("Workspace status: " + Color.GREEN + status.json()["status"] + Color.END)
+                    print("Refer to your Schematics workspace on cloud.ibm.com for more details.")
+                elif status.json()["status"] == "FAILED":
+                    print("Workspace status: " + Color.RED + status.json()["status"] + Color.END)
+                    print("Refer to your Schematics workspace on cloud.ibm.com for more details.")
                 keepgoing = False
             else:
                 print("Workspace status: " + status.json()["status"])

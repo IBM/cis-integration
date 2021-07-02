@@ -32,7 +32,9 @@ def print_help():
 
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
     print("\t--help, -h \t\t show help")
-    print("\t--terraform, -t \t build resources for CIS instance using terraform\n")
+    print("\t--env, -e \t\t gets arguments from a credentials.env file")
+    print("\t--terraform, -t \t build resources for CIS instance using terraform")
+    print("\t--verbose, -v \t\t prints a detailed log from the Schematics workspace if --terraform is selected\n")
 
     print(Color.BOLD + "OPTIONAL ARGUMENTS:" + Color.END)
     print("\t--crn, -c \t\t CRN of the CIS instance")
@@ -53,6 +55,9 @@ def handle_args(args):
     UserInfo.terraforming = False
     if args.terraform:
         UserInfo.terraforming = True
+
+    if args.verbose:
+        UserInfo.verbose = True
 
     if args.env:
         UserInfo.read_envfile("credentials.env")
@@ -105,7 +110,7 @@ def CodeEngine(args):
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
 
     if UserInfo.terraforming: # handle the case of using terraform
-        work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint)
+        work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint, UserInfo.verbose)
         work_creator.create_terraform_workspace()
     else: # handle the case of using python
         # 1. Domain Name and DNS
