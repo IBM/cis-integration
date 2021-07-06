@@ -11,6 +11,10 @@ from src.create_glb import GLB
 from src.dns_creator import DNSCreator
 from src.create_edge_function import EdgeFunctionCreator
 from src.create_terraform_workspace import WorkspaceCreator
+from src.delete_glb import DeleteGLB
+from src.delete_dns import DeleteDNS
+from src.delete_certs import DeleteCerts
+from src.delete_edge import DeleteEdge
 
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
@@ -59,6 +63,9 @@ def handle_args(args):
     if args.verbose:
         UserInfo.verbose = True
 
+    if args.delete:
+        UserInfo.delete = True
+
     if args.env:
         UserInfo.read_envfile("credentials.env")
         return UserInfo
@@ -94,11 +101,12 @@ def handle_args(args):
     if UserInfo.cis_domain is None:
         print("You did not specify a CIS Domain.")
         sys.exit(1)
-
-    UserInfo.app_url = args.app_url
-    if UserInfo.app_url is None:
-        print("You did not specify a application URL.")
-        sys.exit(1)
+    
+    if not UserInfo.delete:
+        UserInfo.app_url = args.app_url
+        if UserInfo.app_url is None:
+            print("You did not specify a application URL.")
+            sys.exit(1)
         
     # determining API key and creating the .env file
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
@@ -109,7 +117,20 @@ def CodeEngine(args):
     UserInfo = handle_args(args)
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
 
-    if UserInfo.terraforming: # handle the case of using terraform
+    if UserInfo.delete:
+        delete_glb = DeleteGLB(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        delete_glb.delete_glb()
+
+        delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        delete_dns.delete_dns()
+
+        delete_certs = DeleteCerts(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        delete_certs.delete_certs()
+
+        delete_edge = DeleteEdge(UserInfo.crn, UserInfo.zone_id, UserInfo.cis_domain, UserInfo.cis_api_key)
+        delete_edge.delete_edge()
+
+    elif UserInfo.terraforming: # handle the case of using terraform
         work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint, UserInfo.verbose)
         work_creator.create_terraform_workspace()
     else: # handle the case of using python
