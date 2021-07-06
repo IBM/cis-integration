@@ -57,6 +57,7 @@ class IntegrationInfo:
     cis_domain = ''
     schematics_url = 'https://us.schematics.cloud.ibm.com'
     terraforming = False
+    verbose = False
 
     # loads .env file if it exists
     def read_envfile(self, filename):

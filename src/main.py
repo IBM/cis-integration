@@ -17,6 +17,7 @@ def main():
     ce_parser.add_argument("-n","--name")
     ce_parser.add_argument("-e","--env", action='store_true')
     ce_parser.add_argument("-h","--help", action='store_true')
+    ce_parser.add_argument("-v","--verbose", action='store_true')
 
     #created iks sub-command as an example for to structure the next platform
     ks_parser = subparsers.add_parser("iks", aliases=['ks'], add_help=False)
