@@ -1,4 +1,5 @@
 from ibm_cloud_networking_services import DnsRecordsV1
+from ibm_cloud_sdk_core import ApiException
 from src.functions import Color as Color
 
 class DNSCreator:
@@ -26,23 +27,41 @@ class DNSCreator:
             # checking for the root record
             if item["type"] == "CNAME" and item["zone_name"] == item["name"]:
                 create_root_record = False
-                root_record = record.update_dns_record(dnsrecord_identifier=item["id"],
-                    type=record_type, name=root_name, content=self.content, proxied=True)
+                print(Color.YELLOW+"WARNING: A '@' DNS Record already exists"+Color.END)
+                try:
+                    root_record = record.update_dns_record(dnsrecord_identifier=item["id"],
+                        type=record_type, name=root_name, content=self.content, proxied=True)
+                    print(Color.GREEN+"SUCCESS: DNS Record updated!"+Color.END+"\nDNS Record name: " + root_record.result["result"]["name"] + "\nDNS Record ID: " + root_record.result["result"]["id"] + "\n")
+                except ApiException as ae:
+                    print(Color.RED + "ERROR: " + ae.message + "\nError occurred when trying to update '@' DNS record. Check your application URL and try again\n" + Color.END)        
             # checking for the www record    
             if item["type"] == "CNAME" and item["name"] == "www." + item["zone_name"]:
                 create_www_record = False
-                www_record = record.update_dns_record(dnsrecord_identifier=item["id"],
-                    type=record_type, name=www_name, content=self.content, proxied=True)
+                print(Color.YELLOW+"WARNING: A 'www' DNS Record already exists"+Color.END)
+                try:
+                    www_record = record.update_dns_record(dnsrecord_identifier=item["id"],
+                        type=record_type, name=www_name, content=self.content, proxied=True)
+                    print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + www_record.result["result"]["name"] + "\nDNS Record ID: " + www_record.result["result"]["id"] + "\n")
+                except ApiException as ae:
+                    print(Color.RED + "ERROR: " + ae.message + "\nError occurred when trying to update 'www' DNS record. Check your application URL and try again\n" + Color.END)
 
         # create a new root record if one does not already exist
         if create_root_record:
-            root_record = self.create_root_record(record, record_type, root_name)
-        print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + root_record.result["result"]["name"] + "\nDNS Record ID: " + root_record.result["result"]["id"] + "\n")
+            try:
+                root_record = self.create_root_record(record, record_type, root_name)
+                print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + root_record.result["result"]["name"] + "\nDNS Record ID: " + root_record.result["result"]["id"] + "\n")
+            except ApiException as ae:
+                print(Color.RED + "ERROR: " + ae.message + "\nError occurred when trying to create '@' DNS record. Check your application URL and try again\n" + Color.END)
+        
         
 
         if create_www_record:
-            www_record = self.create_www_record(record, record_type, www_name)
-        print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + www_record.result["result"]["name"] + "\nDNS Record ID: " + www_record.result["result"]["id"] + "\n")
+            try:
+                www_record = self.create_www_record(record, record_type, www_name)
+                print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + www_record.result["result"]["name"] + "\nDNS Record ID: " + www_record.result["result"]["id"] + "\n")
+            except ApiException as ae:
+                print(Color.RED + "ERROR: " + ae.message + "\nError occurred when trying to create 'www' DNS record. Check your application URL and try again\n" + Color.END)
+        
 
         return (root_record, www_record)
 
