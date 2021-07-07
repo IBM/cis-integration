@@ -10,23 +10,24 @@ class DeleteEdge:
         self.apikey = apikey
 
     def delete_edge(self):
-        
-        action_name = self.cis_domain.replace('.','-')
-        token = self.request_token(self.apikey)
-        
-        triggers = self.get_triggers(self.crn, self.zone_id, token)
+        execute = input("Delete edge function? Input 'y' to execute: ")
+        if execute == 'y':
+            action_name = self.cis_domain.replace('.','-')
+            token = self.request_token(self.apikey)
+            
+            triggers = self.get_triggers(self.crn, self.zone_id, token)
 
-        for trigger in triggers["result"]:
-            if trigger["script"] == action_name:
-                self.delete_trigger(self.crn, self.zone_id, trigger["id"], token)
-                print(Color.GREEN + "SUCCESS: Deleted trigger " + trigger["pattern"] + Color.END)
+            for trigger in triggers["result"]:
+                if trigger["script"] == action_name:
+                    self.delete_trigger(self.crn, self.zone_id, trigger["id"], token)
+                    print(Color.GREEN + "SUCCESS: Deleted trigger " + trigger["pattern"] + Color.END)
 
-        action_response = self.delete_action(self.crn, action_name, token)
-        if action_response["success"]:
-            print(Color.GREEN + "SUCCESS: Deleted edge function action with id " + action_response["result"]["id"] + Color.END)
-        else:
-            print(Color.RED + "ERROR: No edge function action associated with domain " + self.cis_domain + " found" + Color.END)
-        #print(ids)
+            action_response = self.delete_action(self.crn, action_name, token)
+            if action_response["success"]:
+                print(Color.GREEN + "SUCCESS: Deleted edge function action with id " + action_response["result"]["id"] + Color.END)
+            else:
+                print(Color.RED + "ERROR: No edge function action associated with domain " + self.cis_domain + " found" + Color.END)
+            #print(ids)
 
     def get_triggers(self, crn: str, zone_id: str, token: str):
         url = "https://api.cis.cloud.ibm.com/v1/" + crn + "/zones/" + zone_id + "/workers/routes"

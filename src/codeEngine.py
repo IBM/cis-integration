@@ -28,14 +28,16 @@ def print_help():
     print("\t- call this tool with either 'cis-integration' or 'ci'\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[python implementation]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ID] -d [CIS DOMAIN] -a [APP URL] ")
+    print("\t[python implementation]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [APP URL] ")
     print("\t[terraform implementation]\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]\n")
-    
+    print("\t[removing resources]\t\tcis-integration [positional args] [global options] --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]\n")
+
     print(Color.BOLD + "POSITIONAL ARGUMENTS:" + Color.END)
     print("\tcode-engine, ce \t\t connect a Code Engine app\n")
 
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
     print("\t--help, -h \t\t show help")
+    print("\t--delete \t\t removes resources created using this tool")
     print("\t--env, -e \t\t gets arguments from a credentials.env file")
     print("\t--terraform, -t \t build resources for CIS instance using terraform")
     print("\t--verbose, -v \t\t prints a detailed log from the Schematics workspace if --terraform is selected\n")
