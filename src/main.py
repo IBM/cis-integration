@@ -1,7 +1,21 @@
+import os
+import sys
 import argparse
 from src.codeEngine import CodeEngine
+import subprocess
+
+def execute(cmd):
+    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, universal_newlines=True)
+    for line in iter(process.stdout.readline, ""):
+        yield line
+    process.stdout.close()
+    ret = process.wait()
+    if ret:
+        raise subprocess.CalledProcessError(ret, cmd)
+
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--uninstall", help="uninstalls cis-integration from your system", action="store_true",)
 
     subparsers = parser.add_subparsers(dest="command")
     
@@ -27,6 +41,19 @@ def main():
     ks_parser.add_argument("-c")
 
     args = parser.parse_args()
+
+    if args.uninstall:
+        #removes the ci and cis-integration command from system
+        confirm = input("Are you sure you wish to uninstall? (y/n): ").lower()
+        if confirm == 'y' or confirm == 'yes':
+            bash_cmd = "pip3 uninstall -y -r requirements.txt"
+            for item in execute(bash_cmd):
+                print(item, end="")
+            if os.path.isfile("/usr/local/bin/cis-integration") and os.path.isfile("/usr/local/bin/ci"):
+                os.remove("/usr/local/bin/cis-integration")
+                os.remove("/usr/local/bin/ci")
+        else:
+            sys.exit(1)
 
     if args.command=="code-engine" or args.command=="ce":
         CodeEngine(args)
