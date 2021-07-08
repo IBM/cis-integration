@@ -1,3 +1,4 @@
+from src.delete_workspaces import DeleteWorkspace
 import os
 import sys
 import getpass
@@ -74,7 +75,7 @@ def handle_args(args):
 
 
     # terraforming vs. not terraforming
-    if UserInfo.terraforming:
+    if UserInfo.terraforming and not UserInfo.delete:
         UserInfo.resource_group = args.resource_group
         if UserInfo.resource_group is None:         
             print("You did not specify a resource group.")
@@ -131,6 +132,10 @@ def CodeEngine(args):
 
         delete_edge = DeleteEdge(UserInfo.crn, UserInfo.zone_id, UserInfo.cis_domain, UserInfo.cis_api_key)
         delete_edge.delete_edge()
+
+        if UserInfo.terraforming:
+            delete_workspaces = DeleteWorkspace(UserInfo.schematics_url, UserInfo.cis_api_key)
+            delete_workspaces.delete_workspace()
 
     elif UserInfo.terraforming: # handle the case of using terraform
         work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint, UserInfo.verbose)
