@@ -1,3 +1,4 @@
+from src.delete_workspaces import DeleteWorkspace
 import os
 import sys
 import getpass
@@ -28,14 +29,16 @@ def print_help():
     print("\t- call this tool with either 'cis-integration' or 'ci'\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[python implementation]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ID] -d [CIS DOMAIN] -a [APP URL] ")
+    print("\t[python implementation]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [APP URL] ")
     print("\t[terraform implementation]\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]\n")
-    
+    print("\t[removing resources]\t\tcis-integration [positional args] [global options] --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]\n")
+
     print(Color.BOLD + "POSITIONAL ARGUMENTS:" + Color.END)
     print("\tcode-engine, ce \t\t connect a Code Engine app\n")
 
     print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
     print("\t--help, -h \t\t show help")
+    print("\t--delete \t\t removes resources created using this tool")
     print("\t--env, -e \t\t gets arguments from a credentials.env file")
     print("\t--terraform, -t \t build resources for CIS instance using terraform")
     print("\t--verbose, -v \t\t prints a detailed log from the Schematics workspace if --terraform is selected\n")
@@ -72,7 +75,7 @@ def handle_args(args):
 
 
     # terraforming vs. not terraforming
-    if UserInfo.terraforming:
+    if UserInfo.terraforming and not UserInfo.delete:
         UserInfo.resource_group = args.resource_group
         if UserInfo.resource_group is None:         
             print("You did not specify a resource group.")
@@ -129,6 +132,10 @@ def CodeEngine(args):
 
         delete_edge = DeleteEdge(UserInfo.crn, UserInfo.zone_id, UserInfo.cis_domain, UserInfo.cis_api_key)
         delete_edge.delete_edge()
+
+        if UserInfo.terraforming:
+            delete_workspaces = DeleteWorkspace(UserInfo.schematics_url, UserInfo.cis_api_key)
+            delete_workspaces.delete_workspace()
 
     elif UserInfo.terraforming: # handle the case of using terraform
         work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint, UserInfo.verbose)
