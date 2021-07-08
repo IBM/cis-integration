@@ -3,7 +3,7 @@ variable ibmcloud_api_key {
     description = "Unique API Key to verify access permissions"
     validation {
     # regex(...) fails if it cannot find a match
-    condition     = length(var.ibmcloud_api_key)==44 
+    condition     = length(var.ibmcloud_api_key)==44
     error_message = ""
   }
 }
@@ -33,7 +33,7 @@ variable cis_domain {
     description = "Domain name that you want to be attached to the CIS Instance and Code Engine app"
     validation {
     # regex(...) fails if it cannot find a match
-    condition     = can(regex(".com", var.cis_domain))
+    condition     = can(regex("/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/", var.cis_domain))
     error_message = "This is not a valid domain name for the CIS Instance"
   }
 }
