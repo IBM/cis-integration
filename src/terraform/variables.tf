@@ -4,7 +4,7 @@ variable ibmcloud_api_key {
     validation {
     # regex(...) fails if it cannot find a match
     condition     = length(var.ibmcloud_api_key)==44
-    error_message = ""
+    error_message = "This is not a valid API key."
   }
 }
 variable cis_name {
@@ -12,7 +12,7 @@ variable cis_name {
     description = "Name of the CIS instance"
   validation {
       condition = can(regex("^([^[:ascii:]]|[a-zA-Z0-9-._: ])+$", var.cis_name))
-      error_message = "Not a valid CIS Name"
+      error_message = "Not a valid CIS Name."
   }
 }
 variable resource_group {
@@ -25,7 +25,7 @@ variable app_url {
     validation {
     # regex(...) fails if it cannot find a match
     condition     = can(regex("^([^[:ascii:]]|[a-zA-Z0-9-._: ])+$", var.app_url))
-    error_message = "This is not a valid url for the code engine app"
+    error_message = "This is not a valid url for the code engine app."
   }
 }
 variable cis_domain {
@@ -33,11 +33,11 @@ variable cis_domain {
     description = "Domain name that you want to be attached to the CIS Instance and Code Engine app"
     validation {
     # regex(...) fails if it cannot find a match
-    condition     = can(regex("/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/", var.cis_domain))
-    error_message = "This is not a valid domain name for the CIS Instance"
+    condition     = can(regex("^([^[:ascii:]]|[a-zA-Z0-9-._: ])+$", var.cis_domain))
+    error_message = "This is not a valid domain name for the CIS Instance."
   }
 }
 variable action_name {
     type = string
-    description = "Name for the Edge Function Action"
+    description = "Name for the Edge Function Action."
 }
