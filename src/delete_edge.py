@@ -10,8 +10,8 @@ class DeleteEdge:
         self.apikey = apikey
 
     def delete_edge(self):
-        execute = input("Delete edge function? Input 'y' to execute: ")
-        if execute == 'y':
+        execute = input("Delete edge function? Input 'y' or 'yes' to execute: ").lower()
+        if execute == 'y' or execute == 'yes':
             action_name = self.cis_domain.replace('.','-')
             token = self.request_token(self.apikey)
             

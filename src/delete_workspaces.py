@@ -9,8 +9,8 @@ class DeleteWorkspace:
 
     def delete_workspace(self):
         w_ids = []
-        execute = input("Delete all associated Schematics workspaces? Input 'y' to execute: ")
-        if execute == 'y':
+        execute = input("Delete all associated Schematics workspaces? Input 'y' or 'yes' to execute: ").lower()
+        if execute == 'y' or execute == 'yes':
             token = self.request_token(self.apikey)
             authenticator = IAMAuthenticator(self.apikey)
             schematics_service = SchematicsV1(authenticator = authenticator)
@@ -20,7 +20,6 @@ class DeleteWorkspace:
                 for template in workspace['template_data']:
                     for variable in template['variablestore']:
                         if variable['name'] == 'cis_name':
-                            print(variable['value'])
                             w_ids.append(workspace['id'])
 
             num_deleted = 0

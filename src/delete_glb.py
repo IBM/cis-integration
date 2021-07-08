@@ -13,8 +13,8 @@ class DeleteGLB:
         
     def delete_glb(self):
         # delete the glb
-        execute_glb = input("Delete global load balancer? Input 'y' to execute: ")
-        if execute_glb == 'y':
+        execute_glb = input("Delete global load balancer? Input 'y' or 'yes' to execute: ").lower()
+        if execute_glb == 'y' or execute_glb == 'yes':
             globalLoadBalancer = GlobalLoadBalancerV1.new_instance(
                 crn=self.crn, zone_identifier=self.zone_id, service_name="cis_services")
             globalLoadBalancer.set_service_url(self.endpoint)
@@ -40,8 +40,8 @@ class DeleteGLB:
 
             if keepgoing:
                 # delete the origin pool
-                execute_origin = input("Delete origin pool? Input 'y' to execute: ")
-                if execute_origin == 'y':
+                execute_origin = input("Delete origin pool? Input 'y' or 'yes' to execute: ").lower()
+                if execute_origin == 'y' or execute_origin == 'yes':
                     globalLoadBalancerPools = GlobalLoadBalancerPoolsV0.new_instance(
                         crn=self.crn, service_name="cis_services")
                     globalLoadBalancerPools.set_service_url(self.endpoint)
@@ -64,8 +64,8 @@ class DeleteGLB:
                     
                     if keepgoing:
                         # delete the linked health check
-                        execute_monitor = input("Delete health check monitor? Input 'y' to execute: ")
-                        if execute_monitor == 'y':
+                        execute_monitor = input("Delete health check monitor? Input 'y' or 'yes' to execute: ").lower()
+                        if execute_monitor == 'y' or execute_monitor == 'yes':
                             
                             cert = GlobalLoadBalancerMonitorV1.new_instance(
                                 crn=self.crn, service_name="cis_services")

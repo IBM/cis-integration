@@ -12,8 +12,8 @@ class DeleteDNS:
         self.cis_domain = cis_domain
 
     def delete_dns(self):
-        execute = input("Delete DNS Records? Input 'y' to execute: ")
-        if execute == 'y':
+        execute = input("Delete DNS Records? Input 'y' or 'yes' to execute: ").lower()
+        if execute == 'y' or execute == 'yes':
             # create instance
             record = DnsRecordsV1.new_instance(
                 crn=self.crn, zone_identifier=self.zone_id, service_name="cis_services")

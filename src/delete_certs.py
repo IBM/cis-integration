@@ -12,9 +12,9 @@ class DeleteCerts:
 
     def delete_certs(self):
         certIds=[]
-        execute = input("Delete TLS Certificates? Input 'y' to execute: ")
+        execute = input("Delete TLS Certificates? Input 'y' or 'yes' to execute: ").lower()
 
-        if execute == 'y':
+        if execute == 'y' or execute == 'yes':
             # create instance
             cert = SslCertificateApiV1.new_instance(
                 crn=self.crn, zone_identifier=self.zone_id, service_name="cis_services")
