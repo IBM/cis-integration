@@ -26,6 +26,15 @@ output "cname_root_record_output" {
     value = ibm_cis_dns_record.test_dns_root_record
 }
 
+# Setting TLS mode to strict
+# Setting minimum TLS version to 1.2
+resource "ibm_cis_domain_settings" "test" {
+    cis_id          = data.ibm_cis.cis_instance.id
+    domain_id       = data.ibm_cis_domain.cis_instance_domain.domain_id 
+    ssl             = "strict"
+    min_tls_version = "1.2"
+}
+
 # Ordering a TLS certificate
 resource "ibm_cis_certificate_order" "test" {
     cis_id    = data.ibm_cis.cis_instance.id          
@@ -50,7 +59,7 @@ resource "ibm_cis_healthcheck" "test" {
 # Creating the origin pool resource using Terraform
 resource "ibm_cis_origin_pool" "example" {
     cis_id          = data.ibm_cis.cis_instance.id       
-    name            = "default-pool"
+    name            = var.pool_name
     origins {
         name        = "default-origin"
         address     = var.app_url     

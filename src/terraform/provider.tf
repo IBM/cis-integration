@@ -6,6 +6,7 @@ variable "cis_domain" {}
 variable "www_domain" {}
 variable "wild_domain" {}
 variable "action_name" {}
+variable "pool_name" {}
 
 provider "ibm" {
     ibmcloud_api_key = var.ibmcloud_api_key
