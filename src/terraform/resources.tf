@@ -89,7 +89,7 @@ resource ibm_cis_edge_functions_trigger action_trigger{
   cis_id      = ibm_cis_edge_functions_action.test_action.cis_id
   domain_id   = ibm_cis_edge_functions_action.test_action.domain_id
   action_name = ibm_cis_edge_functions_action.test_action.action_name
-  pattern_url = local.trigger_urls[count.index-1]
+  pattern_url = local.trigger_urls[count.index - 1]
 }
 
 # Add a Edge Functions Action to the domain
