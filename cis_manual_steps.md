@@ -2,12 +2,12 @@
 This document outlines the manual steps that were needed to connect IBM CIS and Code Engine.
 
 ## 1. Adding Domain Name to CIS Instance
-Within the CIS console in the overview tab add your domain name and configure DNS records from application URL genereated from Code Engine. Two CNAME records present named `@` and `www` with their values both being the application URL. In our case, the application URL is `demo-app.9y43h3pccht.us-south.codeengine.appdomain.cloud`.
+Within the CIS console in the **Overview** tab add your domain name and configure DNS records from the application URL genereated by Code Engine and DNS records. DNS records are optional during this step and can be done later. Adding DNS records later can be done in the **Reliability** tab. In our situation we added two CNAME records named `@` and `www` with their values both being the application URL. For example, the application URL will look something like this `demo-app.9y43h3pccht.us-south.codeengine.appdomain.cloud`.
 
 ![DNS Records in CIS Console](./images/dns-records.png)
 
 ## 2. Configure Load-Balancer on CIS Instance
-On the **Reliability** page first create a HTTPS health check. Name it and select HTTPS. Configure additional properties as needed.
+On the **Reliability** page first create a HTTPS health check. Name it and select HTTPS. Configure additional properties as needed. Note that the HTTPS port is 443.
 ![Health Check](./images/health-check.png)
 
 Also on the **Reliability** page create an origin pool. Provide it a name, address, and select the health check you created. This address would be the same as the URL in the previous step. 
