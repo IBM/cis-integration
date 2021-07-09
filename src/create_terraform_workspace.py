@@ -88,43 +88,48 @@ class WorkspaceCreator:
                                                                 # workspace_wild_variable_request,
                                                                 workspace_pool_variable_request]
 
+            template_repo_request_model = {}
+            template_repo_request_model['url'] = 'https://github.ibm.com/GCAT/cis-integration/tree/terra-module'
+
             workspace_response = schematics_service.create_workspace(
                 description="Workspace for building resources for the CIS instance using terraform", 
                 name="temp-workspace",
                 template_data=[template_source_data_request_model],
+                template_repo=template_repo_request_model,
                 type=['terraform_v0.14.40'],
                 location="us-south",
                 resource_group=self.resource_group,
             ).get_result()
 
             print(Color.GREEN + 'SUCCESS: Successfully created the workspace!' + Color.END)
+
         workspace_activity_plan_result = None
         #keepgoing = True
 
-        if keepgoing:
-            terra = self.build_tar(self.app_url)
+        # if keepgoing:
+        #     terra = self.build_tar(self.app_url)
 
-            file = open(terra, "rb")
-            while keepgoing:
-                try:    
-                    template_repo_tar_upload_response = schematics_service.upload_template_tar(
-                        w_id=workspace_response["id"],
-                        t_id=workspace_response["template_data"][0]["id"],
-                        file = file,
-                        file_content_type = 'multipart/form-data'
-                    ).get_result()
-                    break
-                except ApiException as ae:
-                    if ae.http_response.status_code == 409:
-                        print('Uploading tar file...')
-                        time.sleep(2)
-                    else:
-                        print(Color.RED + "ERROR {0}: ".format(ae.http_response.status_code) + ae.message + Color.END)
-                        keepgoing = False
-                        break
+        #     file = open(terra, "rb")
+        #     while keepgoing:
+        #         try:    
+        #             template_repo_tar_upload_response = schematics_service.upload_template_tar(
+        #                 w_id=workspace_response["id"],
+        #                 t_id=workspace_response["template_data"][0]["id"],
+        #                 file = file,
+        #                 file_content_type = 'multipart/form-data'
+        #             ).get_result()
+        #             break
+        #         except ApiException as ae:
+        #             if ae.http_response.status_code == 409:
+        #                 print('Uploading tar file...')
+        #                 time.sleep(2)
+        #             else:
+        #                 print(Color.RED + "ERROR {0}: ".format(ae.http_response.status_code) + ae.message + Color.END)
+        #                 keepgoing = False
+        #                 break
 
 
-            print(Color.GREEN + "SUCCESS: Uploaded tar file!" + Color.END)
+        #     print(Color.GREEN + "SUCCESS: Uploaded tar file!" + Color.END)
 
         # Generate a plan from the imported terraform files
         while keepgoing:
@@ -310,29 +315,29 @@ class WorkspaceCreator:
         response = requests.request("GET", url, headers=headers)
         return response.text
 
-    def build_tar(self, app_url: str):
-        """
-        Builds the tar file of terraform scripts to be sent to the Schematics workspace
+    # def build_tar(self, app_url: str):
+    #     """
+    #     Builds the tar file of terraform scripts to be sent to the Schematics workspace
 
-        param: app_url is the URL of the Code Engine application
+    #     param: app_url is the URL of the Code Engine application
 
-        returns: the path to the generated file
-        """
-        path_to_script = os.path.dirname(os.path.abspath(__file__))
-        terraform_path = path_to_script + "/terraform"
-        try:
-            js_file = open(terraform_path + "/edge_function_method.js", "w")
-        except:
-            path_to_script = "./src"
-            terraform_path = path_to_script + "/terraform"
-            js_file = open(terraform_path + "/edge_function_method.js", "w")
+    #     returns: the path to the generated file
+    #     """
+    #     path_to_script = os.path.dirname(os.path.abspath(__file__))
+    #     terraform_path = path_to_script + "/terraform"
+    #     try:
+    #         js_file = open(terraform_path + "/edge_function_method.js", "w")
+    #     except:
+    #         path_to_script = "./src"
+    #         terraform_path = path_to_script + "/terraform"
+    #         js_file = open(terraform_path + "/edge_function_method.js", "w")
 
-        js_file.write("addEventListener('fetch', (event) => {\n    const mutable_request = new Request(event.request);\n    event.respondWith(redirectAndLog(mutable_request));\n});\n\nasync function redirectAndLog(request) {\n    const response = await redirectOrPass(request);\n    return response;\n}\n\nasync function getSite(request, site) {\n    const url = new URL(request.url);\n    // let our servers know what origin the request came from\n    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host\n    request.headers.set('X-Forwarded-Host', url.hostname);\n    request.headers.set('host', site);\n    url.hostname = site;\n    url.protocol = \"https:\";\n    response = fetch(url.toString(), request);\n    console.log('Got getSite Request to ' + site, response);\n    return response;\n}\n\nasync function redirectOrPass(request) {\n    const urlObject = new URL(request.url);\n\n    let response = null;\n\n    try {\n        console.log('Got MAIN request', request);\n\n        response = await getSite(request, '"+ app_url + "');\n        console.log('Got MAIN response', response.status);\n        return response;\n\n    } catch (error) {\n        // if no action found, play the regular request\n        console.log('Got Error', error);\n        return await fetch(request);\n\n    }\n\n}\n")
-        js_file.close()
+    #     js_file.write("addEventListener('fetch', (event) => {\n    const mutable_request = new Request(event.request);\n    event.respondWith(redirectAndLog(mutable_request));\n});\n\nasync function redirectAndLog(request) {\n    const response = await redirectOrPass(request);\n    return response;\n}\n\nasync function getSite(request, site) {\n    const url = new URL(request.url);\n    // let our servers know what origin the request came from\n    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host\n    request.headers.set('X-Forwarded-Host', url.hostname);\n    request.headers.set('host', site);\n    url.hostname = site;\n    url.protocol = \"https:\";\n    response = fetch(url.toString(), request);\n    console.log('Got getSite Request to ' + site, response);\n    return response;\n}\n\nasync function redirectOrPass(request) {\n    const urlObject = new URL(request.url);\n\n    let response = null;\n\n    try {\n        console.log('Got MAIN request', request);\n\n        response = await getSite(request, '"+ app_url + "');\n        console.log('Got MAIN response', response.status);\n        return response;\n\n    } catch (error) {\n        // if no action found, play the regular request\n        console.log('Got Error', error);\n        return await fetch(request);\n\n    }\n\n}\n")
+    #     js_file.close()
 
-        with tarfile.open(path_to_script + '/terra.tar', "w") as tar:
-            tar.add(terraform_path, arcname="terra")
-        return path_to_script + '/terra.tar'
+    #     with tarfile.open(path_to_script + '/terra.tar', "w") as tar:
+    #         tar.add(terraform_path, arcname="terra")
+    #     return path_to_script + '/terra.tar'
 
     def request_token(self, apikey: str):
         """
