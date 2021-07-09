@@ -37,7 +37,3 @@ variable cis_domain {
     error_message = "This is not a valid domain name for the CIS Instance."
   }
 }
-variable action_name {
-    type = string
-    description = "Name for the Edge Function Action."
-}
