@@ -104,6 +104,16 @@ Example usage
 ```
 cis-integration code-engine --env
 ```
+
+### Deleting created resources with the `--delete` option
+If you decide to delete the resources you've created using this tool, the `--delete` global option is available to you. The global load balancer, origin pool, health check, DNS records, TLS certificate(s), edge function, and (by adding --terraform to the command) the Schematics workspace(s) created by this tool may be deleted. Use the following generic example to format the command:
+```
+cis-integration code-engine --delete -c [CIS CRN] -z [CIS ID] -d [CIS DOMAIN]
+```
+You will prompted at each stage to confirm the deletion of the selected resource(s). Input 'y' or 'yes' to confirm (NOT case sensitive). 
+
+If you created your resources using the `--terraform` global option, then a Schematics workspace was created on your IBM Cloud account to execute the terraform scripts that built your resources. By adding the `--terraform` option to the `--delete` command, you can delete this workspace along with the rest of the resources.
+
 ## Resources
 - [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
 - [Deploy Code Engine application](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800)
