@@ -5,4 +5,5 @@ module ibm_cis_integration {
     app_url = var.app_url
     cis_domain = var.cis_domain
     ibmcloud_api_key = var.ibmcloud_api_key
+    pool_name = var.pool_name
 }

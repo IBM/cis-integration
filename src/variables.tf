@@ -27,3 +27,8 @@ variable cis_domain {
     description     = "The domain of the CIS instance that is to be connected."
     type            = string
 }
+
+variable pool_name {
+    description = "Name of the pool attached to the CIS Instance"
+    type = string
+}
