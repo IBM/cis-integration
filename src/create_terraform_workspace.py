@@ -59,10 +59,6 @@ class WorkspaceCreator:
             workspace_domain_variable_request['name'] = 'cis_domain'
             workspace_domain_variable_request['value'] = self.cis_domain
 
-            workspace_action_variable_request = {}
-            workspace_action_variable_request['name'] = 'action_name'
-            workspace_action_variable_request['value'] = self.cis_domain.replace('.', '-')
-
             workspace_pool_variable_request = {}
             workspace_pool_variable_request['name'] = 'pool_name'
             workspace_pool_variable_request['value'] = pool_name
@@ -75,7 +71,6 @@ class WorkspaceCreator:
                                                                 workspace_cis_name_variable_request,
                                                                 workspace_app_url_variable_request,
                                                                 workspace_domain_variable_request,
-                                                                workspace_action_variable_request,
                                                                 workspace_pool_variable_request]
 
             template_repo_request_model = {}
@@ -89,7 +84,7 @@ class WorkspaceCreator:
                 type=['terraform_v0.14.40'],
                 location="us-south",
                 resource_group=self.resource_group,
-                x_github_token="8ac87c2ec94205579a0e9c1b537a3a854ae1a535"
+                x_github_token="[GITHUB PAT]"
             ).get_result()
 
             print(Color.GREEN + 'SUCCESS: Successfully created the workspace!' + Color.END)
