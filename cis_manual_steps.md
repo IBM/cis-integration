@@ -56,6 +56,7 @@ async function redirectOrPass(request) {
         console.log('Got Error', error);
         return await fetch(request);
     }
+}
 ```
 where APP_URL is the URL of your Code Engine application.
 
