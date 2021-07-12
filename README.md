@@ -42,6 +42,16 @@ Once in the project directoy run the install script. If a permission error is en
 $ ./install.sh
 ```
 
+#### Uninstall Option `--uninstall` and `-u`
+If you decided to install directly onto your machine and wish to uninstall the gathered dependencies and resources you can specify the `--uninstall` or `-u` argument. This will remove everything that was installed onto your computer and will ask you to confirm before it continues. Below are examples on how you would use this command:
+```
+cis-integration --uninstall
+```
+or
+```
+ci -u
+```
+
 ## Usage
 For general information on how to use the tool, run the following command in the terminal on your computer: 
 ```
