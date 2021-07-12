@@ -21,4 +21,42 @@ In the **Security** tab in CIS either upload or order the needed edge certificat
 ![Edge Certificates](./images/edge-certificates.png)
 
 ## 4. Edge Functions
-Now edge functions (action and triggers) are added on the **Edge Functions** tab in CIS. First create an action. Second create a trigger that maps your applcations hostname with an action. For your trigge URL append `/*` to the end. For example, in our case the hostname would be `gcat-interns-rock.com/*`. Select the action you just created. 
+Now edge functions (action and triggers) are added on the **Edge Functions** tab in CIS. First create an action with the following javascript code:
+```
+addEventListener('fetch', (event) => {
+    const mutable_request = new Request(event.request);
+    event.respondWith(redirectAndLog(mutable_request));
+});
+async function redirectAndLog(request) {
+    const response = await redirectOrPass(request);
+    return response;
+}
+async function getSite(request, site) {
+    const url = new URL(request.url);
+    // let our servers know what origin the request came from
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host
+    request.headers.set('X-Forwarded-Host', url.hostname);
+    request.headers.set('host', site);
+    url.hostname = site;
+    url.protocol = "https:";
+    response = fetch(url.toString(), request);
+    console.log('Got getSite Request to ' + site, response);
+    return response;
+}
+async function redirectOrPass(request) {
+    const urlObject = new URL(request.url);
+    let response = null;
+    try {
+        console.log('Got MAIN request', request);
+        response = await getSite(request, APP_URL);
+        console.log('Got MAIN response', response.status);
+        return response;
+    } catch (error) {
+        // if no action found, play the regular request
+        console.log('Got Error', error);
+        return await fetch(request);
+    }
+```
+where APP_URL is the URL of your Code Engine application.
+
+Second, create a trigger that maps your applcations hostname with an action. For your trigger URL append `/*` to the end. For example, in our case the hostname would be `gcat-interns-rock.com/*`. Select the action you just created. 
