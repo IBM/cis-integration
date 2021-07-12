@@ -60,4 +60,4 @@ async function redirectOrPass(request) {
 ```
 where APP_DOMAIN is the hostname of your Code Engine application.
 
-Second, create a trigger that maps your applcations hostname with an action. For your trigger URL append `/*` to the end. For example, in our case the hostname would be `gcat-interns-rock.com/*`. Select the action you just created. 
+Second, create a trigger that maps your applications hostname with an action. For example, in our case the hostname would be `gcat-interns-rock.com`. Select the action you just created. 
