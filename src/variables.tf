@@ -1,5 +1,5 @@
 variable TF_VERSION {
-    default         = "0.13"
+    default         = "0.14"
     description     = "The version of Terraform that's used in the Schematics workspace."
 }
 
