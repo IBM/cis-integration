@@ -48,7 +48,7 @@ async function redirectOrPass(request) {
     let response = null;
     try {
         console.log('Got MAIN request', request);
-        response = await getSite(request, APP_URL);
+        response = await getSite(request, APP_DOMAIN);
         console.log('Got MAIN response', response.status);
         return response;
     } catch (error) {
@@ -58,6 +58,6 @@ async function redirectOrPass(request) {
     }
 }
 ```
-where APP_URL is the URL of your Code Engine application.
+where APP_DOMAIN is the hostname of your Code Engine application.
 
 Second, create a trigger that maps your applcations hostname with an action. For your trigger URL append `/*` to the end. For example, in our case the hostname would be `gcat-interns-rock.com/*`. Select the action you just created. 
