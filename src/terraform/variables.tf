@@ -37,7 +37,13 @@ variable cis_domain {
     error_message = "This is not a valid domain name for the CIS Instance."
   }
 }
-variable action_name {
+
+variable pool_name {
     type = string
-    description = "Name for the Edge Function Action."
+    description = "Name of the pool attached to the CIS Instance"
+    validation {
+      #regex(...) fails if it cannot find a match
+    condition     = can(regex("default-pool-{0,1}[0-9]*", var.pool_name))
+    error_message = "This is not a valid pool-name for the CIS Instance."
+    }
 }

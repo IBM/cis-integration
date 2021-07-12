@@ -1,5 +1,8 @@
 import requests
 import sys
+from ibm_platform_services import ResourceControllerV2
+from ibm_cloud_networking_services import ZonesV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 class Color:
    PURPLE = '\033[95m'
@@ -88,4 +91,28 @@ class IntegrationInfo:
             self.app_url=env_vars["APP_URL"]
             self.cis_api_key=env_vars["CIS_SERVICES_APIKEY"]
             self.api_endpoint=env_vars["API_ENDPOINT"]
+    
+    def get_crn_and_zone(self) -> bool:
+        '''
+        Returns the True if the cis instance information was found
+        '''
+        authenticator = IAMAuthenticator(self.cis_api_key)
+        controller = ResourceControllerV2(authenticator=authenticator)
+        resource_list = controller.list_resource_instances(name=self.cis_name, type="service_instance").get_result()
+        if len(resource_list["resources"]) > 0:
+            for resource in resource_list["resources"]:
+                if resource["name"] == self.cis_name:
+                    self.crn = resource["id"]
+        else:
+            print(Color.RED + "ERROR: Could not find a CIS instance with the name " + self.cis_name + Color.END)
+            return False
+        zone = ZonesV1.new_instance(
+            crn=self.crn, service_name="cis_services"
+        )
+        zone.set_service_url(self.api_endpoint) # change to var
+        zone_response = zone.list_zones().get_result()
+        for z in zone_response["result"]:
+            if z["name"] == self.cis_domain:
+                self.zone_id = z["id"]
+        return True
    

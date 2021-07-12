@@ -42,6 +42,16 @@ Once in the project directoy run the install script. If a permission error is en
 $ ./install.sh
 ```
 
+#### Uninstall Option `--uninstall` and `-u`
+If you decided to install directly onto your machine and wish to uninstall the gathered dependencies and resources you can specify the `--uninstall` or `-u` argument. This will remove everything that was installed onto your computer and will ask you to confirm before it continues. Below are examples on how you would use this command:
+```
+cis-integration --uninstall
+```
+or
+```
+ci -u
+```
+
 ## Usage
 For general information on how to use the tool, run the following command in the terminal on your computer: 
 ```
@@ -58,9 +68,14 @@ Regardless of the option you choose, the tool will require you to input some inf
 3. If you're using Docker, build and run your Docker image with the above commands
 4. Input the following generic command:
 ```
-$ cis-integration code-engine -c [CIS CRN] -z [CIS ID] -d [CIS DOMAIN] -a [CODE ENGINE APP URL]
+$ cis-integration code-engine -n [CIS NAME] -d [CIS DOMAIN] -a [CODE ENGINE APP URL]
+```
+An alternative command is also available:
+```
+$ cis-integration code-engine -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [CODE ENGINE APP URL]
 ```
 ### Arguments:
+* **CIS NAME:** the name of your CIS instance.
 * **CIS CRN:** the cloud resource name (CRN) of your CIS instance. Found in the "Overview" tab of your CIS resource page. 
     Example: `crn:v1:test:public:internet-svcs:global:a/2c38d9a9913332006a27665dab3d26e8:836f33a5-d3e1-4bc6-876a-982a8668b1bb::`
 * **CIS ID:** the ID associated with your CIS instance. Found in the "Overview" tab of your CIS resource page under "Domain ID". 
@@ -106,9 +121,13 @@ cis-integration code-engine --env
 ```
 
 ### Deleting created resources with the `--delete` option
-If you decide to delete the resources you've created using this tool, the `--delete` global option is available to you. The global load balancer, origin pool, health check, DNS records, TLS certificate(s), edge function, and (by adding --terraform to the command) the Schematics workspace(s) created by this tool may be deleted. Use the following generic example to format the command:
+If you decide to delete the resources you've created using this tool, the `--delete` global option is available to you. The global load balancer, origin pool, health check, DNS records, TLS certificate(s), edge function, and (by adding --terraform to the command) the Schematics workspace(s) created by this tool may be deleted. Use the following generic examples to format the command:
 ```
-cis-integration code-engine --delete -c [CIS CRN] -z [CIS ID] -d [CIS DOMAIN]
+cis-integration code-engine --delete -n [CIS NAME] -d [CIS DOMAIN]
+```
+or
+```
+cis-integration code-engine --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]
 ```
 You will prompted at each stage to confirm the deletion of the selected resource(s). Input 'y' or 'yes' to confirm (NOT case sensitive). 
 

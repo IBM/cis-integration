@@ -29,9 +29,11 @@ def print_help():
     print("\t- call this tool with either 'cis-integration' or 'ci'\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[python implementation]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [APP URL] ")
-    print("\t[terraform implementation]\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]\n")
-    print("\t[removing resources]\t\tcis-integration [positional args] [global options] --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]\n")
+    print("\t[python command]\t\tcis-integration [positional args] [global options] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]")
+    print("\t[alt python command]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [APP URL] \n")
+    print("\t[terraform command]\t\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]\n")
+    print("\t[delete command]\t\tcis-integration [positional args] [global options] --delete -n [CIS NAME] -d [CIS DOMAIN]")
+    print("\t[alt delete command]\t\tcis-integration [positional args] [global options] --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]\n")
 
     print(Color.BOLD + "POSITIONAL ARGUMENTS:" + Color.END)
     print("\tcode-engine, ce \t\t connect a Code Engine app\n")
@@ -73,6 +75,22 @@ def handle_args(args):
         UserInfo.read_envfile("credentials.env")
         return UserInfo
 
+    # determining API key 
+    UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
+    os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
+    
+    # common arguments
+    
+    if not UserInfo.delete:
+        UserInfo.app_url = args.app_url
+        if UserInfo.app_url is None:
+            print("You did not specify an application URL.")
+            sys.exit(1)
+
+    UserInfo.cis_domain = args.cis_domain
+    if UserInfo.cis_domain is None:
+        print("You did not specify a CIS Domain.")
+        sys.exit(1)
 
     # terraforming vs. not terraforming
     if UserInfo.terraforming and not UserInfo.delete:
@@ -86,39 +104,29 @@ def handle_args(args):
         if UserInfo.cis_name is None:
             print("You did not specify a CIS Name.")
             sys.exit(1)
+
+        if not UserInfo.get_crn_and_zone():
+                print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
+                sys.exit(1)
         
     else:
         UserInfo.crn=args.crn
-        if UserInfo.crn is None:
-            print("You did not specify a CIS CRN.")
-            sys.exit(1)
-
         UserInfo.zone_id = args.zone_id
-        if UserInfo.zone_id is None:
-            print("You did not specify a CIS Zone_ID.")
-            sys.exit(1)
-    
-    # common arguments
-    
-    UserInfo.cis_domain = args.cis_domain
-    if UserInfo.cis_domain is None:
-        print("You did not specify a CIS Domain.")
-        sys.exit(1)
-    
-    if not UserInfo.delete:
-        UserInfo.app_url = args.app_url
-        if UserInfo.app_url is None:
-            print("You did not specify a application URL.")
-            sys.exit(1)
+        if UserInfo.crn is None or UserInfo.zone_id is None:
+            UserInfo.cis_name = args.name
         
-    # determining API key and creating the .env file
-    UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
+            if UserInfo.cis_name is None:
+                print("Please specify the name of your CIS instance or both the CIS CRN and CIS Zone ID")
+                sys.exit(1)
+
+            if not UserInfo.get_crn_and_zone():
+                print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
+                sys.exit(1)
 
     return UserInfo
 
 def CodeEngine(args):
-    UserInfo = handle_args(args)
-    os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
+    UserInfo = handle_args(args)  
 
     if UserInfo.delete:
         delete_glb = DeleteGLB(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
@@ -138,7 +146,7 @@ def CodeEngine(args):
             delete_workspaces.delete_workspace()
 
     elif UserInfo.terraforming: # handle the case of using terraform
-        work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint, UserInfo.verbose)
+        work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint, UserInfo.crn, UserInfo.zone_id, UserInfo.verbose)
         work_creator.create_terraform_workspace()
     else: # handle the case of using python
         # 1. Domain Name and DNS
@@ -162,10 +170,11 @@ def CodeEngine(args):
         userEdgeFunction.create_edge_function_wild_card_trigger()
         userEdgeFunction.create_edge_function_www_trigger()
 
-    hostUrl="https://"+UserInfo.cis_domain
+    if not UserInfo.delete:
+        hostUrl="https://"+UserInfo.cis_domain
 
-    healthCheck(hostUrl)
+        healthCheck(hostUrl)
 
-    hostUrl="https://www."+UserInfo.cis_domain
+        hostUrl="https://www."+UserInfo.cis_domain
 
-    healthCheck(hostUrl)
+        healthCheck(hostUrl)
