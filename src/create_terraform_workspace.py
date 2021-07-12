@@ -55,13 +55,13 @@ class WorkspaceCreator:
             workspace_app_url_variable_request['name'] = 'app_url'
             workspace_app_url_variable_request['value'] = self.app_url
 
-            workspace_www_variable_request = {}
-            workspace_www_variable_request['name'] = 'www_domain'
-            workspace_www_variable_request['value'] = 'www.' + self.cis_domain
+            # workspace_www_variable_request = {}
+            # workspace_www_variable_request['name'] = 'www_domain'
+            # workspace_www_variable_request['value'] = 'www.' + self.cis_domain
 
-            workspace_wild_variable_request = {}
-            workspace_wild_variable_request['name'] = 'wild_domain'
-            workspace_wild_variable_request['value'] = '*.' + self.cis_domain
+            # workspace_wild_variable_request = {}
+            # workspace_wild_variable_request['name'] = 'wild_domain'
+            # workspace_wild_variable_request['value'] = '*.' + self.cis_domain
 
             workspace_domain_variable_request = {}
             workspace_domain_variable_request['name'] = 'cis_domain'
@@ -83,9 +83,9 @@ class WorkspaceCreator:
                                                                 workspace_cis_name_variable_request,
                                                                 workspace_app_url_variable_request,
                                                                 workspace_domain_variable_request,
-                                                                workspace_www_variable_request,
+                                                                # workspace_www_variable_request,
                                                                 workspace_action_variable_request,
-                                                                workspace_wild_variable_request,
+                                                                # workspace_wild_variable_request,
                                                                 workspace_pool_variable_request]
 
             workspace_response = schematics_service.create_workspace(
