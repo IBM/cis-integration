@@ -43,7 +43,7 @@ $ ./install.sh
 ```
 
 #### Uninstall Option `--uninstall` and `-u`
-If you decided to install directly onto your machine and wish to uninstall the gathered depencies and resources you can specify the `--uninstall` or `-u` argument. This will remove everything that was installed onto your computer and will ask you to confrim before it continues. Below are examples on how you would use this command:
+If you decided to install directly onto your machine and wish to uninstall the gathered dependencies and resources you can specify the `--uninstall` or `-u` argument. This will remove everything that was installed onto your computer and will ask you to confirm before it continues. Below are examples on how you would use this command:
 ```
 cis-integration --uninstall
 ```
