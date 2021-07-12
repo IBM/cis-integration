@@ -31,7 +31,7 @@ resource "ibm_cis_domain_settings" "test" {
 resource ibm_cis_certificate_order test {
     cis_id    = data.ibm_cis.cis_instance.id          
     domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id  
-    hosts     = [var.cis_domain, var.wild_domain]   
+    hosts     = [var.cis_domain, "*.${var.cis_domain}"]   
 }
 
 # Creating the monitor (health check) resource using Terraform
@@ -89,15 +89,59 @@ resource ibm_cis_edge_functions_trigger action_trigger{
   cis_id      = ibm_cis_edge_functions_action.test_action.cis_id
   domain_id   = ibm_cis_edge_functions_action.test_action.domain_id
   action_name = ibm_cis_edge_functions_action.test_action.action_name
-  pattern_url = local.trigger_urls[count.index-1]
+  pattern_url = local.trigger_urls[count.index]
 }
 
 # Add a Edge Functions Action to the domain
 resource "ibm_cis_edge_functions_action" "test_action" {
   cis_id      = data.ibm_cis.cis_instance.id
   domain_id   = data.ibm_cis_domain.cis_instance_domain.domain_id
-  action_name = var.action_name # change . to - in cis_domain
-  script      = file("./edge_function_method.js")
+  action_name = replace(var.cis_domain, ".", "-") # change . to - in cis_domain
+  script      = <<EOT
+addEventListener('fetch', (event) => {
+    const mutable_request = new Request(event.request);
+    event.respondWith(redirectAndLog(mutable_request));
+});
+
+async function redirectAndLog(request) {
+    const response = await redirectOrPass(request);
+    return response;
+}
+
+async function getSite(request, site) {
+    const url = new URL(request.url);
+    // let our servers know what origin the request came from
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host
+    request.headers.set('X-Forwarded-Host', url.hostname);
+    request.headers.set('host', site);
+    url.hostname = site;
+    url.protocol = "https:";
+    response = fetch(url.toString(), request);
+    console.log('Got getSite Request to ' + site, response);
+    return response;
+}
+
+async function redirectOrPass(request) {
+    const urlObject = new URL(request.url);
+
+    let response = null;
+
+    try {
+        console.log('Got MAIN request', request);
+
+        response = await getSite(request, '${var.app_url}');
+        console.log('Got MAIN response', response.status);
+        return response;
+
+    } catch (error) {
+        // if no action found, play the regular request
+        console.log('Got Error', error);
+        return await fetch(request);
+
+    }
+
+}
+EOT
 }
 
 data ibm_resource_group group {
