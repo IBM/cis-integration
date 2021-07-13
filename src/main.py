@@ -37,6 +37,7 @@ def main():
 
     #created iks sub-command as an example for to structure the next platform
     ks_parser = subparsers.add_parser("iks", aliases=['ks'], add_help=False)
+    ks_parser.add_argument("-h","--help", action="store_true")
     ks_parser.add_argument("-a")
     ks_parser.add_argument("-b")
     ks_parser.add_argument("-c")

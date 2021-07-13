@@ -32,6 +32,50 @@ def handle_args(args):
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
 
+    # common arguments
+    
+    if not UserInfo.delete:
+        UserInfo.cluster_id = args.cluster_id
+        if UserInfo.cluster_id is None:
+            print("You did not specify a IKS cluster ID.")
+            sys.exit(1)
+
+    UserInfo.cis_domain = args.cis_domain
+    if UserInfo.cis_domain is None:
+        print("You did not specify a CIS Domain.")
+        sys.exit(1)
+    
+    # terraforming vs. not terraforming
+    if UserInfo.terraforming and not UserInfo.delete:
+        UserInfo.resource_group = args.resource_group
+        if UserInfo.resource_group is None:         
+            print("You did not specify a resource group.")
+            sys.exit(1)
+        
+        
+        UserInfo.cis_name = args.name
+        if UserInfo.cis_name is None:
+            print("You did not specify a CIS Name.")
+            sys.exit(1)
+
+        if not UserInfo.get_crn_and_zone():
+                print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
+                sys.exit(1)
+        
+    else:
+        UserInfo.crn=args.crn
+        UserInfo.zone_id = args.zone_id
+        if UserInfo.crn is None or UserInfo.zone_id is None:
+            UserInfo.cis_name = args.name
+        
+            if UserInfo.cis_name is None:
+                print("Please specify the name of your CIS instance or both the CIS CRN and CIS Zone ID")
+                sys.exit(1)
+
+            if not UserInfo.get_crn_and_zone():
+                print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
+                sys.exit(1)
+
     return UserInfo
 
 def iks(args):
