@@ -68,11 +68,11 @@ Regardless of the option you choose, the tool will require you to input some inf
 3. If you're using Docker, build and run your Docker image with the above commands
 4. Input the following generic command:
 ```
-$ cis-integration code-engine -n [CIS NAME] -d [CIS DOMAIN] -a [CODE ENGINE APP URL]
+$ cis-integration code-engine -n [CIS NAME] -d [CIS DOMAIN] -a [CODE ENGINE APP DOMAIN]
 ```
 An alternative command is also available:
 ```
-$ cis-integration code-engine -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [CODE ENGINE APP URL]
+$ cis-integration code-engine -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [CODE ENGINE APP DOMAIN]
 ```
 ### Arguments:
 * **CIS NAME:** the name of your CIS instance.
@@ -82,7 +82,7 @@ $ cis-integration code-engine -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [
     Example: `ae3445ji01b31lvi934jlaef09fad1lc`
 * **CIS DOMAIN:** the domain name connected to your CIS instance. Found near the top of your CIS resource page. 
     Example: `example.com`
-* **CODE ENGINE APP URL:** the URL of your Code Engine application. Found by navigating to your Code Engine application page and clicking on "Open application URL". 
+* **CODE ENGINE APP DOMAIN:** the hostname of your Code Engine application. Found by navigating to your Code Engine application page and clicking on "Open application URL". 
     Example: `example-app.8jl3icnad39.us-south.codeengine.appdomain.cloud`
 
 ### To deploy resources using Terraform scripts:
@@ -91,14 +91,14 @@ $ cis-integration code-engine -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [
 3. If you're using Docker, build and run your Docker image with the above commands
 4. Input the following generic command:
 ```
-$ cis-integration code-engine --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [CODE ENGINE APP URL]
+$ cis-integration code-engine --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [CODE ENGINE APP DOMAIN]
 ```
 ### Arguments:
 * **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
 * **CIS NAME:** the name of your CIS instance.
 * **CIS DOMAIN:** the domain name connected to your CIS instance. Found near the top of your CIS resource page. 
     Example: `example.com`
-* **CODE ENGINE APP URL:** the URL of your Code Engine application. Found by navigating to your Code Engine application page and clicking on "Open application URL". 
+* **CODE ENGINE APP DOMAIN:** the hostname of your Code Engine application. Found by navigating to your Code Engine application page and clicking on "Open application URL". 
     Example: `example-app.8jl3icnad39.us-south.codeengine.appdomain.cloud`
 
 **Note:** For the origin pool, origin name, and health check resources, this tool builds them using generic names. If you would like to change these later, navigate to the "Reliability" tab of your CIS instance and click on the "Global load balancers" tab. You can find your origin pools and health checks here and edit them manually.
@@ -112,7 +112,7 @@ API_ENDPOINT="https://api.cis.cloud.ibm.com"
 CIS_SERVICES_APIKEY="<YOUR_CIS_SERVICES_APIKEY>"
 CIS_NAME="<CIS_INSTANCE_NAME>"
 RESOURCE_GROUP="<YOUR_IBM_CLOUD_RESOURCE_GROUP>"
-APP_URL="<CODE_ENGINE_APP_URL>"
+APP_DOMAIN="<CODE_ENGINE_APP_DOMAIN>"
 CIS_DOMAIN="<DOMAIN_NAME>"
 ```
 Example usage

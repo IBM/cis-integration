@@ -29,9 +29,9 @@ def print_help():
     print("\t- call this tool with either 'cis-integration' or 'ci'\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[python command]\t\tcis-integration [positional args] [global options] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]")
-    print("\t[alt python command]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [APP URL] \n")
-    print("\t[terraform command]\t\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]\n")
+    print("\t[python command]\t\tcis-integration [positional args] [global options] -n [CIS NAME] -d [CIS DOMAIN] -a [APP DOMAIN]")
+    print("\t[alt python command]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [APP DOMAIN] \n")
+    print("\t[terraform command]\t\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP DOMAIN]\n")
     print("\t[delete command]\t\tcis-integration [positional args] [global options] --delete -n [CIS NAME] -d [CIS DOMAIN]")
     print("\t[alt delete command]\t\tcis-integration [positional args] [global options] --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]\n")
 
@@ -49,7 +49,7 @@ def print_help():
     print("\t--crn, -c \t\t CRN of the CIS instance")
     print("\t--zone_id, -z \t\t Zone ID of the CIS instance")
     print("\t--cis_domain, -d \t domain name of the CIS instance")
-    print("\t--app_url, -a \t\t URL of the application")
+    print("\t--app, -a \t\t hostname of the application")
     print("\t--resource_group, -r \t resource group associated with the CIS instance")
     print("\t--name, -n \t\t name of the CIS instance")
 
@@ -82,9 +82,9 @@ def handle_args(args):
     # common arguments
     
     if not UserInfo.delete:
-        UserInfo.app_url = args.app_url
+        UserInfo.app_url = args.app
         if UserInfo.app_url is None:
-            print("You did not specify an application URL.")
+            print("You did not specify an application domain.")
             sys.exit(1)
 
     UserInfo.cis_domain = args.cis_domain
