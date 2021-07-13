@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 from src.codeEngine import CodeEngine
+from src.iks import iks
 import subprocess
 
 def execute(cmd):
@@ -60,6 +61,7 @@ def main():
 
     elif args.command=="iks" or args.command=="ks":
         print("running iks command")
+        iks(args)
 
 if __name__ == "__main__":
     main()
