@@ -62,7 +62,7 @@ class WorkspaceCreator:
 
             template_source_data_request_model = {}
             
-            template_source_data_request_model['type'] = 'terraform_v0.14.40'
+            template_source_data_request_model['type'] = 'terraform_v0.13.00'
             template_source_data_request_model['variablestore'] = [workspace_apikey_variable_request,
                                                                 workspace_resource_group_variable_request,
                                                                 workspace_cis_name_variable_request,
@@ -78,7 +78,7 @@ class WorkspaceCreator:
                 name="temp-workspace",
                 template_data=[template_source_data_request_model],
                 template_repo=template_repo_request_model,
-                type=['terraform_v0.14.40'],
+                type=['terraform_v0.13.00'],
                 location="us-south",
                 resource_group=self.resource_group,
             ).get_result()
