@@ -11,7 +11,6 @@ class SecretCertificateCreator:
         self.token = self.request_token(self.apikey)
 
     def create_certificate(self):
-        print("hello")
         cert_url = "https://containers.cloud.ibm.com/global/ingress/v2/secret/createSecret"
         
         # Creating the data required for the request
@@ -31,6 +30,12 @@ class SecretCertificateCreator:
         }
 
         cert_response = requests.request("POST", url=cert_url, headers=cert_headers, data=cert_data)
+        
+        if cert_response.status_code == 200:
+            print(Color.GREEN+"SUCCESS: Created TLS certificate for IKS"+Color.END)
+        else:
+            print(Color.RED+"ERROR: Failed to create TLS certificate for IKS with error code " + str(cert_response.status_code) + Color.END)
+
         return cert_response
     
     def request_token(self, apikey: str):
