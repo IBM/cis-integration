@@ -53,7 +53,7 @@ class IntegrationInfo:
     crn = ''
     zone_id = ''
     api_endpoint = 'https://api.cis.cloud.ibm.com'
-    cluster_id = ''
+    iks_cluster_id = ''
     app_url = ''
     resource_group = ''
     cis_name = ''
@@ -110,19 +110,20 @@ class IntegrationInfo:
             self.token = requests.post(url=url, data=data, headers=headers)
             return self.token.json()
 
-    def get_iks_info(self, token: str):
+    def get_iks_info(self):
 
-        url = "https://containers.cloud.ibm.com/global/v1/nlb-dns/clusters/" + self.cluster_id + "/list"
+        url = "https://containers.cloud.ibm.com/global/v1/nlb-dns/clusters/" + self.iks_cluster_id + "/list"
 
         headers = {
         'Accept': 'application/json',
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + self.token.json()["access_token"]
         }
 
-        response = requests.request("GET", url, headers=headers)
+        response = requests.request("GET", url, headers=headers).json()
 
-        print(response.text)
-
+        for cluster in response["nlbs"]:
+            if cluster["clusterID"] == self.iks_cluster_id:
+                self.app_url = cluster["nlbHost"]
         return response
 
 

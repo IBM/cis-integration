@@ -33,12 +33,15 @@ def handle_args(args):
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
 
     # common arguments
-    
+    UserInfo.request_token()
+
     if not UserInfo.delete:
-        UserInfo.cluster_id = args.cluster_id
-        if UserInfo.cluster_id is None:
-            print("You did not specify a IKS cluster ID.")
+        UserInfo.iks_cluster_id = args.iks_cluster_id
+        if UserInfo.iks_cluster_id is None:
+            print("You did not specify an IKS cluster ID.")
             sys.exit(1)
+
+    iks_info = UserInfo.get_iks_info()
 
     UserInfo.cis_domain = args.cis_domain
     if UserInfo.cis_domain is None:
