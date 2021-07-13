@@ -71,7 +71,7 @@ class WorkspaceCreator:
                                                                 workspace_pool_variable_request]
 
             template_repo_request_model = {}
-            template_repo_request_model['url'] = 'https://github.ibm.com/GCAT/cis-integration/tree/terra-module/src'
+            template_repo_request_model['url'] = 'https://github.com/IBM/cis-integration/tree/master/src'
 
             workspace_response = schematics_service.create_workspace(
                 description="Workspace for building resources for the CIS instance using terraform", 
@@ -81,7 +81,6 @@ class WorkspaceCreator:
                 type=['terraform_v0.14.40'],
                 location="us-south",
                 resource_group=self.resource_group,
-                x_github_token="[GITHUB PAT]"
             ).get_result()
 
             print(Color.GREEN + 'SUCCESS: Successfully created the workspace!' + Color.END)
