@@ -46,12 +46,16 @@ def main():
         #removes the ci and cis-integration command from system
         confirm = input("Are you sure you wish to uninstall? (y/n): ").lower()
         if confirm == 'y' or confirm == 'yes':
-            bash_cmd = "pip3 uninstall -y -r requirements.txt"
-            for item in execute(bash_cmd):
-                print(item, end="")
-            if os.path.isfile("/usr/local/bin/cis-integration") and os.path.isfile("/usr/local/bin/ci"):
-                os.remove("/usr/local/bin/cis-integration")
-                os.remove("/usr/local/bin/ci")
+            try:
+                bash_cmd = "pip3 uninstall -y -r requirements.txt"
+                for item in execute(bash_cmd):
+                    print(item, end="")
+            except Exception as e:
+                print(e)
+            else:
+                if os.path.isfile("/usr/local/bin/cis-integration") and os.path.isfile("/usr/local/bin/ci"):
+                    os.remove("/usr/local/bin/cis-integration")
+                    os.remove("/usr/local/bin/ci")
         else:
             sys.exit(1)
 
