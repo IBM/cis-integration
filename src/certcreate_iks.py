@@ -3,12 +3,12 @@ from src.functions import Color as Color
 
 class SecretCertificateCreator:
 
-    def __init__(self, cluster_id, cert_manager_crn, cert_name, apikey):
+    def __init__(self, cluster_id, cert_manager_crn, cert_name, apikey, token):
         self.cluster_id = cluster_id
         self.cert_manager_crn = cert_manager_crn
         self.cert_name = cert_name
         self.apikey = apikey
-        self.token = self.request_token(self.apikey)
+        self.token = token
 
     def create_certificate(self):
         cert_url = "https://containers.cloud.ibm.com/global/ingress/v2/secret/createSecret"
@@ -38,6 +38,7 @@ class SecretCertificateCreator:
 
         return cert_response
     
+    '''
     def request_token(self, apikey: str):
         """
         Requests an access token for the client so that we can execute the plan and apply commands in
@@ -53,3 +54,4 @@ class SecretCertificateCreator:
         url="https://iam.cloud.ibm.com/identity/token"
         token = requests.post(url=url, data=data, headers=headers)
         return token.json()["access_token"]
+    '''
