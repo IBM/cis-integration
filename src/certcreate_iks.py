@@ -32,9 +32,9 @@ class SecretCertificateCreator:
         cert_response = requests.request("POST", url=cert_url, headers=cert_headers, data=cert_data)
         
         if cert_response.status_code == 200:
-            print(Color.GREEN+"SUCCESS: Created TLS certificate for IKS"+Color.END)
+            print(Color.GREEN+"SUCCESS: Created secret for IKS"+Color.END)
         else:
-            print(Color.RED+"ERROR: Failed to create TLS certificate for IKS with error code " + str(cert_response.status_code) + Color.END)
+            print(Color.RED+"ERROR: Failed to create secret for IKS with error code " + str(cert_response.status_code) + Color.END)
 
         return cert_response
     
