@@ -6,7 +6,6 @@ cffi==1.14.5
 cfgv==3.3.0
 chardet==4.0.0
 cryptography==3.4.7
-detect-secrets @ git+https://github.com/ibm/detect-secrets.git@706ee1d2d03a45f105ed9d906fb10881f48726d1
 distlib==0.3.2
 filelock==3.0.12
 ibm-cloud-networking-services==0.6.0
