@@ -88,10 +88,15 @@ def iks(args):
         delete_dns.delete_dns()
 
         if UserInfo.terraforming:
-            delete_workspaces = DeleteWorkspace(UserInfo.schematics_url, UserInfo.cis_api_key)
+            delete_workspaces = DeleteWorkspace(UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
             delete_workspaces.delete_workspace()
     elif UserInfo.terraforming: # handle the case of using terraform
-        work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint, UserInfo.crn, UserInfo.zone_id, UserInfo.verbose)
+        work_creator = WorkspaceCreator(
+            UserInfo.cis_api_key, UserInfo.schematics_url, 
+            UserInfo.app_url, UserInfo.cis_domain, 
+            UserInfo.resource_group, UserInfo.cis_name, 
+            UserInfo.api_endpoint, UserInfo.crn, 
+            UserInfo.zone_id, UserInfo.verbose, UserInfo.token)
         work_creator.create_terraform_workspace()
     else:
         # handle the case of using python

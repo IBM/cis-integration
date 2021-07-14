@@ -107,8 +107,8 @@ class IntegrationInfo:
                     'Content-type': 'application/x-www-form-urlencoded',
                     'Authorization': 'Basic Yng6Yng='}
             url="https://iam.cloud.ibm.com/identity/token"
-            self.token = requests.post(url=url, data=data, headers=headers)
-            return self.token.json()
+            self.token = requests.post(url=url, data=data, headers=headers).json()
+            return self.token
 
     def get_iks_info(self):
 
@@ -116,7 +116,7 @@ class IntegrationInfo:
 
         headers = {
         'Accept': 'application/json',
-        'Authorization': 'Bearer ' + self.token.json()["access_token"]
+        'Authorization': 'Bearer ' + self.token["access_token"]
         }
 
         response = requests.request("GET", url, headers=headers).json()
