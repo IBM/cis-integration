@@ -26,7 +26,7 @@ def main():
     ce_parser.add_argument("-c","--crn")
     ce_parser.add_argument("-z","--zone_id")
     ce_parser.add_argument("-d","--cis_domain")
-    ce_parser.add_argument("-a","--app_url")
+    ce_parser.add_argument("-a","--app")
     ce_parser.add_argument("-t","--terraform", action='store_true')
     ce_parser.add_argument("-r","--resource_group")
     ce_parser.add_argument("-n","--name")

@@ -85,12 +85,12 @@ class IntegrationInfo:
                 self.cis_name=env_vars["CIS_NAME"]
 
         
-        if "API_ENDPOINT" not in env_vars or "CIS_SERVICES_APIKEY" not in env_vars or "CIS_DOMAIN" not in env_vars or "APP_URL" not in env_vars:
+        if "API_ENDPOINT" not in env_vars or "CIS_SERVICES_APIKEY" not in env_vars or "CIS_DOMAIN" not in env_vars or "APP_DOMAIN" not in env_vars:
             print("Missing one or more necessary attributes in .env!")
             sys.exit(1)
         else:
             self.cis_domain=env_vars["CIS_DOMAIN"]
-            self.app_url=env_vars["APP_URL"]
+            self.app_url=env_vars["APP_DOMAIN"]
             self.cis_api_key=env_vars["CIS_SERVICES_APIKEY"]
             self.api_endpoint=env_vars["API_ENDPOINT"]
     
