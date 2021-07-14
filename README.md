@@ -9,7 +9,7 @@ This command line tool currently supports [Code Engine](https://www.ibm.com/clou
 
 Before using this application:
 * [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
-* [Deploy a Code Engine](https://cloud.ibm.com/docs/codeengine?topic=codeengine-deploy-app-tutorial) application
+* [Deploy a Code Engine application](https://cloud.ibm.com/docs/codeengine?topic=codeengine-deploy-app-tutorial) 
 
 ## Installation
 
