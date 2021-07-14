@@ -9,7 +9,7 @@ This command line tool currently supports [Code Engine](https://www.ibm.com/clou
 
 Before using this application:
 * [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
-* Deploy a [Code Engine](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800) application
+* Deploy a [Code Engine](https://cloud.ibm.com/docs/codeengine?topic=codeengine-deploy-app-tutorial) application
 
 ## Installation
 
@@ -18,7 +18,7 @@ The only prerequisite needed for this installation is Docker. Please see https:/
 
 Clone or download the repository and change into the project directory.
 ```
-$ git clone https://github.ibm.com/GCAT/cis-integration.git
+$ git clone https://github.com/IBM/cis-integration.git
 ```
 Now within the cloned project we need to build and run our Docker image. To do this run the following commands. 
 ```
@@ -35,7 +35,7 @@ The main prerequisite for this installation is Python. We suggest that you use P
 
 Clone or download the repository and navigate into the project directory.
 ```
-$ git clone https://github.ibm.com/GCAT/cis-integration.git
+$ git clone https://github.com/IBM/cis-integration.git
 ```
 Once in the project directoy run the install script. If a permission error is encountered `sudo` might need to be used. 
 ```
@@ -135,7 +135,7 @@ If you created your resources using the `--terraform` global option, then a Sche
 
 ## Resources
 - [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
-- [Deploy Code Engine application](https://ibm-cloudplatform.slack.com/archives/C01MHQ3MUF4/p1613432390005800)
+- [Deploy Code Engine application](https://cloud.ibm.com/docs/codeengine?topic=codeengine-deploy-app-tutorial)
 - [Python](https://www.python.org/downloads/)
 - [Docker](https://docs.docker.com/get-docker/)
 - [Terraform](https://www.terraform.io/)
