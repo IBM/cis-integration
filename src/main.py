@@ -58,7 +58,7 @@ def main():
             except Exception as e:
                 reinstall_cmd = "pip3 install -r requirements.txt"
                 subprocess.Popen(reinstall_cmd.split(), stdout=subprocess.PIPE)
-                print("Uninstall failed, trying adding the sudo option.")
+                print("Uninstall failed, try again using the sudo option.")
                 print(e)
             else:
                 if os.path.isfile("/usr/local/bin/cis-integration") and os.path.isfile("/usr/local/bin/ci"):
