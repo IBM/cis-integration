@@ -16,6 +16,7 @@ def execute(cmd):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--uninstall", help="uninstalls cis-integration from your system", action="store_true",)
+    parser.add_argument("-s", "--sudo", help="adds sudo privileges for uninstall process", action="store_true",)
 
     subparsers = parser.add_subparsers(dest="command")
     
@@ -47,10 +48,17 @@ def main():
         confirm = input("Are you sure you wish to uninstall? (y/n): ").lower()
         if confirm == 'y' or confirm == 'yes':
             try:
-                bash_cmd = "pip3 uninstall -y -r requirements.txt"
+                bash_cmd = ""
+                if args.sudo:
+                    bash_cmd = "sudo pip3 uninstall -y -r requirements.txt"
+                else:
+                    bash_cmd = "pip3 uninstall -y -r requirements.txt"
                 for item in execute(bash_cmd):
                     print(item, end="")
             except Exception as e:
+                reinstall_cmd = "pip3 install -r requirements.txt"
+                subprocess.Popen(reinstall_cmd.split(), stdout=subprocess.PIPE)
+                print("Uninstall failed, trying adding the sudo option.")
                 print(e)
             else:
                 if os.path.isfile("/usr/local/bin/cis-integration") and os.path.isfile("/usr/local/bin/ci"):
