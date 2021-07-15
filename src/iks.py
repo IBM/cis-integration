@@ -1,5 +1,6 @@
 from src.dns_creator import DNSCreator
 from src.create_terraform_workspace import WorkspaceCreator
+from src.certcreate import CertificateCreator
 from src.functions import Color, IntegrationInfo, healthCheck
 from src.delete_dns import DeleteDNS
 from src.delete_workspaces import DeleteWorkspace
@@ -103,7 +104,11 @@ def iks(args):
         # 1. Domain Name and DNS
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
-        
+
+        # 3. TLS Certificate Configuration
+        cert_creator = CertificateCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        cert_creator.create_certificate()
+
     if not UserInfo.delete:
         hostUrl="https://"+UserInfo.cis_domain
 
