@@ -80,7 +80,8 @@ def handle_args(args):
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
     
     # common arguments
-    
+    UserInfo.request_token()
+
     if not UserInfo.delete:
         UserInfo.app_url = args.app
         if UserInfo.app_url is None:
@@ -138,15 +139,27 @@ def CodeEngine(args):
         delete_certs = DeleteCerts(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_certs.delete_certs()
 
-        delete_edge = DeleteEdge(UserInfo.crn, UserInfo.zone_id, UserInfo.cis_domain, UserInfo.cis_api_key)
+        delete_edge = DeleteEdge(UserInfo.crn, UserInfo.zone_id, 
+            UserInfo.cis_domain, UserInfo.cis_api_key, UserInfo.token["access_token"])
         delete_edge.delete_edge()
 
         if UserInfo.terraforming:
-            delete_workspaces = DeleteWorkspace(UserInfo.schematics_url, UserInfo.cis_api_key)
+            delete_workspaces = DeleteWorkspace(UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
             delete_workspaces.delete_workspace()
 
     elif UserInfo.terraforming: # handle the case of using terraform
-        work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint, UserInfo.crn, UserInfo.zone_id, UserInfo.verbose)
+        work_creator = WorkspaceCreator(
+            UserInfo.cis_api_key,
+            UserInfo.schematics_url, 
+            UserInfo.app_url, 
+            UserInfo.cis_domain, 
+            UserInfo.resource_group, 
+            UserInfo.cis_name, 
+            UserInfo.api_endpoint, 
+            UserInfo.crn, 
+            UserInfo.zone_id, 
+            UserInfo.verbose, 
+            UserInfo.token)
         work_creator.create_terraform_workspace()
     else: # handle the case of using python
         # 1. Domain Name and DNS
@@ -164,7 +177,10 @@ def CodeEngine(args):
         cert_creator.create_certificate()
 
         # 4. Edge Functions
-        userEdgeFunction = EdgeFunctionCreator(UserInfo.crn, UserInfo.app_url, UserInfo.cis_api_key, UserInfo.zone_id, UserInfo.cis_domain)
+        userEdgeFunction = EdgeFunctionCreator(
+            UserInfo.crn, UserInfo.app_url, 
+            UserInfo.cis_api_key, UserInfo.zone_id, 
+            UserInfo.cis_domain, UserInfo.token["access_token"])
         userEdgeFunction.create_edge_function_action()
         userEdgeFunction.create_edge_function_trigger()
         userEdgeFunction.create_edge_function_wild_card_trigger()

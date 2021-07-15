@@ -3,26 +3,27 @@ import requests
 from src.functions import Color
 
 class DeleteEdge:
-    def __init__(self, crn: str, zone_id: str, cis_domain: str, apikey: str) -> None:
+    def __init__(self, crn: str, zone_id: str, cis_domain: str, apikey: str, token: str) -> None:
         self.crn = crn
         self.zone_id = zone_id
         self.cis_domain = cis_domain
         self.apikey = apikey
+        self.token = token
 
     def delete_edge(self):
         execute = input("Delete edge function? Input 'y' or 'yes' to execute: ").lower()
         if execute == 'y' or execute == 'yes':
             action_name = self.cis_domain.replace('.','-')
-            token = self.request_token(self.apikey)
+            #token = self.request_token(self.apikey)
             
-            triggers = self.get_triggers(self.crn, self.zone_id, token)
+            triggers = self.get_triggers(self.crn, self.zone_id, self.token)
 
             for trigger in triggers["result"]:
                 if trigger["script"] == action_name:
-                    self.delete_trigger(self.crn, self.zone_id, trigger["id"], token)
+                    self.delete_trigger(self.crn, self.zone_id, trigger["id"],self.token)
                     print(Color.GREEN + "SUCCESS: Deleted trigger " + trigger["pattern"] + Color.END)
 
-            action_response = self.delete_action(self.crn, action_name, token)
+            action_response = self.delete_action(self.crn, action_name, self.token)
             if action_response["success"]:
                 print(Color.GREEN + "SUCCESS: Deleted edge function action with id " + action_response["result"]["id"] + Color.END)
             else:
@@ -63,6 +64,7 @@ class DeleteEdge:
         response = requests.request("DELETE", url, headers=headers).json()
         return response
 
+    '''
     def request_token(self, apikey: str):
             """
             Requests an access token for the client so that we can execute the plan and apply commands in
@@ -78,3 +80,4 @@ class DeleteEdge:
             url="https://iam.cloud.ibm.com/identity/token"
             token = requests.post(url=url, data=data, headers=headers)
             return token.json()["access_token"] 
+    '''

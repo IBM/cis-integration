@@ -8,7 +8,7 @@ from ibm_cloud_networking_services import ZonesV1, GlobalLoadBalancerPoolsV0, Gl
 from src.functions import Color as Color
 
 class WorkspaceCreator:
-    def __init__(self, cis_api_key, schematics_url, app_url, cis_domain, resource_group, cis_name, api_endpoint, crn, zone_id, verbose):
+    def __init__(self, cis_api_key, schematics_url, app_url, cis_domain, resource_group, cis_name, api_endpoint, crn, zone_id, verbose, token):
         self.cis_api_key = cis_api_key
         self.schematics_url = schematics_url
         self.app_url = app_url
@@ -19,18 +19,19 @@ class WorkspaceCreator:
         self.crn = crn
         self.zone_id = zone_id
         self.verbose = verbose
+        self.token = token
 
     def create_terraform_workspace(self):
         authenticator = IAMAuthenticator(self.cis_api_key)
         schematics_service = SchematicsV1(authenticator = authenticator)
         schematics_service.set_service_url(self.schematics_url)
-        r_token = self.request_token(self.cis_api_key)
+        #r_token = self.request_token(self.cis_api_key)
         keepgoing = True
 
         pool_name = self.pool_check()
         keepgoing = self.glb_check()
         keepgoing = self.dns_check(keepgoing)
-        keepgoing = self.edge_check(r_token["access_token"], keepgoing)
+        keepgoing = self.edge_check(self.token["access_token"], keepgoing)
 
         # Creating the workspace and connecting to the github repo
         if keepgoing:
@@ -95,7 +96,7 @@ class WorkspaceCreator:
             try:
                 workspace_activity_plan_result = schematics_service.plan_workspace_command(
                     w_id=workspace_response["id"],
-                    refresh_token=r_token["refresh_token"]
+                    refresh_token=self.token["refresh_token"]
                     
                 ).get_result()
                 break
@@ -119,7 +120,7 @@ class WorkspaceCreator:
                 try:
                     workspace_activity_apply_result = schematics_service.apply_workspace_command(
                         w_id=workspace_response["id"],
-                        refresh_token=r_token["refresh_token"]
+                        refresh_token=self.token["refresh_token"]
                         
                     ).get_result()
                     break
@@ -137,7 +138,7 @@ class WorkspaceCreator:
             status = self.action_status(
                 w_id=workspace_response["id"],
                 a_id=workspace_activity_apply_result["activityid"],
-                access_token=r_token["access_token"]
+                access_token=self.token["access_token"]
             )
             
             if status.json()["status"] == "COMPLETED" or status.json()["status"] == "FAILED":
@@ -146,7 +147,7 @@ class WorkspaceCreator:
                     w_id=workspace_response["id"],
                     a_id=workspace_activity_apply_result["activityid"],
                     t_id=workspace_response["template_data"][0]["id"],
-                    access_token=r_token["access_token"]
+                    access_token=self.token["access_token"]
                     )
                     print(apply_log)
                 elif status.json()["status"] == "COMPLETED":
@@ -248,6 +249,7 @@ class WorkspaceCreator:
         response = requests.request("GET", url, headers=headers)
         return response.text
 
+    '''
     def request_token(self, apikey: str):
         """
         Requests a refresh token for the client so that we can execute the plan and apply commands in
@@ -265,5 +267,6 @@ class WorkspaceCreator:
         token = requests.post(url=url, data=data, headers=headers)
         return token.json()
         #return token.json()["refresh_token"] 
+        '''
     
 

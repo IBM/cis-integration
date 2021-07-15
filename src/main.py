@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 from src.codeEngine import CodeEngine
+from src.iks import iks
 import subprocess
 
 def execute(cmd):
@@ -36,9 +37,16 @@ def main():
 
     #created iks sub-command as an example for to structure the next platform
     ks_parser = subparsers.add_parser("iks", aliases=['ks'], add_help=False)
-    ks_parser.add_argument("-a")
-    ks_parser.add_argument("-b")
-    ks_parser.add_argument("-c")
+    ks_parser.add_argument("-h","--help", action="store_true")
+    ks_parser.add_argument("-c","--crn")
+    ks_parser.add_argument("-z","--zone_id")
+    ks_parser.add_argument("-d","--cis_domain")
+    ks_parser.add_argument("-t","--terraform", action='store_true')
+    ks_parser.add_argument("-r","--resource_group")
+    ks_parser.add_argument("-n","--name")
+    ks_parser.add_argument("-v","--verbose", action='store_true')
+    ks_parser.add_argument("--delete", action='store_true')
+    ks_parser.add_argument("-i","--iks_cluster_id")
 
     args = parser.parse_args()
 
@@ -60,6 +68,7 @@ def main():
 
     elif args.command=="iks" or args.command=="ks":
         print("running iks command")
+        iks(args)
 
 if __name__ == "__main__":
     main()
