@@ -15,12 +15,12 @@ class MockResponse:
 
 # custom class to be a mock token
 # will override request token
-class MockToken:
+#class MockToken:
 
     # mock token() method always returns a specific access token
-    @staticmethod
-    def token(self, dummy):
-        return "test-token"
+    #@staticmethod
+    #def token(self, dummy):
+        #return "test-token"
 
 def edge_function():
     return create_edge_function.EdgeFunctionCreator(
@@ -28,7 +28,8 @@ def edge_function():
         app_url="test-url.com",
         apikey="testString",
         zone_id="testString",
-        domain="test-domain.com"
+        domain="test-domain.com",
+        token="test-token"
     )
 
 def test_create_edge_action(monkeypatch):
@@ -38,12 +39,12 @@ def test_create_edge_action(monkeypatch):
     def mock_put(*args, **kwargs):
         return MockResponse()
 
-    def mock_token(*args, **kwargs):
-        return MockToken()
+    #def mock_token(*args, **kwargs):
+    #    return MockToken()
 
     # apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "request", mock_put)
-    monkeypatch.setattr(create_edge_function.EdgeFunctionCreator, "request_token", mock_token().token)
+    #monkeypatch.setattr(create_edge_function.EdgeFunctionCreator, "request_token", mock_token().token)
 
     # app.get_json, which contains requests.get, uses the monkeypatch
     test_edge_function = edge_function()
@@ -56,12 +57,12 @@ def test_create_edge_trigger(monkeypatch):
     def mock_put(*args, **kwargs):
         return MockResponse()
 
-    def mock_token(*args, **kwargs):
-        return MockToken()
+    #def mock_token(*args, **kwargs):
+    #    return MockToken()
 
     # apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "request", mock_put)
-    monkeypatch.setattr(create_edge_function.EdgeFunctionCreator, "request_token", mock_token().token)
+    #monkeypatch.setattr(create_edge_function.EdgeFunctionCreator, "request_token", mock_token().token)
 
     # app.get_json, which contains requests.get, uses the monkeypatch
     test_edge_function = edge_function()
@@ -74,12 +75,12 @@ def test_create_edge_www_trigger(monkeypatch):
     def mock_put(*args, **kwargs):
         return MockResponse()
 
-    def mock_token(*args, **kwargs):
-        return MockToken()
+    #def mock_token(*args, **kwargs):
+    #    return MockToken()
 
     # apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "request", mock_put)
-    monkeypatch.setattr(create_edge_function.EdgeFunctionCreator, "request_token", mock_token().token)
+    #monkeypatch.setattr(create_edge_function.EdgeFunctionCreator, "request_token", mock_token().token)
 
     # app.get_json, which contains requests.get, uses the monkeypatch
     test_edge_function = edge_function()
@@ -92,12 +93,12 @@ def test_create_edge_wild_card_trigger(monkeypatch):
     def mock_put(*args, **kwargs):
         return MockResponse()
 
-    def mock_token(*args, **kwargs):
-        return MockToken()
+    #def mock_token(*args, **kwargs):
+    #    return MockToken()
 
     # apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "request", mock_put)
-    monkeypatch.setattr(create_edge_function.EdgeFunctionCreator, "request_token", mock_token().token)
+    #monkeypatch.setattr(create_edge_function.EdgeFunctionCreator, "request_token", mock_token().token)
 
     # app.get_json, which contains requests.get, uses the monkeypatch
     test_edge_function = edge_function()

@@ -53,6 +53,7 @@ class IntegrationInfo:
     crn = ''
     zone_id = ''
     api_endpoint = 'https://api.cis.cloud.ibm.com'
+    iks_cluster_id = ''
     app_url = ''
     resource_group = ''
     cis_name = ''
@@ -62,6 +63,7 @@ class IntegrationInfo:
     terraforming = False
     verbose = False
     delete = False
+    token = None
 
     # loads .env file if it exists
     def read_envfile(self, filename):
@@ -83,15 +85,49 @@ class IntegrationInfo:
                 self.cis_name=env_vars["CIS_NAME"]
 
         
-        if "API_ENDPOINT" not in env_vars or "CIS_SERVICES_APIKEY" not in env_vars or "CIS_DOMAIN" not in env_vars or "APP_URL" not in env_vars:
+        if "API_ENDPOINT" not in env_vars or "CIS_SERVICES_APIKEY" not in env_vars or "CIS_DOMAIN" not in env_vars or "APP_DOMAIN" not in env_vars:
             print("Missing one or more necessary attributes in .env!")
             sys.exit(1)
         else:
             self.cis_domain=env_vars["CIS_DOMAIN"]
-            self.app_url=env_vars["APP_URL"]
+            self.app_url=env_vars["APP_DOMAIN"]
             self.cis_api_key=env_vars["CIS_SERVICES_APIKEY"]
             self.api_endpoint=env_vars["API_ENDPOINT"]
     
+    def request_token(self):
+            """
+            Requests an access token for the client so that we can execute the plan and apply commands in
+            the workspace.
+            
+            param: apikey is the client's IBM Cloud Apikey
+            returns: the generated access token
+            """
+            data={'grant_type': 'urn:ibm:params:oauth:grant-type:apikey', 'apikey': self.cis_api_key}
+            headers= {'Accept': 'application/json',
+                    'Content-type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic Yng6Yng='}
+            url="https://iam.cloud.ibm.com/identity/token"
+            self.token = requests.post(url=url, data=data, headers=headers).json()
+            return self.token
+
+    def get_iks_info(self):
+
+        url = "https://containers.cloud.ibm.com/global/v1/nlb-dns/clusters/" + self.iks_cluster_id + "/list"
+
+        headers = {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ' + self.token["access_token"]
+        }
+
+        response = requests.request("GET", url, headers=headers).json()
+
+        for cluster in response["nlbs"]:
+            if cluster["clusterID"] == self.iks_cluster_id:
+                self.app_url = cluster["nlbHost"]
+        return response
+
+
+
     def get_crn_and_zone(self) -> bool:
         '''
         Returns the True if the cis instance information was found
