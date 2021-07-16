@@ -112,6 +112,8 @@ def iks(args):
         # 1. Domain Name and DNS
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
+        # 2. Generate certificate in manager if necessary
+        
 
         
         
