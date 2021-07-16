@@ -138,7 +138,8 @@ class IntegrationInfo:
     def get_cms(self):
         authenticator = IAMAuthenticator(self.cis_api_key)
         controller = ResourceControllerV2(authenticator=authenticator)
-        resource_list = controller.list_resource_instances(name="kube-"+self.iks_cluster_id, resource_group_id=self.resource_group).get_result()
+        resource_list = controller.list_resource_instances(name="kube-"+self.iks_cluster_id, resource_group_id=self.resource_id).get_result()
+        print(resource_list)
         return resource_list["resources"][0]["id"]
 
     def get_crn_and_zone(self) -> bool:
