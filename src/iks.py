@@ -107,10 +107,13 @@ def iks(args):
             UserInfo.zone_id, UserInfo.verbose, UserInfo.token)
         work_creator.create_terraform_workspace()
     else:
+        print(UserInfo.get_cms())
         # handle the case of using python
         # 1. Domain Name and DNS
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
+
+        
         
     if not UserInfo.delete:
         hostUrl="https://"+UserInfo.cis_domain
