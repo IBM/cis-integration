@@ -29,9 +29,9 @@ def print_help():
     print("\t- call this tool with either 'cis-integration' or 'ci'\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[python command]\t\tcis-integration [positional args] [global options] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]")
-    print("\t[alt python command]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [APP URL] \n")
-    print("\t[terraform command]\t\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP URL]\n")
+    print("\t[python command]\t\tcis-integration [positional args] [global options] -n [CIS NAME] -d [CIS DOMAIN] -a [APP DOMAIN]")
+    print("\t[alt python command]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [APP DOMAIN] \n")
+    print("\t[terraform command]\t\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP DOMAIN]\n")
     print("\t[delete command]\t\tcis-integration [positional args] [global options] --delete -n [CIS NAME] -d [CIS DOMAIN]")
     print("\t[alt delete command]\t\tcis-integration [positional args] [global options] --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]\n")
 
@@ -49,7 +49,7 @@ def print_help():
     print("\t--crn, -c \t\t CRN of the CIS instance")
     print("\t--zone_id, -z \t\t Zone ID of the CIS instance")
     print("\t--cis_domain, -d \t domain name of the CIS instance")
-    print("\t--app_url, -a \t\t URL of the application")
+    print("\t--app, -a \t\t hostname of the application")
     print("\t--resource_group, -r \t resource group associated with the CIS instance")
     print("\t--name, -n \t\t name of the CIS instance")
 
@@ -80,11 +80,12 @@ def handle_args(args):
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
     
     # common arguments
-    
+    UserInfo.request_token()
+
     if not UserInfo.delete:
-        UserInfo.app_url = args.app_url
+        UserInfo.app_url = args.app
         if UserInfo.app_url is None:
-            print("You did not specify an application URL.")
+            print("You did not specify an application domain.")
             sys.exit(1)
 
     UserInfo.cis_domain = args.cis_domain
@@ -138,15 +139,27 @@ def CodeEngine(args):
         delete_certs = DeleteCerts(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_certs.delete_certs()
 
-        delete_edge = DeleteEdge(UserInfo.crn, UserInfo.zone_id, UserInfo.cis_domain, UserInfo.cis_api_key)
+        delete_edge = DeleteEdge(UserInfo.crn, UserInfo.zone_id, 
+            UserInfo.cis_domain, UserInfo.cis_api_key, UserInfo.token["access_token"])
         delete_edge.delete_edge()
 
         if UserInfo.terraforming:
-            delete_workspaces = DeleteWorkspace(UserInfo.schematics_url, UserInfo.cis_api_key)
+            delete_workspaces = DeleteWorkspace(UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
             delete_workspaces.delete_workspace()
 
     elif UserInfo.terraforming: # handle the case of using terraform
-        work_creator = WorkspaceCreator(UserInfo.cis_api_key, UserInfo.schematics_url, UserInfo.app_url, UserInfo.cis_domain, UserInfo.resource_group, UserInfo.cis_name, UserInfo.api_endpoint, UserInfo.crn, UserInfo.zone_id, UserInfo.verbose)
+        work_creator = WorkspaceCreator(
+            UserInfo.cis_api_key,
+            UserInfo.schematics_url, 
+            UserInfo.app_url, 
+            UserInfo.cis_domain, 
+            UserInfo.resource_group, 
+            UserInfo.cis_name, 
+            UserInfo.api_endpoint, 
+            UserInfo.crn, 
+            UserInfo.zone_id, 
+            UserInfo.verbose, 
+            UserInfo.token)
         work_creator.create_terraform_workspace()
     else: # handle the case of using python
         # 1. Domain Name and DNS
@@ -164,7 +177,10 @@ def CodeEngine(args):
         cert_creator.create_certificate()
 
         # 4. Edge Functions
-        userEdgeFunction = EdgeFunctionCreator(UserInfo.crn, UserInfo.app_url, UserInfo.cis_api_key, UserInfo.zone_id, UserInfo.cis_domain)
+        userEdgeFunction = EdgeFunctionCreator(
+            UserInfo.crn, UserInfo.app_url, 
+            UserInfo.cis_api_key, UserInfo.zone_id, 
+            UserInfo.cis_domain, UserInfo.token["access_token"])
         userEdgeFunction.create_edge_function_action()
         userEdgeFunction.create_edge_function_trigger()
         userEdgeFunction.create_edge_function_wild_card_trigger()
