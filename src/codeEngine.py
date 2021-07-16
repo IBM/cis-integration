@@ -100,6 +100,7 @@ def handle_args(args):
             print("You did not specify a resource group.")
             sys.exit(1)
         
+        UserInfo.get_resource_id()
         
         UserInfo.cis_name = args.name
         if UserInfo.cis_name is None:
@@ -114,6 +115,14 @@ def handle_args(args):
         UserInfo.crn=args.crn
         UserInfo.zone_id = args.zone_id
         if UserInfo.crn is None or UserInfo.zone_id is None:
+
+            UserInfo.resource_group = args.resource_group
+            if UserInfo.resource_group is None:         
+                print("You did not specify a resource group.")
+                sys.exit(1)
+
+            UserInfo.get_resource_id()
+
             UserInfo.cis_name = args.name
         
             if UserInfo.cis_name is None:
