@@ -55,3 +55,7 @@ class SecretCertificateCreator:
         token = requests.post(url=url, data=data, headers=headers)
         return token.json()["access_token"]
     '''
+
+    def URLify(self, replacement_str):
+        new_string = replacement_str.replace(":", "%3A")
+        return new_string.replace("/", "%2F")
