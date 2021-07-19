@@ -1,3 +1,4 @@
+from src.certcreate_iks import SecretCertificateCreator
 from src.dns_creator import DNSCreator
 from src.create_terraform_workspace import WorkspaceCreator
 from src.functions import Color, IntegrationInfo, healthCheck
@@ -107,12 +108,23 @@ def iks(args):
             UserInfo.zone_id, UserInfo.verbose, UserInfo.token)
         work_creator.create_terraform_workspace()
     else:
-        print(UserInfo.get_cms())
         # handle the case of using python
         # 1. Domain Name and DNS
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
         # 2. Generate certificate in manager if necessary
+        cms_id = UserInfo.get_cms()
+        print("\n"+cms_id)
+        user_cert = SecretCertificateCreator(
+            cis_crn=UserInfo.crn, 
+            cluster_id=UserInfo.iks_cluster_id, 
+            cis_domain=UserInfo.cis_domain, 
+            cert_manager_crn=cms_id,
+            cert_name="cis-cert",
+            token=UserInfo.token["access_token"]
+            )
+        user_cert.create_secret()
+
         
 
         

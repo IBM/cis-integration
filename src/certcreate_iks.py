@@ -51,19 +51,20 @@ class SecretCertificateCreator:
             exit(1)
 
         cert_check_url = f"https://{region}.certificate-manager.cloud.ibm.com/api/v3/{url_cert_man_crn}/certificates/"
-
+        print(cert_check_url)
         cert_check_headers = {
             "Authorization": 'Bearer ' + self.token
         }
 
         # Gets all certificates previously present in the certificate manager
         cert_check_response = requests.request("GET", url=cert_check_url, headers=cert_check_headers)
-        
+        #print(cert_check_response.text)
         # If a valid certificate exists, it returns the CRN of that certificate
-        for cert in cert_check_response.json()["certificates"]:
-            if self.cis_domain in cert["domains"] and ("*." + self.cis_domain) in cert["domains"]:
-                print("Certificate with domain already exists in certificate manager")
-                return cert["_id"]
+        if cert_check_response.status_code == 200:
+            for cert in cert_check_response.json()["certificates"]:
+                if self.cis_domain in cert["domains"] and ("*." + self.cis_domain) in cert["domains"]:
+                    print("Certificate with domain already exists in certificate manager")
+                    return cert["_id"]
         
         print("Ordering a certificate for the certificate manager...")
 
@@ -83,7 +84,8 @@ class SecretCertificateCreator:
 
         # Orders a new certificate through the certificate manager
         cert_create_response = requests.request("POST", url=cert_create_url, headers=cert_create_headers, data=cert_create_data)
-
+        print(cert_create_response)
+        print(cert_create_response.text)
         # Returns the CRN of the new certificate
         print(Color.GREEN+"SUCESS: Ordered a certificate for the certificate manager!"+Color.END)
         return cert_create_response.json()["_id"]
