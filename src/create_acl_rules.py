@@ -30,6 +30,24 @@ class AclRuleCreator:
         return vpc_identity_model
 
     def create_acl_rules(self):
+        network_acl_rules = [
+            {
+                "name" : "iks-create-worker-nodes-inbound",
+                "action" : "allow",
+                "source" : "161.26.0.0/16",
+                "destination" : "0.0.0.0/0",
+                "direction" : "inbound",
+            },
+            {
+                "name" : "iks-nodes-to-master-inbound",
+                "action" : "allow",
+                "source" : "166.8.0.0/14",
+                "destination": "0.0.0.0/0",
+                "direction" : "inbound",
+            }
+        ]
+
+
 
 
     def create_network_acl(self):
