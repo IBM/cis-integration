@@ -1,4 +1,4 @@
-import requests, json
+import requests, json, time
 from src.functions import Color as Color
 
 class SecretCertificateCreator:
@@ -31,13 +31,21 @@ class SecretCertificateCreator:
             "Accept": 'application/json',
             "Authorization": 'Bearer ' + self.token
         }
+        keepgoing = True
 
-        cert_response = requests.request("POST", url=cert_url, headers=cert_headers, data=cert_data)
-        
-        if cert_response.status_code == 200:
-            print(Color.GREEN+"SUCCESS: Created secret for IKS"+Color.END)
-        else:
-            print(Color.RED+"ERROR: Failed to create secret for IKS with error code " + str(cert_response.status_code) + Color.END)
+        while keepgoing:
+            cert_response = requests.request("POST", url=cert_url, headers=cert_headers, data=cert_data)
+            
+            if cert_response.status_code == 200:
+                print(Color.GREEN+"SUCCESS: Created secret for IKS"+Color.END)
+                keepgoing = False
+            elif cert_response.status_code == 500:
+                print("Waiting for a response from the certificate manager...")
+                print(cert_response.json())
+                time.sleep(2)
+            else:
+                print(Color.RED+"ERROR: Failed to create secret for IKS with error code " + str(cert_response.status_code) + Color.END)
+                keepgoing = False
 
         return cert_response
 
@@ -87,7 +95,7 @@ class SecretCertificateCreator:
         print(cert_create_response)
         print(cert_create_response.text)
         # Returns the CRN of the new certificate
-        print(Color.GREEN+"SUCESS: Ordered a certificate for the certificate manager!"+Color.END)
+        print(Color.GREEN+"SUCCESS: Ordered a certificate for the certificate manager!"+Color.END)
         return cert_create_response.json()["_id"]
         
     # Converts the certificate manager CRN into a URL-encoded CRN
