@@ -3,12 +3,12 @@ from src.functions import Color as Color
 
 class SecretCertificateCreator:
 
-    def __init__(self, cis_crn, cluster_id, cis_domain, cert_manager_crn, cert_name, token):
+    def __init__(self, cis_crn, cluster_id, cis_domain, cert_manager_crn, token):
         self.cis_crn = cis_crn
         self.cluster_id = cluster_id
         self.cis_domain = cis_domain
         self.cert_manager_crn = cert_manager_crn
-        self.cert_name = cert_name
+        self.cert_name = "cis-cert"
         self.token = token
 
     # Creates a secret in the IKS cluster using the CRN returned by check_certificate()
@@ -31,11 +31,17 @@ class SecretCertificateCreator:
             "Accept": 'application/json',
             "Authorization": 'Bearer ' + self.token
         }
+
         keepgoing = True
+        try_counter = 0
 
         while keepgoing:
             cert_response = requests.request("POST", url=cert_url, headers=cert_headers, data=cert_data)
             
+            if try_counter == 10:
+                print(Color.RED+"ERROR: Timed out while waiting for certificate. Make sure you haven't been rate limited"+Color.END)
+                break
+
             if cert_response.status_code == 200:
                 print(Color.GREEN+"SUCCESS: Created secret for IKS"+Color.END)
                 keepgoing = False
@@ -46,7 +52,9 @@ class SecretCertificateCreator:
             else:
                 print(Color.RED+"ERROR: Failed to create secret for IKS with error code " + str(cert_response.status_code) + Color.END)
                 keepgoing = False
-
+                
+            try_counter += 1
+            
         return cert_response
 
     # Creates a certificate (if necessary) and returns a CRN

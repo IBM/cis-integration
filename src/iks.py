@@ -120,7 +120,6 @@ def iks(args):
             cluster_id=UserInfo.iks_cluster_id, 
             cis_domain=UserInfo.cis_domain, 
             cert_manager_crn=cms_id,
-            cert_name="cis-cert",
             token=UserInfo.token["access_token"]
             )
         user_cert.create_secret()
