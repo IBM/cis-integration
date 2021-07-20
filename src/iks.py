@@ -3,6 +3,7 @@ from src.create_terraform_workspace import WorkspaceCreator
 from src.functions import Color, IntegrationInfo, healthCheck
 from src.delete_dns import DeleteDNS
 from src.delete_workspaces import DeleteWorkspace
+from src.create_acl_rules import AclRuleCreator
 import sys, getpass, os
 
 def print_help():
@@ -27,6 +28,9 @@ def handle_args(args):
 
     if args.delete:
         UserInfo.delete = True
+
+    #vpc name
+    UserInfo.vpc_name = args.vpc_name
 
     # determining API key 
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
@@ -78,7 +82,7 @@ def handle_args(args):
             if not UserInfo.get_crn_and_zone():
                 print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
                 sys.exit(1)
-
+    
     return UserInfo
 
 def iks(args):
@@ -103,7 +107,10 @@ def iks(args):
         # 1. Domain Name and DNS
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
-        
+
+        user_ACL = AclRuleCreator(UserInfo.resource_group, UserInfo.vpc_name, UserInfo.cis_api_key)
+        user_ACL.create_network_acl()
+
     if not UserInfo.delete:
         hostUrl="https://"+UserInfo.cis_domain
 

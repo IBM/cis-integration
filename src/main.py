@@ -48,6 +48,7 @@ def main():
     ks_parser.add_argument("-v","--verbose", action='store_true')
     ks_parser.add_argument("--delete", action='store_true')
     ks_parser.add_argument("-i","--iks_cluster_id")
+    ks_parser.add_argument("-p", "--vpc_name")
 
     args = parser.parse_args()
 
