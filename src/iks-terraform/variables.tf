@@ -35,8 +35,3 @@ variable cluster_id {
     type = string
     description = "Cluster ID of the IKS instance"
 }
-
-variable token {
-    type = string
-    description = "IAM Authorization token"
-}
