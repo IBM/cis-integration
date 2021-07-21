@@ -1,19 +1,19 @@
-from src.delete_workspaces import DeleteWorkspace
+from src.common.delete_workspaces import DeleteWorkspace
 import os
 import sys
 import getpass
 
 
 from src.ce.certcreate import CertificateCreator
-from src.functions import IntegrationInfo as IntegrationInfo
-from src.functions import Color as Color
-from src.functions import healthCheck as healthCheck
+from src.common.functions import IntegrationInfo as IntegrationInfo
+from src.common.functions import Color as Color
+from src.common.functions import healthCheck as healthCheck
 from src.ce.create_glb import GLB
-from src.dns_creator import DNSCreator
+from src.common.dns_creator import DNSCreator
 from src.ce.create_edge_function import EdgeFunctionCreator
-from src.create_terraform_workspace import WorkspaceCreator
+from src.common.create_terraform_workspace import WorkspaceCreator
 from src.ce.delete_glb import DeleteGLB
-from src.delete_dns import DeleteDNS
+from src.common.delete_dns import DeleteDNS
 from src.ce.delete_certs import DeleteCerts
 from src.ce.delete_edge import DeleteEdge
 

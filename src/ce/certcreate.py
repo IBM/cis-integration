@@ -1,4 +1,4 @@
-from src.functions import Color as Color
+from src.common.functions import Color as Color
 from ibm_cloud_networking_services import SslCertificateApiV1
 
 class CertificateCreator:

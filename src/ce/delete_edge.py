@@ -1,6 +1,6 @@
 
 import requests
-from src.functions import Color
+from src.common.functions import Color
 
 class DeleteEdge:
     def __init__(self, crn: str, zone_id: str, cis_domain: str, apikey: str, token: str) -> None:
