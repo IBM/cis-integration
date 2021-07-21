@@ -1,7 +1,7 @@
 import pytest
 import os
 from dotenv import load_dotenv
-from src import create_edge_function
+from src.ce import create_edge_function
 import requests, json
 
 # custom class to be the mock return value
