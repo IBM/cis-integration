@@ -45,7 +45,7 @@ def handle_args(args):
             print("You did not specify an IKS cluster ID.")
             sys.exit(1)
 
-    iks_info = UserInfo.get_iks_info()
+    # iks_info = UserInfo.get_iks_info()
 
     UserInfo.cis_domain = args.cis_domain
     if UserInfo.cis_domain is None:
@@ -72,6 +72,7 @@ def handle_args(args):
     else:
         UserInfo.crn=args.crn
         UserInfo.zone_id = args.zone_id
+        UserInfo.resource_group = args.resource_group
         if UserInfo.crn is None or UserInfo.zone_id is None:
             UserInfo.cis_name = args.name
         
@@ -105,10 +106,13 @@ def iks(args):
     else:
         # handle the case of using python
         # 1. Domain Name and DNS
-        user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
-        user_DNS.create_records()
+        # user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
+        # user_DNS.create_records()
 
         user_ACL = AclRuleCreator(UserInfo.resource_group, UserInfo.vpc_name, UserInfo.cis_api_key)
+        print(UserInfo.resource_group)
+        print(UserInfo.vpc_name)
+        print(UserInfo.cis_api_key)
         user_ACL.create_network_acl()
 
     if not UserInfo.delete:

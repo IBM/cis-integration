@@ -16,11 +16,12 @@ class AclRuleCreator:
         resource = resource_service.list_resource_groups(name=self.resource_group, include_deleted=False).get_result()
         self.resource_group_id = resource["resources"][0]["id"]
         resource_group_identity_model = {}
-        resource_group_identity_model['id'] = self.resource_group_id
+        resource_group_identity_model["id"] = self.resource_group_id
         return resource_group_identity_model
 
     def create_vpc_model(self, authenticator):
         vpc_serivce = VpcV1(authenticator=authenticator)
+        vpc_serivce.set_service_url('https://us-south.iaas.cloud.ibm.com/v1')
         vpc_list = vpc_serivce.list_vpcs(resource_group_id=self.resource_group_id).get_result()
         for vpc in vpc_list["vpcs"]:
             if vpc["name"] == self.vpc_name:
@@ -257,17 +258,18 @@ class AclRuleCreator:
 
 
     def create_network_acl(self):
+        print("Starting Network ACL Creation")
         authenticator = IAMAuthenticator(self.api_key)
 
         resource_group_identity_model = self.create_resource_group_model(authenticator)
-        
         vpc_identity_model, vpc_service = self.create_vpc_model(authenticator)
-       
+        
         network_acl_prototype_model = {}
-        network_acl_prototype_model['name'] = "cis-integration_default"
+        network_acl_prototype_model['name'] = "cis_integration_default"
         network_acl_prototype_model["resource_group"] = resource_group_identity_model
         network_acl_prototype_model["vpc"] = vpc_identity_model
         network_acl_prototype_model["rules"] = self.create_acl_rules()
+        print(network_acl_prototype_model)
 
         response = vpc_service.create_network_acl(network_acl_prototype_model=network_acl_prototype_model)
         print(response)
