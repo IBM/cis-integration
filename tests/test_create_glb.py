@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 from requests.models import Response
-from src.create_glb import GLB
+from src.ce.create_glb import GLB
 from ibm_cloud_sdk_core.detailed_response import DetailedResponse
 from ibm_cloud_networking_services import GlobalLoadBalancerPoolsV0
 from ibm_cloud_networking_services import GlobalLoadBalancerV1
