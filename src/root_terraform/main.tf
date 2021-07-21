@@ -1,5 +1,5 @@
 module ibm_cis_integration {
-    source = "./ce/terraform"
+    source = "../ce/terraform"
     cis_name = var.cis_name
     resource_group = var.resource_group
     app_url = var.app_url
