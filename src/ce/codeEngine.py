@@ -4,18 +4,18 @@ import sys
 import getpass
 
 
-from src.certcreate import CertificateCreator
+from src.ce.certcreate import CertificateCreator
 from src.functions import IntegrationInfo as IntegrationInfo
 from src.functions import Color as Color
 from src.functions import healthCheck as healthCheck
-from src.create_glb import GLB
+from src.ce.create_glb import GLB
 from src.dns_creator import DNSCreator
-from src.create_edge_function import EdgeFunctionCreator
+from src.ce.create_edge_function import EdgeFunctionCreator
 from src.create_terraform_workspace import WorkspaceCreator
-from src.delete_glb import DeleteGLB
+from src.ce.delete_glb import DeleteGLB
 from src.delete_dns import DeleteDNS
-from src.delete_certs import DeleteCerts
-from src.delete_edge import DeleteEdge
+from src.ce.delete_certs import DeleteCerts
+from src.ce.delete_edge import DeleteEdge
 
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder

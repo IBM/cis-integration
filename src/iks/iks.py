@@ -1,4 +1,4 @@
-from src.certcreate_iks import SecretCertificateCreator
+from src.iks.certcreate_iks import SecretCertificateCreator
 from src.dns_creator import DNSCreator
 from src.create_terraform_workspace import WorkspaceCreator
 from src.functions import Color, IntegrationInfo, healthCheck

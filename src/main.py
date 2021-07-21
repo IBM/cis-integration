@@ -1,8 +1,8 @@
 import os
 import sys
 import argparse
-from src.codeEngine import CodeEngine
-from src.iks import iks
+from src.ce.codeEngine import CodeEngine
+from src.iks.iks import iks
 import subprocess
 
 def execute(cmd):
