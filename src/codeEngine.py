@@ -29,10 +29,10 @@ def print_help():
     print("\t- call this tool with either 'cis-integration' or 'ci'\n")
 
     print(Color.BOLD + "USAGE:" + Color.END)
-    print("\t[python command]\t\tcis-integration [positional args] [global options] -n [CIS NAME] -d [CIS DOMAIN] -a [APP DOMAIN]")
+    print("\t[python command]\t\tcis-integration [positional args] [global options] -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -a [APP DOMAIN]")
     print("\t[alt python command]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [APP DOMAIN] \n")
     print("\t[terraform command]\t\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [APP DOMAIN]\n")
-    print("\t[delete command]\t\tcis-integration [positional args] [global options] --delete -n [CIS NAME] -d [CIS DOMAIN]")
+    print("\t[delete command]\t\tcis-integration [positional args] [global options] --delete -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN]")
     print("\t[alt delete command]\t\tcis-integration [positional args] [global options] --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]\n")
 
     print(Color.BOLD + "POSITIONAL ARGUMENTS:" + Color.END)
@@ -100,6 +100,7 @@ def handle_args(args):
             print("You did not specify a resource group.")
             sys.exit(1)
         
+        UserInfo.get_resource_id()
         
         UserInfo.cis_name = args.name
         if UserInfo.cis_name is None:
@@ -114,6 +115,14 @@ def handle_args(args):
         UserInfo.crn=args.crn
         UserInfo.zone_id = args.zone_id
         if UserInfo.crn is None or UserInfo.zone_id is None:
+
+            UserInfo.resource_group = args.resource_group
+            if UserInfo.resource_group is None:         
+                print("You did not specify a resource group.")
+                sys.exit(1)
+
+            UserInfo.get_resource_id()
+
             UserInfo.cis_name = args.name
         
             if UserInfo.cis_name is None:

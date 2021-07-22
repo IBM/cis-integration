@@ -1,3 +1,4 @@
+from src.certcreate_iks import SecretCertificateCreator
 from src.dns_creator import DNSCreator
 from src.create_terraform_workspace import WorkspaceCreator
 from src.functions import Color, IntegrationInfo, healthCheck
@@ -55,6 +56,7 @@ def handle_args(args):
             print("You did not specify a resource group.")
             sys.exit(1)
         
+        UserInfo.get_resource_id()
         
         UserInfo.cis_name = args.name
         if UserInfo.cis_name is None:
@@ -66,6 +68,13 @@ def handle_args(args):
                 sys.exit(1)
         
     else:
+        UserInfo.resource_group = args.resource_group
+        if UserInfo.resource_group is None:         
+            print("You did not specify a resource group.")
+            sys.exit(1)
+
+        UserInfo.get_resource_id()
+
         UserInfo.crn=args.crn
         UserInfo.zone_id = args.zone_id
         if UserInfo.crn is None or UserInfo.zone_id is None:
@@ -103,6 +112,21 @@ def iks(args):
         # 1. Domain Name and DNS
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
+        # 2. Generate certificate in manager if necessary
+        cms_id = UserInfo.get_cms()
+        print("\n"+cms_id)
+        user_cert = SecretCertificateCreator(
+            cis_crn=UserInfo.crn, 
+            cluster_id=UserInfo.iks_cluster_id, 
+            cis_domain=UserInfo.cis_domain, 
+            cert_manager_crn=cms_id,
+            token=UserInfo.token["access_token"]
+            )
+        user_cert.create_secret()
+
+        
+
+        
         
     if not UserInfo.delete:
         hostUrl="https://"+UserInfo.cis_domain

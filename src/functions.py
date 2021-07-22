@@ -1,6 +1,7 @@
+from ibm_platform_services.case_management_v1 import Resource
 import requests
 import sys
-from ibm_platform_services import ResourceControllerV2
+from ibm_platform_services import ResourceControllerV2, ResourceManagerV2
 from ibm_cloud_networking_services import ZonesV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
@@ -56,6 +57,7 @@ class IntegrationInfo:
     iks_cluster_id = ''
     app_url = ''
     resource_group = ''
+    resource_id = ''
     cis_name = ''
     cis_api_key = ''
     cis_domain = ''
@@ -126,7 +128,19 @@ class IntegrationInfo:
                 self.app_url = cluster["nlbHost"]
         return response
 
+    def get_resource_id(self):
+        authenticator = IAMAuthenticator(self.cis_api_key)
+        manager = ResourceManagerV2(authenticator=authenticator)
+        resource = manager.list_resource_groups(name=self.resource_group, include_deleted=False).get_result()
+        self.resource_id = resource["resources"][0]["id"]
+        print(self.resource_id)
 
+    def get_cms(self):
+        authenticator = IAMAuthenticator(self.cis_api_key)
+        controller = ResourceControllerV2(authenticator=authenticator)
+        resource_list = controller.list_resource_instances(name="kube-certmgr-"+self.iks_cluster_id, resource_group_id=self.resource_id).get_result()
+        print(resource_list)
+        return resource_list["resources"][0]["id"]
 
     def get_crn_and_zone(self) -> bool:
         '''
@@ -134,7 +148,7 @@ class IntegrationInfo:
         '''
         authenticator = IAMAuthenticator(self.cis_api_key)
         controller = ResourceControllerV2(authenticator=authenticator)
-        resource_list = controller.list_resource_instances(name=self.cis_name, type="service_instance").get_result()
+        resource_list = controller.list_resource_instances(name=self.cis_name, resource_group_id=self.resource_id, type="service_instance").get_result()
         if len(resource_list["resources"]) > 0:
             for resource in resource_list["resources"]:
                 if resource["name"] == self.cis_name:
