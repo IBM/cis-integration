@@ -85,7 +85,7 @@ locals {
 }
 
 resource ibm_cis_edge_functions_trigger action_trigger{
-  count = length(local.trigger_urls)
+  count = var.standard == true ? 0 : length(local.trigger_urls)
   cis_id      = ibm_cis_edge_functions_action.test_action.cis_id
   domain_id   = ibm_cis_edge_functions_action.test_action.domain_id
   action_name = ibm_cis_edge_functions_action.test_action.action_name
@@ -94,6 +94,7 @@ resource ibm_cis_edge_functions_trigger action_trigger{
 
 # Add a Edge Functions Action to the domain
 resource "ibm_cis_edge_functions_action" "test_action" {
+  count = var.standard == true ? 0 : 1
   cis_id      = data.ibm_cis.cis_instance.id
   domain_id   = data.ibm_cis_domain.cis_instance_domain.domain_id
   action_name = replace(var.cis_domain, ".", "-") # change . to - in cis_domain

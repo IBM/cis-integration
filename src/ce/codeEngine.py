@@ -64,6 +64,7 @@ def handle_args(args):
 
     UserInfo = IntegrationInfo()
     UserInfo.terraforming = False
+    UserInfo.standard = args.standard
     if args.terraform:
         UserInfo.terraforming = True
 
@@ -179,7 +180,8 @@ def CodeEngine(args):
             UserInfo.crn,
             UserInfo.zone_id,
             UserInfo.verbose,
-            UserInfo.token)
+            UserInfo.token,
+            UserInfo.standard)
         work_creator.create_terraform_workspace()
     else:  # handle the case of using python
         # 1. Domain Name and DNS
@@ -200,14 +202,17 @@ def CodeEngine(args):
         cert_creator.create_certificate()
 
         # 4. Edge Functions
-        userEdgeFunction = EdgeFunctionCreator(
-            UserInfo.crn, UserInfo.app_url,
-            UserInfo.cis_api_key, UserInfo.zone_id,
-            UserInfo.cis_domain, UserInfo.token["access_token"])
-        userEdgeFunction.create_edge_function_action()
-        userEdgeFunction.create_edge_function_trigger()
-        userEdgeFunction.create_edge_function_wild_card_trigger()
-        userEdgeFunction.create_edge_function_www_trigger()
+        if not UserInfo.standard:
+            userEdgeFunction = EdgeFunctionCreator(
+                UserInfo.crn, UserInfo.app_url,
+                UserInfo.cis_api_key, UserInfo.zone_id,
+                UserInfo.cis_domain, UserInfo.token["access_token"])
+            userEdgeFunction.create_edge_function_action()
+            userEdgeFunction.create_edge_function_trigger()
+            userEdgeFunction.create_edge_function_wild_card_trigger()
+            userEdgeFunction.create_edge_function_www_trigger()
+        else:
+            print("Edge function was not created since you are using the Standard Plan. You can create the edge function manually.")
 
     if not UserInfo.delete:
         hostUrl = "https://"+UserInfo.cis_domain
