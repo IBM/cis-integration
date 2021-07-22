@@ -63,7 +63,7 @@ This tool offers two options to connect the CIS instance to the application. You
 Regardless of the option you choose, the tool will require you to input some information about your CIS instance and Code Engine application. You can find this information by going to https://cloud.ibm.com and logging into your IBM Cloud account. Navigate to the "Resource list" tab and locate your CIS instance and Code Engine app.
 
 ### To deploy resources using Python scripts:
-**WARNING:** If you have any resources already present on your CIS instance that will conflict with the resources that will be created by this tool (i.e. a DNS Record with 'www' as its name), this method will automatically update them to represent the configuration specified by this tool. If you are concerned about overwriting any resources you've created yourself, use the [Terraform implementation](#to%20deploy%resources%20using%20terraform%20scripts:) listed below.
+**WARNING:** If you have any resources already present on your CIS instance that will conflict with the resources that will be created by this tool (i.e. a DNS Record with 'www' as its name), this method will automatically update them to represent the configuration specified by this tool. If you are concerned about overwriting any resources you've created yourself, use the [Terraform implementation](#to%20deploy%resources%20using%20terraform%20scripts%3A) listed below.
 
 1. Install the tool using the [installation](#installation) instructions listed above
 2. Access the command terminal on your computer 
