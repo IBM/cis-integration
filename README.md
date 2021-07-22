@@ -97,6 +97,7 @@ $ cis-integration code-engine -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [
 ```
 $ cis-integration code-engine --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [CODE ENGINE APP DOMAIN]
 ```
+If you would like to view a detailed log from the Schematics workspace showing the resources being created during the execution of the Terraform `apply` function, add `--verbose` to the above command.
 ### Arguments:
 * **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
 * **CIS NAME:** the name of your CIS instance.
