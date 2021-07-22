@@ -16,6 +16,9 @@ data ibm_cis_domain cis_instance_domain {
 data ibm_cis cis_instance {
   name              = var.cis_name
   resource_group_id = data.ibm_resource_group.group.id
+}
+
+data ibm_iam_auth_token token {}
 
 data ibm_iam_auth_token token {}
 

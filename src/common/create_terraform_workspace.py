@@ -5,7 +5,7 @@ import os, requests, time, tarfile
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import ResourceControllerV2
 from ibm_cloud_networking_services import ZonesV1, GlobalLoadBalancerPoolsV0, GlobalLoadBalancerV1, DnsRecordsV1
-from src.functions import Color as Color
+from src.common.functions import Color as Color
 
 class WorkspaceCreator:
     def __init__(self, cis_api_key, schematics_url, app_url, cis_domain, resource_group, cis_name, api_endpoint, crn, zone_id, verbose, token):

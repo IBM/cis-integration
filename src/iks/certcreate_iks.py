@@ -1,5 +1,5 @@
 import requests, json, time
-from src.functions import Color as Color
+from src.common.functions import Color as Color
 
 class SecretCertificateCreator:
 

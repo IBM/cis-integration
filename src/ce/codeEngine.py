@@ -1,27 +1,27 @@
-from src.delete_workspaces import DeleteWorkspace
+from src.common.delete_workspaces import DeleteWorkspace
 import os
 import sys
 import getpass
 
 
-from src.certcreate import CertificateCreator
-from src.functions import IntegrationInfo as IntegrationInfo
-from src.functions import Color as Color
-from src.functions import healthCheck as healthCheck
-from src.create_glb import GLB
-from src.dns_creator import DNSCreator
-from src.create_edge_function import EdgeFunctionCreator
-from src.create_terraform_workspace import WorkspaceCreator
-from src.delete_glb import DeleteGLB
-from src.delete_dns import DeleteDNS
-from src.delete_certs import DeleteCerts
-from src.delete_edge import DeleteEdge
+from src.ce.certcreate import CertificateCreator
+from src.common.functions import IntegrationInfo as IntegrationInfo
+from src.common.functions import Color as Color
+from src.common.functions import healthCheck as healthCheck
+from src.ce.create_glb import GLB
+from src.common.dns_creator import DNSCreator
+from src.ce.create_edge_function import EdgeFunctionCreator
+from src.common.create_terraform_workspace import WorkspaceCreator
+from src.ce.delete_glb import DeleteGLB
+from src.common.delete_dns import DeleteDNS
+from src.ce.delete_certs import DeleteCerts
+from src.ce.delete_edge import DeleteEdge
 
 '''
 To get python script to run globally run following command: $ pip3 install -e /path/to/script/folder
 '''
 
-             
+
 # method used to display the command usage if user uses `-h` or `--help`
 def print_help():
     print(Color.BOLD + 'NAME:' + Color.END)
@@ -54,12 +54,14 @@ def print_help():
     print("\t--name, -n \t\t name of the CIS instance")
 
 # handles the arguments given for both the python and terraform command options
+
+
 def handle_args(args):
-    
+
     if args.help:
         print_help()
         sys.exit(1)
-    
+
     UserInfo = IntegrationInfo()
     UserInfo.terraforming = False
     if args.terraform:
@@ -75,10 +77,11 @@ def handle_args(args):
         UserInfo.read_envfile("credentials.env")
         return UserInfo
 
-    # determining API key 
-    UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
+    # determining API key
+    UserInfo.cis_api_key = getpass.getpass(
+        prompt="Enter CIS Services API Key: ")
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
-    
+
     # common arguments
     UserInfo.request_token()
 
@@ -96,99 +99,110 @@ def handle_args(args):
     # terraforming vs. not terraforming
     if UserInfo.terraforming and not UserInfo.delete:
         UserInfo.resource_group = args.resource_group
-        if UserInfo.resource_group is None:         
+        if UserInfo.resource_group is None:
             print("You did not specify a resource group.")
             sys.exit(1)
-        
+
         UserInfo.get_resource_id()
-        
+
         UserInfo.cis_name = args.name
         if UserInfo.cis_name is None:
             print("You did not specify a CIS Name.")
             sys.exit(1)
 
         if not UserInfo.get_crn_and_zone():
-                print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
-                sys.exit(1)
-        
+            print(
+                "Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
+            sys.exit(1)
+
     else:
-        UserInfo.crn=args.crn
+        UserInfo.crn = args.crn
         UserInfo.zone_id = args.zone_id
         if UserInfo.crn is None or UserInfo.zone_id is None:
 
             UserInfo.resource_group = args.resource_group
-            if UserInfo.resource_group is None:         
+            if UserInfo.resource_group is None:
                 print("You did not specify a resource group.")
                 sys.exit(1)
 
             UserInfo.get_resource_id()
 
             UserInfo.cis_name = args.name
-        
+
             if UserInfo.cis_name is None:
-                print("Please specify the name of your CIS instance or both the CIS CRN and CIS Zone ID")
+                print(
+                    "Please specify the name of your CIS instance or both the CIS CRN and CIS Zone ID")
                 sys.exit(1)
 
             if not UserInfo.get_crn_and_zone():
-                print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
+                print(
+                    "Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
                 sys.exit(1)
 
     return UserInfo
 
+
 def CodeEngine(args):
-    UserInfo = handle_args(args)  
+    UserInfo = handle_args(args)
 
     if UserInfo.delete:
-        delete_glb = DeleteGLB(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        delete_glb = DeleteGLB(
+            UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_glb.delete_glb()
 
-        delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        delete_dns = DeleteDNS(
+            UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_dns.delete_dns()
 
-        delete_certs = DeleteCerts(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        delete_certs = DeleteCerts(
+            UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_certs.delete_certs()
 
-        delete_edge = DeleteEdge(UserInfo.crn, UserInfo.zone_id, 
-            UserInfo.cis_domain, UserInfo.cis_api_key, UserInfo.token["access_token"])
+        delete_edge = DeleteEdge(UserInfo.crn, UserInfo.zone_id,
+                                 UserInfo.cis_domain, UserInfo.cis_api_key, UserInfo.token["access_token"])
         delete_edge.delete_edge()
 
         if UserInfo.terraforming:
-            delete_workspaces = DeleteWorkspace(UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
+            delete_workspaces = DeleteWorkspace(
+                UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
             delete_workspaces.delete_workspace()
 
-    elif UserInfo.terraforming: # handle the case of using terraform
+    elif UserInfo.terraforming:  # handle the case of using terraform
         work_creator = WorkspaceCreator(
             UserInfo.cis_api_key,
-            UserInfo.schematics_url, 
-            UserInfo.app_url, 
-            UserInfo.cis_domain, 
-            UserInfo.resource_group, 
-            UserInfo.cis_name, 
-            UserInfo.api_endpoint, 
-            UserInfo.crn, 
-            UserInfo.zone_id, 
-            UserInfo.verbose, 
+            UserInfo.schematics_url,
+            UserInfo.app_url,
+            UserInfo.cis_domain,
+            UserInfo.resource_group,
+            UserInfo.cis_name,
+            UserInfo.api_endpoint,
+            UserInfo.crn,
+            UserInfo.zone_id,
+            UserInfo.verbose,
             UserInfo.token)
         work_creator.create_terraform_workspace()
-    else: # handle the case of using python
+    else:  # handle the case of using python
         # 1. Domain Name and DNS
-        user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
+        user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id,
+                              UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
 
         # 2. Global Load Balancer
-        user_GLB = GLB(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        user_GLB = GLB(UserInfo.crn, UserInfo.zone_id,
+                       UserInfo.api_endpoint, UserInfo.cis_domain)
         user_GLB.create_load_balancer_monitor()
         user_GLB.create_origin_pool()
         user_GLB.create_global_load_balancer()
 
         # 3. TLS Certificate Configuration
-        cert_creator = CertificateCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        cert_creator = CertificateCreator(
+            UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         cert_creator.create_certificate()
 
         # 4. Edge Functions
         userEdgeFunction = EdgeFunctionCreator(
-            UserInfo.crn, UserInfo.app_url, 
-            UserInfo.cis_api_key, UserInfo.zone_id, 
+            UserInfo.crn, UserInfo.app_url,
+            UserInfo.cis_api_key, UserInfo.zone_id,
             UserInfo.cis_domain, UserInfo.token["access_token"])
         userEdgeFunction.create_edge_function_action()
         userEdgeFunction.create_edge_function_trigger()
@@ -196,10 +210,10 @@ def CodeEngine(args):
         userEdgeFunction.create_edge_function_www_trigger()
 
     if not UserInfo.delete:
-        hostUrl="https://"+UserInfo.cis_domain
+        hostUrl = "https://"+UserInfo.cis_domain
 
         healthCheck(hostUrl)
 
-        hostUrl="https://www."+UserInfo.cis_domain
+        hostUrl = "https://www."+UserInfo.cis_domain
 
         healthCheck(hostUrl)

@@ -1,9 +1,9 @@
-from src.certcreate_iks import SecretCertificateCreator
-from src.dns_creator import DNSCreator
-from src.create_terraform_workspace import WorkspaceCreator
-from src.functions import Color, IntegrationInfo, healthCheck
-from src.delete_dns import DeleteDNS
-from src.delete_workspaces import DeleteWorkspace
+from src.iks.certcreate_iks import SecretCertificateCreator
+from src.common.dns_creator import DNSCreator
+from src.common.create_terraform_workspace import WorkspaceCreator
+from src.common.functions import Color, IntegrationInfo, healthCheck
+from src.common.delete_dns import DeleteDNS
+from src.common.delete_workspaces import DeleteWorkspace
 import sys, getpass, os
 
 def print_help():

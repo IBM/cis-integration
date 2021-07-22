@@ -4,7 +4,7 @@ import json
 from dotenv import load_dotenv
 from pathlib import Path
 from requests.models import Response
-from src.dns_creator import DNSCreator
+from src.common.dns_creator import DNSCreator
 from ibm_cloud_networking_services.dns_records_v1 import DnsRecordsV1
 from ibm_cloud_sdk_core.detailed_response import DetailedResponse
 

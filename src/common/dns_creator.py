@@ -1,6 +1,6 @@
 from ibm_cloud_networking_services import DnsRecordsV1
 from ibm_cloud_sdk_core import ApiException
-from src.functions import Color as Color
+from src.common.functions import Color as Color
 
 class DNSCreator:
     def __init__(self, crn, zone_id, api_endpoint, app_url):
