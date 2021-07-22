@@ -15,5 +15,4 @@ module ibm_cis_iks_integration {
     resource_group = var.resource_group
     cis_domain = var.cis_domain
     cluster_id = var.cluster_id
-    token = var.token
 }
