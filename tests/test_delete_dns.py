@@ -5,10 +5,10 @@ from unittest.mock import patch
 from dotenv import load_dotenv
 from pathlib import Path
 from requests.models import Response
-from src.functions import Color
+from src.common.functions import Color
 from dotenv import load_dotenv
 from ibm_cloud_networking_services import DnsRecordsV1
-from src.delete_dns import DeleteDNS
+from src.common.delete_dns import DeleteDNS
 import requests, json
 from ibm_cloud_sdk_core.detailed_response import DetailedResponse
 
