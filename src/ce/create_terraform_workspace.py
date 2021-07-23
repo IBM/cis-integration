@@ -68,11 +68,11 @@ class WorkspaceCreator:
 
             workspace_create_ce_variable_request = {}
             workspace_create_ce_variable_request['name'] = 'create_ce'
-            workspace_create_ce_variable_request['value'] = "true"
+            workspace_create_ce_variable_request['value'] = 'true'
 
             workspace_create_iks_variable_request = {}
             workspace_create_iks_variable_request['name'] = 'create_iks'
-            workspace_create_iks_variable_request['value'] = "false"
+            workspace_create_iks_variable_request['value'] = 'false'
 
             template_source_data_request_model = {}
 
@@ -90,7 +90,7 @@ class WorkspaceCreator:
             template_repo_request_model['url'] = 'https://github.com/IBM/cis-integration/tree/iks-workspace/src/root_terraform'
 
             workspace_response = schematics_service.create_workspace(
-                description="Workspace for building resources for the CIS instance using terraform",
+                description="Workspace for building resources for the CIS-CE integration using Terraform",
                 name="temp-workspace",
                 template_data=[template_source_data_request_model],
                 template_repo=template_repo_request_model,
