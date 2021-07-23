@@ -20,8 +20,6 @@ data ibm_cis cis_instance {
 
 data ibm_iam_auth_token token {}
 
-data ibm_iam_auth_token token {}
-
 resource "ibm_certificate_manager_order" "cert" {
   certificate_manager_instance_id = data.ibm_resource_instance.cm.id
   name                            = "test"
