@@ -4,6 +4,7 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 import os
 import requests
 import time
+import json
 import tarfile
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import ResourceControllerV2
@@ -29,7 +30,7 @@ class WorkspaceCreator:
         authenticator = IAMAuthenticator(self.cis_api_key)
         schematics_service = SchematicsV1(authenticator=authenticator)
         schematics_service.set_service_url(self.schematics_url)
-        #r_token = self.request_token(self.cis_api_key)
+        # r_token = self.request_token(self.cis_api_key)
         keepgoing = True
 
         pool_name = self.pool_check()
@@ -65,6 +66,14 @@ class WorkspaceCreator:
             workspace_pool_variable_request['name'] = 'pool_name'
             workspace_pool_variable_request['value'] = pool_name
 
+            workspace_create_ce_variable_request = {}
+            workspace_create_ce_variable_request['name'] = 'create_ce'
+            workspace_create_ce_variable_request['value'] = "true"
+
+            workspace_create_iks_variable_request = {}
+            workspace_create_iks_variable_request['name'] = 'create_iks'
+            workspace_create_iks_variable_request['value'] = "false"
+
             template_source_data_request_model = {}
 
             template_source_data_request_model['type'] = 'terraform_v0.14.00'
@@ -73,10 +82,12 @@ class WorkspaceCreator:
                                                                    workspace_cis_name_variable_request,
                                                                    workspace_app_url_variable_request,
                                                                    workspace_domain_variable_request,
-                                                                   workspace_pool_variable_request]
+                                                                   workspace_pool_variable_request,
+                                                                   workspace_create_ce_variable_request,
+                                                                   workspace_create_iks_variable_request]
 
             template_repo_request_model = {}
-            template_repo_request_model['url'] = 'https://github.com/IBM/cis-integration/tree/master/src/root_terraform'
+            template_repo_request_model['url'] = 'https://github.com/IBM/cis-integration/tree/iks-workspace/src/root_terraform'
 
             workspace_response = schematics_service.create_workspace(
                 description="Workspace for building resources for the CIS instance using terraform",
@@ -286,5 +297,5 @@ class WorkspaceCreator:
         url="https://iam.cloud.ibm.com/identity/token"
         token = requests.post(url=url, data=data, headers=headers)
         return token.json()
-        #return token.json()["refresh_token"] 
+        # return token.json()["refresh_token"] 
         '''

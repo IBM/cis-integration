@@ -3,7 +3,7 @@ from src.common.dns_creator import DNSCreator
 from src.iks.create_terraform_workspace import WorkspaceCreator
 from src.common.functions import Color, IntegrationInfo, healthCheck
 from src.common.delete_dns import DeleteDNS
-from src.iks.delete_workspaces import DeleteWorkspace
+# from src.iks.delete_workspaces import DeleteWorkspace
 import sys
 import getpass
 import os
