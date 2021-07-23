@@ -39,16 +39,6 @@ class MockDeleteTriggers:
     def json():
         return {"success": True}
 
-def edge_function():
-    return create_edge_function.EdgeFunctionCreator(
-        crn="testString",
-        app_url="test-url.com",
-        apikey="testString",
-        zone_id="testString",
-        domain="test-domain.com",
-        token="test-token"
-    )
-
 def test_fail_delete_action(monkeypatch):
     sample_inputs = StringIO('y\n')
     monkeypatch.setattr('sys.stdin', sample_inputs)

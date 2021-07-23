@@ -27,7 +27,7 @@ class MockGlobalLoadBalancerV1DNE:
 
     # create_load_balancer_monitor() creates a fake Load Balancer Monitor for testing
     def delete_load_balancer(self, load_balancer_identifier):
-        return DetailedResponse(response={"result": { "id": glb_id}})
+        return DetailedResponse(response={"result": { "id": load_balancer_identifier}})
 
     def list_all_load_balancers(self):
         return DetailedResponse(response={"result": []})
