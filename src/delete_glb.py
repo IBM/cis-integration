@@ -4,16 +4,19 @@ from ibm_cloud_networking_services import GlobalLoadBalancerMonitorV1, GlobalLoa
 from ibm_cloud_sdk_core.api_exception import ApiException
 from src.functions import Color
 
+def get_input(text):
+    return input(text)
+
 class DeleteGLB:
     def __init__(self, crn: str, zone_id: str, endpoint: str, cis_domain: str) -> None:
         self.crn = crn
         self.zone_id = zone_id
         self.endpoint = endpoint
-        self.cis_domain = cis_domain
+        self.cis_domain = cis_domain    
         
     def delete_glb(self):
         # delete the glb
-        execute_glb = input("Delete global load balancer? Input 'y' or 'yes' to execute: ").lower()
+        execute_glb = get_input("Delete global load balancer? Input 'y' or 'yes' to execute: ").lower()
         if execute_glb == 'y' or execute_glb == 'yes':
             globalLoadBalancer = GlobalLoadBalancerV1.new_instance(
                 crn=self.crn, zone_identifier=self.zone_id, service_name="cis_services")
@@ -40,7 +43,7 @@ class DeleteGLB:
 
             if keepgoing:
                 # delete the origin pool
-                execute_origin = input("Delete origin pool? Input 'y' or 'yes' to execute: ").lower()
+                execute_origin = get_input("Delete origin pool? Input 'y' or 'yes' to execute: ").lower()
                 if execute_origin == 'y' or execute_origin == 'yes':
                     globalLoadBalancerPools = GlobalLoadBalancerPoolsV0.new_instance(
                         crn=self.crn, service_name="cis_services")
@@ -64,7 +67,7 @@ class DeleteGLB:
                     
                     if keepgoing:
                         # delete the linked health check
-                        execute_monitor = input("Delete health check monitor? Input 'y' or 'yes' to execute: ").lower()
+                        execute_monitor = get_input("Delete health check monitor? Input 'y' or 'yes' to execute: ").lower()
                         if execute_monitor == 'y' or execute_monitor == 'yes':
                             
                             cert = GlobalLoadBalancerMonitorV1.new_instance(

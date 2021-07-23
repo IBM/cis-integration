@@ -4,6 +4,9 @@ from ibm_cloud_networking_services import DnsRecordsV1
 from ibm_cloud_sdk_core.api_exception import ApiException
 from src.functions import Color
 
+def get_input(text):
+    return input(text)
+
 class DeleteDNS:
     def __init__(self, crn: str, zone_id: str, endpoint: str, cis_domain: str) -> None:
         self.crn = crn
@@ -12,7 +15,7 @@ class DeleteDNS:
         self.cis_domain = cis_domain
 
     def delete_dns(self):
-        execute = input("Delete DNS Records? Input 'y' or 'yes' to execute: ").lower()
+        execute = get_input("Delete DNS Records? Input 'y' or 'yes' to execute: ").lower()
         if execute == 'y' or execute == 'yes':
             # create instance
             record = DnsRecordsV1.new_instance(
