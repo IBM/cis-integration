@@ -43,7 +43,8 @@ def print_help():
     print("\t--delete \t\t removes resources created using this tool")
     print("\t--env, -e \t\t gets arguments from a credentials.env file")
     print("\t--terraform, -t \t build resources for CIS instance using terraform")
-    print("\t--verbose, -v \t\t prints a detailed log from the Schematics workspace if --terraform is selected\n")
+    print("\t--verbose, -v \t\t prints a detailed log from the Schematics workspace if --terraform is selected")
+    print("\t--standard \t\t creates everything except the edge function, according to Standard Plan permissions\n")
 
     print(Color.BOLD + "OPTIONAL ARGUMENTS:" + Color.END)
     print("\t--crn, -c \t\t CRN of the CIS instance")
@@ -212,7 +213,8 @@ def CodeEngine(args):
             userEdgeFunction.create_edge_function_wild_card_trigger()
             userEdgeFunction.create_edge_function_www_trigger()
         else:
-            print("Edge function was not created since you are using the Standard Plan. You can create the edge function manually.")
+            print("Edge function was not created with this tool since you are using the Standard Plan. You can still create the edge function manually.")
+            print("Follow Step 4 of this link for instructions: https://github.com/IBM/cis-integration/blob/master/cis_manual_steps.md#4-edge-functions \n")
 
     if not UserInfo.delete:
         hostUrl = "https://"+UserInfo.cis_domain

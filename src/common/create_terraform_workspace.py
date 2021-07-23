@@ -34,6 +34,9 @@ class WorkspaceCreator:
         keepgoing = self.dns_check(keepgoing)
         if not self.standard:
             keepgoing = self.edge_check(self.token["access_token"], keepgoing)
+        else:
+            print("Edge function was not created with this tool since you are using the Standard Plan. You can still create the edge function manually.")
+            print("Follow Step 4 of this link for instructions: https://github.com/IBM/cis-integration/blob/master/cis_manual_steps.md#4-edge-functions \n")
 
         # Creating the workspace and connecting to the github repo
         if keepgoing:
