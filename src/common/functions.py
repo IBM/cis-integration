@@ -58,8 +58,13 @@ class IntegrationInfo:
     app_url = ''
     resource_group = ''
     resource_id = ''
+    namespace=''
+    service_name=''
+    secret_name=''
+    service_port=''
     cis_name = ''
     cis_api_key = ''
+    cert_name= ''
     cis_domain = ''
     schematics_url = 'https://us.schematics.cloud.ibm.com'
     terraforming = False
@@ -133,7 +138,7 @@ class IntegrationInfo:
         manager = ResourceManagerV2(authenticator=authenticator)
         resource = manager.list_resource_groups(name=self.resource_group, include_deleted=False).get_result()
         self.resource_id = resource["resources"][0]["id"]
-        print(self.resource_id)
+        return self.resource_id
 
     def get_cms(self):
         authenticator = IAMAuthenticator(self.cis_api_key)

@@ -1,8 +1,4 @@
-<<<<<<< HEAD:src/ce/certcreate.py
 from src.common.functions import Color as Color
-=======
-from src.functions import Color as Color
->>>>>>> 82cfc9b (made some progress on moving files):src/certcreate.py
 from ibm_cloud_networking_services import SslCertificateApiV1
 
 class CertificateCreator:
