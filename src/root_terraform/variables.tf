@@ -37,3 +37,8 @@ variable cluster_id {
     type = string
     description = "Cluster ID of the IKS instance"
 }
+
+variable standard {
+    type = bool
+    description = "Determines whether the CIS instance is using the Standard Plan"
+}
