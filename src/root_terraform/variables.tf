@@ -37,3 +37,13 @@ variable cluster_id {
     type = string
     description = "Cluster ID of the IKS instance"
 }
+
+variable create_ce {
+    type = bool
+    description = "Whether or not to build the CodeEngine module"
+}
+
+variable create_iks {
+    type = bool
+    description = "Whether or not to build the CodeEngine module"
+}
