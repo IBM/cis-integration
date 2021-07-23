@@ -68,7 +68,11 @@ class WorkspaceCreator:
 
             workspace_standard_variable_request = {}
             workspace_standard_variable_request['name'] = 'standard'
-            workspace_standard_variable_request['value'] = self.standard
+            workspace_standard_variable_request['type'] = 'bool'
+            if self.standard:
+                workspace_standard_variable_request['value'] = 'true'
+            else:
+                workspace_standard_variable_request['value'] = 'false'
 
             template_source_data_request_model = {}
             

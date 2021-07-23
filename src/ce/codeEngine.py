@@ -213,7 +213,7 @@ def CodeEngine(args):
             userEdgeFunction.create_edge_function_wild_card_trigger()
             userEdgeFunction.create_edge_function_www_trigger()
         else:
-            print("Edge function was not created with this tool since you are using the Standard Plan. You can still create the edge function manually.")
+            print("\nEdge function was not created with this tool since you are using the Standard Plan. You can still create the edge function manually.")
             print("Follow Step 4 of this link for instructions: https://github.com/IBM/cis-integration/blob/master/cis_manual_steps.md#4-edge-functions \n")
 
     if not UserInfo.delete:
