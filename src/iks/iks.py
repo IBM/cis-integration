@@ -3,7 +3,8 @@ from src.common.dns_creator import DNSCreator
 from src.iks.create_terraform_workspace import WorkspaceCreator
 from src.common.functions import Color, IntegrationInfo, healthCheck
 from src.common.delete_dns import DeleteDNS
-# from src.iks.delete_workspaces import DeleteWorkspace
+from src.ce.delete_workspaces import DeleteWorkspace
+
 import sys
 import getpass
 import os
@@ -113,10 +114,9 @@ def iks(args):
     elif UserInfo.terraforming:  # handle the case of using terraform
         work_creator = WorkspaceCreator(
             UserInfo.cis_api_key, UserInfo.schematics_url,
-            UserInfo.app_url, UserInfo.cis_domain,
-            UserInfo.resource_group, UserInfo.cis_name,
-            UserInfo.api_endpoint, UserInfo.crn,
-            UserInfo.zone_id, UserInfo.verbose, UserInfo.token)
+            UserInfo.cis_name, UserInfo.resource_group,
+            UserInfo.cis_name, UserInfo.iks_cluster_id,
+            UserInfo.verbose, UserInfo.token)
         work_creator.create_terraform_workspace()
     else:
         # handle the case of using python
