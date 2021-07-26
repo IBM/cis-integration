@@ -3,12 +3,12 @@ from src.common.functions import Color as Color
 
 class SecretCertificateCreator:
 
-    def __init__(self, cis_crn, cluster_id, cis_domain, cert_manager_crn, token):
+    def __init__(self, cis_crn, cluster_id, cis_domain, cert_manager_crn, token, cert_name):
         self.cis_crn = cis_crn
         self.cluster_id = cluster_id
         self.cis_domain = cis_domain
         self.cert_manager_crn = cert_manager_crn
-        self.cert_name = "cis-cert"
+        self.cert_name = cert_name
         self.token = token
 
     # Creates a secret in the IKS cluster using the CRN returned by check_certificate()
