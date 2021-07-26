@@ -87,7 +87,7 @@ class WorkspaceCreator:
                                                                    workspace_create_iks_variable_request]
 
             template_repo_request_model = {}
-            template_repo_request_model['url'] = 'https://github.com/IBM/cis-integration/tree/iks-workspace/src/root_terraform'
+            template_repo_request_model['url'] = 'https://github.com/IBM/cis-integration/tree/master/src/root_terraform'
 
             workspace_response = schematics_service.create_workspace(
                 description="Workspace for building resources for the CIS-CE integration using Terraform",
