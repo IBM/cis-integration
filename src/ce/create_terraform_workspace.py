@@ -98,7 +98,6 @@ class WorkspaceCreator:
                 location="us-south",
                 resource_group=self.resource_group,
             ).get_result()
-            print(json.dumps(workspace_response, indent=2))
 
             print(Color.GREEN +
                   'SUCCESS: Successfully created the workspace!' + Color.END)

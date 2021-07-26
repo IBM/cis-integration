@@ -75,12 +75,11 @@ class WorkspaceCreator:
                 description="Workspace for building resources for the CIS-IKS integration using Terraform",
                 name="temp-workspace",
                 template_data=[template_source_data_request_model],
-                templae_repo=template_repo_request_model,
+                template_repo=template_repo_request_model,
                 type=['terraform_v0.14.00'],
                 location='us-south',
                 resource_group=self.resource_group,
             ).get_result()
-            print(json.dumps(workspace_response, indent=2))
 
             print(Color.GREEN +
                   'SUCCESS: Successfully created the workspace!' + Color.END)

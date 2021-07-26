@@ -115,7 +115,7 @@ def iks(args):
         work_creator = WorkspaceCreator(
             UserInfo.cis_api_key, UserInfo.schematics_url,
             UserInfo.cis_name, UserInfo.resource_group,
-            UserInfo.cis_name, UserInfo.iks_cluster_id,
+            UserInfo.cis_domain, UserInfo.iks_cluster_id,
             UserInfo.verbose, UserInfo.token)
         work_creator.create_terraform_workspace()
     else:
