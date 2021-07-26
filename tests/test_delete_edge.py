@@ -86,3 +86,27 @@ def test_success_delete_action(monkeypatch):
     with patch('sys.stdout', new = StringIO()) as fake_out:
             delete.delete_edge()
             assert fake_out.getvalue() == expected_out
+
+def test_no_delete_action(monkeypatch):
+    sample_inputs = StringIO('n\n')
+    monkeypatch.setattr('sys.stdin', sample_inputs)
+
+    def mock_get_trigg(*args, **kwargs):
+        return MockGetTriggers().list_triggers()
+
+    def mock_delete_trigg(*args, **kwargs):
+        return MockDeleteTriggers()
+
+    def mock_delete_action(*args, **kwargs):
+        return MockDeleteActionSuccess().response()
+
+    monkeypatch.setattr(DeleteEdge, "get_triggers", mock_get_trigg)
+    monkeypatch.setattr(DeleteEdge, "delete_trigger", mock_delete_trigg)
+    monkeypatch.setattr(DeleteEdge, "delete_action", mock_delete_action)
+
+    delete = DeleteEdge(crn="testString", zone_id="testString", cis_domain="test-domain.com", apikey="testString", token="test-token")
+    no_delete = "Delete edge function? Input 'y' or 'yes' to execute: "
+    expected_out = no_delete
+    with patch('sys.stdout', new = StringIO()) as fake_out:
+            delete.delete_edge()
+            assert fake_out.getvalue() == expected_out

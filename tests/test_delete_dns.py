@@ -157,3 +157,19 @@ def test_neither_dns_records(monkeypatch):
     with patch('sys.stdout', new = StringIO()) as fake_out:
             delete.delete_dns()
             assert fake_out.getvalue() == expected_out
+
+def test_no_dns_records(monkeypatch):
+    sample_inputs = StringIO('n\n')
+    monkeypatch.setattr('sys.stdin', sample_inputs)
+
+    def mock_dns(*args, **kwargs):
+        return MockNeitherDNSRecordsV1()
+
+    monkeypatch.setattr(DnsRecordsV1, "new_instance", mock_dns)
+
+    delete = dns_delete()
+    no_delete = "Delete DNS Records? Input 'y' or 'yes' to execute: "
+    expected_out = no_delete
+    with patch('sys.stdout', new = StringIO()) as fake_out:
+            delete.delete_dns()
+            assert fake_out.getvalue() == expected_out
