@@ -110,10 +110,7 @@ def iks(args):
         # user_DNS.create_records()
 
         user_ACL = AclRuleCreator(UserInfo.resource_group, UserInfo.vpc_name, UserInfo.cis_api_key)
-        print(UserInfo.resource_group)
-        print(UserInfo.vpc_name)
-        print(UserInfo.cis_api_key)
-        user_ACL.create_network_acl()
+        user_ACL.check_network_acl()
 
     if not UserInfo.delete:
         hostUrl="https://"+UserInfo.cis_domain
