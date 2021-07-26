@@ -1,11 +1,10 @@
 import requests
-import json
 import os
 import subprocess
 from src.common.functions import Color as Color
 
 class IngressCreator:
-    def __init__(self, clusterNameOrID, resourceGroupID, namespace, secretName, serviceName, servicePort, accessToken, refreshToken ):
+    def __init__(self, clusterNameOrID, resourceGroupID, namespace, secretName, serviceName, servicePort, accessToken, refreshToken, ingressSubdomain ):
         self.clusterNameOrID=clusterNameOrID
         self.resourceGroupID=resourceGroupID
         self.namespace=namespace
@@ -14,24 +13,7 @@ class IngressCreator:
         self.servicePort=servicePort
         self.accessToken= accessToken
         self.refreshToken=refreshToken
-        print("values: ",clusterNameOrID,resourceGroupID,namespace,secretName,serviceName,servicePort)
-    def getIngressSubdomain(self):
-        url = "https://containers.cloud.ibm.com/global/v2/getCluster?cluster="+self.clusterNameOrID
-
-        payload = ""
-        headers = {
-        'accept': 'application/json',
-        'Authorization': self.accessToken,
-        'X-Auth-Resource-Group': self.resourceGroupID
-        }
-        try:
-            response = requests.request("GET", url, headers=headers, data=payload)
-
-            data=json.loads(response.text)
-            
-            return data["ingress"]["hostname"]
-        except:
-            print(Color.RED+"ERROR: Unable to get ingress subdomain"+Color.END)
+        self.ingressSubdomain=ingressSubdomain
 
     def getKubeConfig(self):
 
@@ -62,7 +44,7 @@ class IngressCreator:
 
         #2. getting ingressSubdomain
         ingressFileName="ingress.yaml"
-        ingressSubdomain=self.getIngressSubdomain()
+  
         
         yaml='''apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
@@ -73,10 +55,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - '''+ingressSubdomain+'''
+    - '''+self.ingressSubdomain+'''
     secretName: '''+self.secretName+'''
   rules:
-  - host: '''+ingressSubdomain+'''
+  - host: '''+self.ingressSubdomain+'''
     http:
       paths:
       - path: /

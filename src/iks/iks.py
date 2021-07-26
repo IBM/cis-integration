@@ -126,13 +126,13 @@ def iks(args):
     else:
         # handle the case of using python
         # 1. Domain Name and DNS
-        
+        '''
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
-        
+        '''
         # 2. Generate certificate in manager if necessary
         UserInfo.cert_name="cis-cert"
-        
+        '''
         cms_id = UserInfo.get_cms()
         print("\n"+cms_id)
         user_cert = SecretCertificateCreator(
@@ -146,18 +146,19 @@ def iks(args):
         user_cert.create_secret()
 
        
-        
+        '''
         #3 generate ingress
         UserInfo.secret_name=UserInfo.cert_name
         user_ingress = IngressCreator(
             clusterNameOrID=UserInfo.iks_cluster_id,
-            resourceGroupID=UserInfo.get_resource_id(), 
+            resourceGroupID=UserInfo.resource_id, 
             namespace=UserInfo.namespace, 
             secretName=UserInfo.secret_name, 
             serviceName=UserInfo.service_name, 
             servicePort=UserInfo.service_port, 
             accessToken=UserInfo.token["access_token"], 
-            refreshToken=UserInfo.token["refresh_token"]
+            refreshToken=UserInfo.token["refresh_token"],
+            ingressSubdomain=UserInfo.app_url
         )
         user_ingress.create_ingress()
         
