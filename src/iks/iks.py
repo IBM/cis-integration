@@ -30,10 +30,7 @@ def handle_args(args):
 
     if args.delete:
         UserInfo.delete = True
-
-    #vpc name
-    UserInfo.vpc_name = args.vpc_name
-
+    
     # determining API key 
     UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
@@ -73,6 +70,12 @@ def handle_args(args):
                 sys.exit(1)
         
     else:
+        #vpc name
+        UserInfo.vpc_name = args.vpc_name
+        if UserInfo.vpc_name is None:
+            print("You did not specify a VPC instance name.")
+            sys.exit(1)
+
         UserInfo.resource_group = args.resource_group
         if UserInfo.resource_group is None:         
             print("You did not specify a resource group.")

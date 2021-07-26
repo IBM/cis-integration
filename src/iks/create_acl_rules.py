@@ -15,8 +15,13 @@ class AclRuleCreator:
     def check_ips(self, subnet_acl):
         notfound = False
         needed_acl_ips = ["161.26.0.0/16", "166.8.0.0/14", "103.21.244.0/22", "173.245.48.0/20", "103.22.200.0/22", "103.31.4.0/22", "141.101.64.0/18", "108.162.192.0/18", "190.93.240.0/20", "188.114.96.0/20", "197.234.240.0/22", "198.41.128.0/17", "162.158.0.0/15", "104.16.0.0/12", "172.64.0.0/13", "131.0.72.0/22", "10.10.30.0/24", "10.10.20.0/24", "10.10.10.0/24"]
+        current_rules = []
         for rule in subnet_acl["rules"]:
-            if rule["source"] != "0.0.0.0/0" and rule["source"] not in needed_acl_ips:
+            if rule["source"] != "0.0.0.0/0":
+                current_rules.append(rule["source"])
+    
+        for ip in needed_acl_ips:
+            if ip not in current_rules:
                 notfound = True
         return notfound
     
@@ -266,5 +271,7 @@ class AclRuleCreator:
         for sub in subnets:
             if sub["vpc"]["id"] == self.vpc_id:
                 resp = vpc_service.get_subnet_network_acl(sub["id"]).get_result()
-                if not self.check_ips(resp):
+                if self.check_ips(resp):
                     print(Color.YELLOW + "WARNING: Please check and verify needed ACL rules are present" + Color.END)
+                else:
+                    print(Color.GREEN + "SUCESS: Needed ACL Rules Verified" + Color.END)
