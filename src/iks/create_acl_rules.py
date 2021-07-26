@@ -2,7 +2,7 @@ from ibm_vpc import VpcV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import ResourceManagerV2
-from src.functions import Color
+from src.common.functions import Color
 
 class AclRuleCreator:
     def __init__(self, resource_group, vpc_name, api_key):

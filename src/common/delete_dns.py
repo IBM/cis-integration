@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from ibm_cloud_networking_services import DnsRecordsV1
 from ibm_cloud_sdk_core.api_exception import ApiException
-from src.functions import Color
+from src.common.functions import Color
 
 class DeleteDNS:
     def __init__(self, crn: str, zone_id: str, endpoint: str, cis_domain: str) -> None:

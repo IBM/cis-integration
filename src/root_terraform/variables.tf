@@ -32,3 +32,8 @@ variable pool_name {
     description = "Name of the pool attached to the CIS Instance"
     type = string
 }
+
+variable cluster_id {
+    type = string
+    description = "Cluster ID of the IKS instance"
+}

@@ -1,5 +1,5 @@
 import requests, json
-from src.functions import Color as Color
+from src.common.functions import Color as Color
 
 class EdgeFunctionCreator:
     def __init__(self, crn, app_url, apikey, zone_id, domain, token):

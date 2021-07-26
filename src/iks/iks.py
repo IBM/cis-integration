@@ -1,9 +1,11 @@
-from src.dns_creator import DNSCreator
-from src.create_terraform_workspace import WorkspaceCreator
-from src.functions import Color, IntegrationInfo, healthCheck
-from src.delete_dns import DeleteDNS
-from src.delete_workspaces import DeleteWorkspace
-from src.create_acl_rules import AclRuleCreator
+from src.iks.certcreate_iks import SecretCertificateCreator
+from src.iks.create_ingress import IngressCreator
+from src.common.dns_creator import DNSCreator
+from src.common.create_terraform_workspace import WorkspaceCreator
+from src.common.functions import Color, IntegrationInfo, healthCheck
+from src.common.delete_dns import DeleteDNS
+from src.common.delete_workspaces import DeleteWorkspace
+from src.iks.create_acl_rules import AclRuleCreator
 import sys, getpass, os
 
 def print_help():
@@ -59,6 +61,7 @@ def handle_args(args):
             print("You did not specify a resource group.")
             sys.exit(1)
         
+        UserInfo.get_resource_id()
         
         UserInfo.cis_name = args.name
         if UserInfo.cis_name is None:
@@ -70,6 +73,28 @@ def handle_args(args):
                 sys.exit(1)
         
     else:
+        UserInfo.resource_group = args.resource_group
+        if UserInfo.resource_group is None:         
+            print("You did not specify a resource group.")
+            sys.exit(1)
+
+        UserInfo.namespace = args.namespace
+        if UserInfo.namespace is None:         
+            print("You did not specify a namespace for IKS cluster.")
+            sys.exit(1)
+
+        UserInfo.service_name = args.service_name
+        if UserInfo.service_name is None:         
+            print("You did not specify a service name from the IKS cluster.")
+            sys.exit(1)
+
+        UserInfo.service_port = args.service_port
+        if UserInfo.service_port is None:         
+            print("You did not specify the target port of the service from the IKS cluster.")
+            sys.exit(1)
+
+        UserInfo.get_resource_id()
+
         UserInfo.crn=args.crn
         UserInfo.zone_id = args.zone_id
         UserInfo.resource_group = args.resource_group
@@ -106,12 +131,48 @@ def iks(args):
     else:
         # handle the case of using python
         # 1. Domain Name and DNS
-        # user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
-        # user_DNS.create_records()
+        
+        user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
+        user_DNS.create_records()
 
         user_ACL = AclRuleCreator(UserInfo.resource_group, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
+        
+        # 2. Generate certificate in manager if necessary
+        UserInfo.cert_name="cis-cert"
+        
+        cms_id = UserInfo.get_cms()
+        print("\n"+cms_id)
+        user_cert = SecretCertificateCreator(
+            cis_crn=UserInfo.crn, 
+            cluster_id=UserInfo.iks_cluster_id, 
+            cis_domain=UserInfo.cis_domain, 
+            cert_manager_crn=cms_id,
+            token=UserInfo.token["access_token"],
+            cert_name=UserInfo.cert_name
+            )
+        user_cert.create_secret()
 
+       
+        
+        #3 generate ingress
+        UserInfo.secret_name=UserInfo.cert_name
+        user_ingress = IngressCreator(
+            clusterNameOrID=UserInfo.iks_cluster_id,
+            resourceGroupID=UserInfo.resource_id, 
+            namespace=UserInfo.namespace, 
+            secretName=UserInfo.secret_name, 
+            serviceName=UserInfo.service_name, 
+            servicePort=UserInfo.service_port, 
+            accessToken=UserInfo.token["access_token"], 
+            refreshToken=UserInfo.token["refresh_token"],
+            ingressSubdomain=UserInfo.app_url
+        )
+        user_ingress.create_ingress()
+        
+
+        
+        
     if not UserInfo.delete:
         hostUrl="https://"+UserInfo.cis_domain
 

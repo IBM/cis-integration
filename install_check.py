@@ -1,5 +1,5 @@
 import os
-from src.functions import Color
+from src.common.functions import Color
 
 first_check = False
 second_check = False

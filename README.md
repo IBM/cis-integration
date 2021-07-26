@@ -7,7 +7,7 @@ The goal of this project is to automate CIS integration for IBM Cloud applicatio
 
 This command line tool currently supports [Code Engine](https://www.ibm.com/cloud/code-engine) applications and has been configured for MacOS. In order to connect a Code Engine app to a CIS instance, numerous resources must be set up within CIS, namely: DNS records, a TLS certificate, a Global Load Balancer, Origin Pool, and Health Check Monitor, and an Edge Function.
 
-Before using this application:
+Before using this application, make sure you have an existing Code Engine app and a CIS instance with a domain name:
 * [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
 * [Deploy a Code Engine application](https://cloud.ibm.com/docs/codeengine?topic=codeengine-deploy-app-tutorial) 
 
@@ -58,17 +58,19 @@ For general information on how to use the tool, run the following command in the
 $ cis-integration code-engine --help
 ```
 
-This tool offers two options to connect the CIS instance to the application. You may choose to build the resources needed for your CIS instance using either Python or [Terraform](https://www.terraform.io/) scripts. If you choose to use Terraform, this tool will build an [IBM Schematics](https://cloud.ibm.com/docs/schematics?topic=schematics-about-schematics) workspace to run the Terraform code. Note that Terraform is currently unable to ensure that the TLS mode for TLS certificates is in End-to-end CA Signed or check for duplicate certificates.
+This tool offers two options to connect the CIS instance to the application. You may choose to build the resources needed for your CIS instance using either Python or [Terraform](https://www.terraform.io/) scripts. If you choose to use Terraform, this tool will build an [IBM Schematics](https://cloud.ibm.com/docs/schematics?topic=schematics-about-schematics) workspace to run the Terraform code. 
 
-Regardless of the option you choose, the tool will require you to input some information about your CIS instance and Code Engine application. You can find this information by going to https://cloud.ibm.com and logging into your IBM Cloud account. Navigate to the "Resource list" tab and locate your CIS instance and Code Engine app
+Regardless of the option you choose, the tool will require you to input some information about your CIS instance and Code Engine application. You can find this information by going to https://cloud.ibm.com and logging into your IBM Cloud account. Navigate to the "Resource list" tab and locate your CIS instance and Code Engine app.
 
 ### To deploy resources using Python scripts:
+**WARNING:** If you have any resources already present on your CIS instance that will conflict with the resources that will be created by this tool (i.e. a DNS Record with 'www' as its name), this method will automatically update them to represent the configuration specified by this tool. If you are concerned about overwriting any resources you've created yourself, use the [Terraform implementation](#to-deploy-resources-using-terraform-scripts) listed below.
+
 1. Install the tool using the [installation](#installation) instructions listed above
 2. Access the command terminal on your computer 
 3. If you're using Docker, build and run your Docker image with the above commands
 4. Input the following generic command:
 ```
-$ cis-integration code-engine -n [CIS NAME] -d [CIS DOMAIN] -a [CODE ENGINE APP DOMAIN]
+$ cis-integration code-engine -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -a [CODE ENGINE APP DOMAIN]
 ```
 An alternative command is also available:
 ```
@@ -76,6 +78,7 @@ $ cis-integration code-engine -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [
 ```
 ### Arguments:
 * **CIS NAME:** the name of your CIS instance.
+* **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
 * **CIS CRN:** the cloud resource name (CRN) of your CIS instance. Found in the "Overview" tab of your CIS resource page. 
     Example: `crn:v1:test:public:internet-svcs:global:a/2c38d9a9913332006a27665dab3d26e8:836f33a5-d3e1-4bc6-876a-982a8668b1bb::`
 * **CIS ID:** the ID associated with your CIS instance. Found in the "Overview" tab of your CIS resource page under "Domain ID". 
@@ -86,6 +89,8 @@ $ cis-integration code-engine -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [
     Example: `example-app.8jl3icnad39.us-south.codeengine.appdomain.cloud`
 
 ### To deploy resources using Terraform scripts:
+**Note:** This version will not execute any portion of the Terraform scripts if it detects any conflicting resources already present on your CIS instance. Please review the [CIS Manual Steps](https://github.com/IBM/cis-integration/blob/master/cis_manual_steps.md) document to see what resources are created by this tool.
+
 1. Install the tool using the [installation](#installation) instructions listed above
 2. Access the command terminal on your computer
 3. If you're using Docker, build and run your Docker image with the above commands
@@ -93,6 +98,7 @@ $ cis-integration code-engine -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -a [
 ```
 $ cis-integration code-engine --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -a [CODE ENGINE APP DOMAIN]
 ```
+If you would like to view a detailed log from the Schematics workspace showing the resources being created during the execution of the Terraform `apply` function, add `--verbose` to the above command.
 ### Arguments:
 * **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
 * **CIS NAME:** the name of your CIS instance.
@@ -123,7 +129,7 @@ cis-integration code-engine --env
 ### Deleting created resources with the `--delete` option
 If you decide to delete the resources you've created using this tool, the `--delete` global option is available to you. The global load balancer, origin pool, health check, DNS records, TLS certificate(s), edge function, and (by adding --terraform to the command) the Schematics workspace(s) created by this tool may be deleted. Use the following generic examples to format the command:
 ```
-cis-integration code-engine --delete -n [CIS NAME] -d [CIS DOMAIN]
+cis-integration code-engine --delete -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN]
 ```
 or
 ```
