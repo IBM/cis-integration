@@ -52,3 +52,9 @@ build/*
 #############
 terraform.tfvars
 .terraform*
+
+# Other #
+#########
+ingress.yaml
+config.txt
+

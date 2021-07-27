@@ -1,4 +1,5 @@
 from src.iks.certcreate_iks import SecretCertificateCreator
+from src.iks.create_ingress import IngressCreator
 from src.common.dns_creator import DNSCreator
 from src.iks.create_terraform_workspace import WorkspaceCreator
 from src.common.functions import Color, IntegrationInfo, healthCheck
@@ -80,6 +81,21 @@ def handle_args(args):
             print("You did not specify a resource group.")
             sys.exit(1)
 
+        UserInfo.namespace = args.namespace
+        if UserInfo.namespace is None:         
+            print("You did not specify a namespace for IKS cluster.")
+            sys.exit(1)
+
+        UserInfo.service_name = args.service_name
+        if UserInfo.service_name is None:         
+            print("You did not specify a service name from the IKS cluster.")
+            sys.exit(1)
+
+        UserInfo.service_port = args.service_port
+        if UserInfo.service_port is None:         
+            print("You did not specify the target port of the service from the IKS cluster.")
+            sys.exit(1)
+
         UserInfo.get_resource_id()
 
         UserInfo.crn = args.crn
@@ -123,8 +139,12 @@ def iks(args):
         # 1. Domain Name and DNS
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id,
                               UserInfo.api_endpoint, UserInfo.app_url)
+
         user_DNS.create_records()
+        
         # 2. Generate certificate in manager if necessary
+        UserInfo.cert_name="cis-cert"
+        
         cms_id = UserInfo.get_cms()
         # print("\n"+cms_id)
         user_cert = SecretCertificateCreator(
@@ -132,10 +152,30 @@ def iks(args):
             cluster_id=UserInfo.iks_cluster_id,
             cis_domain=UserInfo.cis_domain,
             cert_manager_crn=cms_id,
-            token=UserInfo.token["access_token"]
-        )
+
+            token=UserInfo.token["access_token"],
+            cert_name=UserInfo.cert_name
+            )
         user_cert.create_secret()
 
+       
+        
+        #3 generate ingress
+        UserInfo.secret_name=UserInfo.cert_name
+        user_ingress = IngressCreator(
+            clusterNameOrID=UserInfo.iks_cluster_id,
+            resourceGroupID=UserInfo.resource_id, 
+            namespace=UserInfo.namespace, 
+            secretName=UserInfo.secret_name, 
+            serviceName=UserInfo.service_name, 
+            servicePort=UserInfo.service_port, 
+            accessToken=UserInfo.token["access_token"], 
+            refreshToken=UserInfo.token["refresh_token"],
+            ingressSubdomain=UserInfo.app_url
+        )
+        user_ingress.create_ingress()
+        
+        
     if not UserInfo.delete:
         hostUrl = "https://"+UserInfo.cis_domain
 

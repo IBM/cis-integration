@@ -1,6 +1,7 @@
 from ibm_platform_services.case_management_v1 import Resource
 import requests
 import sys
+import json
 from ibm_platform_services import ResourceControllerV2, ResourceManagerV2
 from ibm_cloud_networking_services import ZonesV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -65,8 +66,13 @@ class IntegrationInfo:
     app_url = ''
     resource_group = ''
     resource_id = ''
+    namespace=''
+    service_name=''
+    secret_name=''
+    service_port=''
     cis_name = ''
     cis_api_key = ''
+    cert_name= ''
     cis_domain = ''
     schematics_url = 'https://us.schematics.cloud.ibm.com'
     terraforming = False
@@ -121,20 +127,23 @@ class IntegrationInfo:
 
     def get_iks_info(self):
 
-        url = "https://containers.cloud.ibm.com/global/v1/nlb-dns/clusters/" + \
-            self.iks_cluster_id + "/list"
+        url = "https://containers.cloud.ibm.com/global/v2/getCluster?cluster="+self.iks_cluster_id
 
+        payload = ""
         headers = {
-            'Accept': 'application/json',
-            'Authorization': 'Bearer ' + self.token["access_token"]
+          'accept': 'application/json',
+          'Authorization': self.token["access_token"],
+          'X-Auth-Resource-Group': self.resource_id
         }
+        
+        try:
+            response = requests.request("GET", url, headers=headers, data=payload)
 
-        response = requests.request("GET", url, headers=headers).json()
-
-        for cluster in response["nlbs"]:
-            if cluster["clusterID"] == self.iks_cluster_id:
-                self.app_url = cluster["nlbHost"]
-        return response
+            data=json.loads(response.text)
+            self.app_url=data["ingress"]["hostname"]
+            return data
+        except:
+            print(Color.RED+"ERROR: Unable to get cluster's data"+Color.END)
 
     def get_resource_id(self):
         authenticator = IAMAuthenticator(self.cis_api_key)
@@ -142,7 +151,7 @@ class IntegrationInfo:
         resource = manager.list_resource_groups(
             name=self.resource_group, include_deleted=False).get_result()
         self.resource_id = resource["resources"][0]["id"]
-        # print(self.resource_id)
+        return self.resource_id
 
     def get_cms(self):
         authenticator = IAMAuthenticator(self.cis_api_key)
