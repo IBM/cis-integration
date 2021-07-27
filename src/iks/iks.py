@@ -126,7 +126,7 @@ def iks(args):
         user_DNS.create_records()
         # 2. Generate certificate in manager if necessary
         cms_id = UserInfo.get_cms()
-        print("\n"+cms_id)
+        # print("\n"+cms_id)
         user_cert = SecretCertificateCreator(
             cis_crn=UserInfo.crn,
             cluster_id=UserInfo.iks_cluster_id,
