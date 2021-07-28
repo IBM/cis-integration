@@ -12,7 +12,8 @@ def cert_creator():
         cluster_id="testClusterID",
         cis_domain="test-domain.com",
         cert_manager_crn="testCertCRN:::::testRegion",
-        token="test-token"
+        token="test-token",
+        cert_name="testCertName"
     )
 
 
