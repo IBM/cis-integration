@@ -12,8 +12,12 @@ def cert_creator():
         cluster_id="testClusterID",
         cis_domain="test-domain.com",
         cert_manager_crn="testCertCRN:::::testRegion",
+<<<<<<< HEAD
         token="test-token",
         cert_name="testCertName"
+=======
+        token="test-token"
+>>>>>>> 391ceed (wrote a ton of tests for certcreate_iks.py)
     )
 
 

@@ -1,4 +1,4 @@
-from src.common.create_terraform_workspace import WorkspaceCreator
+from src.iks.create_terraform_workspace import WorkspaceCreator
 from src.common.dns_creator import DNSCreator
 from src.iks.certcreate_iks import SecretCertificateCreator
 import pytest
@@ -15,7 +15,7 @@ from src.iks import iks as IKS
 from src.iks.iks import handle_args
 from src.iks.iks import iks
 from src.common.delete_dns import DeleteDNS
-from src.common.delete_workspaces import DeleteWorkspace
+from src.ce.delete_workspaces import DeleteWorkspace
 
 
 class MockArgs():
