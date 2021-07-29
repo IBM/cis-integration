@@ -1,4 +1,4 @@
-from src.common.delete_workspaces import DeleteWorkspace
+from src.ce.delete_workspaces import DeleteWorkspace
 import os
 import sys
 import getpass
@@ -11,7 +11,7 @@ from src.common.functions import healthCheck as healthCheck
 from src.ce.create_glb import GLB
 from src.common.dns_creator import DNSCreator
 from src.ce.create_edge_function import EdgeFunctionCreator
-from src.common.create_terraform_workspace import WorkspaceCreator
+from src.ce.create_terraform_workspace import WorkspaceCreator
 from src.ce.delete_glb import DeleteGLB
 from src.common.delete_dns import DeleteDNS
 from src.ce.delete_certs import DeleteCerts
