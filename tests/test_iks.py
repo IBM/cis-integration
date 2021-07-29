@@ -51,7 +51,8 @@ class MockIntegrationInfoObj():
         self.terraforming = terraform
         self.verbose = verbose
         self.delete = delete
-        self.token = {"access_token": "123456789"}
+        self.token = {"access_token": "123456789",
+                      "refresh_token": "testingRefresh"}
         self.namespace = namespace
         self.service_name = service_name
         self.service_port = service_port
