@@ -1,6 +1,6 @@
 from src.common.create_terraform_workspace import WorkspaceCreator
 from src.common.dns_creator import DNSCreator
-from iks.certcreate_iks import SecretCertificateCreator
+from src.iks.certcreate_iks import SecretCertificateCreator
 import pytest
 import os
 import getpass
