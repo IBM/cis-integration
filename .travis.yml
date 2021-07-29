@@ -10,6 +10,8 @@ install:
   - pip3 install pytest-cov
   - pip3 install coveralls
   - pip3 install kubernetes
+  - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  - sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 script:
   - pytest --cov=./
 after_success:
