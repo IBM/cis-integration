@@ -48,6 +48,13 @@ __pycache__/
 ###############
 build/*
 
-###############
+# Terraform #
+#############
+terraform.tfvars
+.terraform*
+
+# Other #
+#########
 ingress.yaml
 config.txt
+
