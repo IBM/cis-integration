@@ -100,7 +100,6 @@ def handle_args(args):
 
         UserInfo.crn=args.crn
         UserInfo.zone_id = args.zone_id
-        UserInfo.resource_group = args.resource_group
         if UserInfo.crn is None or UserInfo.zone_id is None:
             UserInfo.cis_name = args.name
         
@@ -138,7 +137,8 @@ def iks(args):
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.app_url)
         user_DNS.create_records()
 
-        user_ACL = AclRuleCreator(UserInfo.resource_group, UserInfo.vpc_name, UserInfo.cis_api_key)
+        resource_group_id = UserInfo.get_resource_id()
+        user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
         
         # 2. Generate certificate in manager if necessary

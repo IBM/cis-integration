@@ -5,9 +5,9 @@ from ibm_platform_services import ResourceManagerV2
 from src.common.functions import Color
 
 class AclRuleCreator:
-    def __init__(self, resource_group, vpc_name, api_key):
+    def __init__(self, resource_group_id, vpc_name, api_key, ):
         self.api_key = api_key
-        self.resource_group = resource_group
+        self.resource_group_id = resource_group_id
         self.resource_group_id = ''
         self.vpc_name = vpc_name
         self.vpc_id = ''
@@ -256,9 +256,6 @@ class AclRuleCreator:
     def check_network_acl(self):
         print("Starting Network ACL Rule Check")
         authenticator = IAMAuthenticator(self.api_key)
-        resource_service = ResourceManagerV2(authenticator=authenticator)
-        resource = resource_service.list_resource_groups(name=self.resource_group, include_deleted=False).get_result()
-        self.resource_group_id = resource["resources"][0]["id"]
 
         vpc_service = VpcV1(authenticator=authenticator)
         vpc_list = vpc_service.list_vpcs(resource_group_id=self.resource_group_id).get_result()
@@ -274,4 +271,4 @@ class AclRuleCreator:
                 if self.check_ips(resp):
                     print(Color.YELLOW + "WARNING: Please check and verify needed ACL rules are present" + Color.END)
                 else:
-                    print(Color.GREEN + "SUCESS: Needed ACL Rules Verified" + Color.END)
+                    print(Color.GREEN + "SUCCESS: Needed ACL Rules Verified" + Color.END)
