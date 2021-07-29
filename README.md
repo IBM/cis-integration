@@ -140,7 +140,7 @@ You will prompted at each stage to confirm the deletion of the selected resource
 If you created your resources using the `--terraform` global option, then a Schematics workspace was created on your IBM Cloud account to execute the terraform scripts that built your resources. By adding the `--terraform` option to the `--delete` command, you can delete this workspace along with the rest of the resources.
 
 ## Network ACL Rule Requirement
-For integration between Cloud Internet Services (CIS) and IBM Kubernetes Service (IKS) some network ACL rules will need to be present. These rules are present in the [VPC Infrastructure - Access Control List](https://cloud.ibm.com/vpc-ext/network/acl) section in IBM Cloud. These rulesa are used to secure incoming traffic inbound traffic for the VPC. Below are the required rules.
+For integration between Cloud Internet Services (CIS) and IBM Kubernetes Service (IKS) some network ACL rules will need to be present. These rules are present in the [VPC Infrastructure - Access Control List](https://cloud.ibm.com/vpc-ext/network/acl) section in IBM Cloud. These rules are used to secure incoming traffic for the VPC. Below are the required rules.
 
 #### General Rules
 
