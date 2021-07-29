@@ -19,7 +19,7 @@ from src.common.delete_workspaces import DeleteWorkspace
 
 
 class MockArgs():
-    def __init__(self, terraform, verbose, delete, iks_cluster_id, cis_domain, resource_group, name, crn, zone_id):
+    def __init__(self, terraform, verbose, delete, iks_cluster_id, cis_domain, resource_group, name, crn, zone_id, namespace):
         self.help = False
         self.terraform = terraform
         self.verbose = verbose
@@ -30,10 +30,11 @@ class MockArgs():
         self.name = name
         self.crn = crn
         self.zone_id = zone_id
+        self.namespace = namespace
 
 
 class MockIntegrationInfoObj():
-    def __init__(self, terraform, verbose, delete, iks_cluster_id, cis_domain, resource_group, name, crn, zone_id):
+    def __init__(self, terraform, verbose, delete, iks_cluster_id, cis_domain, resource_group, name, crn, zone_id, namespace):
         self.crn = crn
         self.zone_id = zone_id
         self.api_endpoint = 'https://api.cis.cloud.ibm.com'
@@ -49,6 +50,7 @@ class MockIntegrationInfoObj():
         self.verbose = verbose
         self.delete = delete
         self.token = {"access_token": "123456789"}
+        self.namespace = namespace
 
     def get_cms(arg):
         return "123456789"
@@ -76,15 +78,15 @@ def get_no_crn_and_zone(self):
 
 
 def mock_handle_args_delete(args):
-    return MockIntegrationInfoObj(True, True, True, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id")
+    return MockIntegrationInfoObj(True, True, True, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace")
 
 
 def mock_handle_args_terr(args):
-    return MockIntegrationInfoObj(True, True, False, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id")
+    return MockIntegrationInfoObj(True, True, False, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace")
 
 
 def mock_handle_args_reg(args):
-    return MockIntegrationInfoObj(False, False, False, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id")
+    return MockIntegrationInfoObj(False, False, False, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace")
 
 
 class MockDeleteDNS():
@@ -125,7 +127,7 @@ def test_terr_verb_del_handle_args(monkeypatch):
                         MockIntegrationInfo.get_resource_id)
 
     args = MockArgs(True, True, True, "fake_cluster_id", "fake_cis_domain",
-                    "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id")
+                    "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace")
     user_info = handle_args(args)
 
     assert user_info.terraforming == True
@@ -147,7 +149,7 @@ def test_no_iks_cluster_handle_args(monkeypatch):
                         MockIntegrationInfo.get_resource_id)
 
     args = MockArgs(True, True, False, None, "fake_cis_domain",
-                    "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id")
+                    "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace")
 
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         user_info = handle_args(args)
@@ -167,7 +169,7 @@ def test_no_cis_domain_handle_args(monkeypatch):
                         MockIntegrationInfo.get_resource_id)
 
     args = MockArgs(True, True, False, "fake_cluster_id", None,
-                    "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id")
+                    "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace")
 
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         user_info = handle_args(args)
@@ -187,7 +189,7 @@ def test_terr_and_not_delete_no_cis_handle_args(monkeypatch):
                         MockIntegrationInfo.get_resource_id)
 
     args = MockArgs(True, True, False, "fake_cluster_id",
-                    "fake_cis_domain", None, "fake_name", "fake_crn", "fake_zone_id")
+                    "fake_cis_domain", None, "fake_name", "fake_crn", "fake_zone_id", "fake_namespace")
 
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         user_info = handle_args(args)
@@ -207,7 +209,7 @@ def test_terr_and_not_crn_zone_handle_args(monkeypatch):
                         MockIntegrationInfo.get_resource_id)
 
     args = MockArgs(True, True, False, "fake_cluster_id", "fake_cis_domain",
-                    "fake_resource_group", None, "fake_crn", "fake_zone_id")
+                    "fake_resource_group", None, "fake_crn", "fake_zone_id", "fake_namespace")
 
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         user_info = handle_args(args)
@@ -229,7 +231,7 @@ def test_no_resource_group_handle_args(monkeypatch):
                         get_no_crn_and_zone)
 
     args = MockArgs(True, True, False, "fake_cluster_id", "fake_cis_domain",
-                    "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id")
+                    "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace")
 
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         user_info = handle_args(args)
@@ -249,7 +251,7 @@ def test_no_zone_id_handle_args(monkeypatch):
                         get_no_crn_and_zone)
 
     args = MockArgs(True, True, False, "fake_cluster_id", "fake_cis_domain",
-                    "fake_resource_group", "fake_name", "fake_crn", None)
+                    "fake_resource_group", "fake_name", "fake_crn", None, "fake_namespace")
 
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         user_info = handle_args(args)
@@ -264,7 +266,7 @@ def test_iks_delete(monkeypatch):
                         MockDeleteWorkspace.delete_workspace)
 
     args = MockArgs(True, True, True, "fake_cluster_id", "fake_cis_domain",
-                    "fake_resource_group", "fake_name", "fake_crn", None)
+                    "fake_resource_group", "fake_name", "fake_crn", None, "fake_namespace")
 
     iks(args)
 
@@ -273,7 +275,7 @@ def test_iks_terraform(monkeypatch):
     monkeypatch.setattr(IKS, "handle_args", mock_handle_args_terr)
 
     args = MockArgs(True, True, False, "fake_cluster_id", "fake_cis_domain",
-                    "fake_resource_group", "fake_name", "fake_crn", None)
+                    "fake_resource_group", "fake_name", "fake_crn", None, "fake_namespace")
 
     with patch("src.common.create_terraform_workspace.WorkspaceCreator.create_terraform_workspace", mock_create_terraform_workspace):
         iks(args)
@@ -283,7 +285,7 @@ def test_iks_regular(monkeypatch):
     monkeypatch.setattr(IKS, "handle_args", mock_handle_args_reg)
 
     args = MockArgs(True, True, True, "fake_cluster_id", "fake_cis_domain",
-                    "fake_resource_group", "fake_name", "fake_crn", None)
+                    "fake_resource_group", "fake_name", "fake_crn", None, "fake_namespace")
 
     with patch("src.common.dns_creator.DNSCreator.create_records", mock_create_records):
         with patch("src.iks.certcreate_iks.SecretCertificateCreator.create_secret", mock_create_secret):
