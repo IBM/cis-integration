@@ -145,7 +145,7 @@ def handle_args(args):
 def CodeEngine(args):
     UserInfo = handle_args(args)
 
-    if UserInfo.delete:
+    if UserInfo.delete and not UserInfo.terraforming:
         delete_glb = DeleteGLB(
             UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_glb.delete_glb()
@@ -162,10 +162,11 @@ def CodeEngine(args):
                                  UserInfo.cis_domain, UserInfo.cis_api_key, UserInfo.token["access_token"])
         delete_edge.delete_edge()
 
-        if UserInfo.terraforming:
-            delete_workspaces = DeleteWorkspace(
-                UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
-            delete_workspaces.delete_workspace()
+    elif UserInfo.delete and UserInfo.terraforming:
+        delete_workspaces = DeleteWorkspace(UserInfo.crn, UserInfo.zone_id,
+            UserInfo.cis_domain, UserInfo.api_endpoint,
+            UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
+        delete_workspaces.delete_workspace()
 
     elif UserInfo.terraforming:  # handle the case of using terraform
         work_creator = WorkspaceCreator(

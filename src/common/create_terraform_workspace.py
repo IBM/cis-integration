@@ -61,18 +61,28 @@ class WorkspaceCreator:
             workspace_pool_variable_request['name'] = 'pool_name'
             workspace_pool_variable_request['value'] = pool_name
 
+            workspace_create_ce_variable_request = {}
+            workspace_create_ce_variable_request['name'] = 'create_ce'
+            workspace_create_ce_variable_request['value'] = 'true'
+
+            workspace_create_iks_variable_request = {}
+            workspace_create_iks_variable_request['name'] = 'create_iks'
+            workspace_create_iks_variable_request['value'] = 'false'
+
             template_source_data_request_model = {}
             
             template_source_data_request_model['type'] = 'terraform_v0.14.00'
             template_source_data_request_model['variablestore'] = [workspace_apikey_variable_request,
-                                                                workspace_resource_group_variable_request,
-                                                                workspace_cis_name_variable_request,
-                                                                workspace_app_url_variable_request,
-                                                                workspace_domain_variable_request,
-                                                                workspace_pool_variable_request]
+                                                                    workspace_resource_group_variable_request,
+                                                                    workspace_cis_name_variable_request,
+                                                                    workspace_app_url_variable_request,
+                                                                    workspace_domain_variable_request,
+                                                                    workspace_pool_variable_request,
+                                                                    workspace_create_ce_variable_request,
+                                                                    workspace_create_iks_variable_request]
 
             template_repo_request_model = {}
-            template_repo_request_model['url'] = 'https://github.com/IBM/cis-integration/tree/master/src'
+            template_repo_request_model['url'] = 'https://github.com/IBM/cis-integration/tree/iks-workspace/src/root_terraform'
 
             workspace_response = schematics_service.create_workspace(
                 description="Workspace for building resources for the CIS instance using terraform", 
