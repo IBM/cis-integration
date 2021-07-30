@@ -165,7 +165,7 @@ def CodeEngine(args):
     elif UserInfo.delete and UserInfo.terraforming:
         delete_workspaces = DeleteWorkspace(UserInfo.crn, UserInfo.zone_id,
             UserInfo.cis_domain, UserInfo.api_endpoint,
-            UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
+            UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token, ce=True, iks=False)
         delete_workspaces.delete_workspace()
 
     elif UserInfo.terraforming:  # handle the case of using terraform

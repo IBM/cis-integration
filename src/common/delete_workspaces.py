@@ -7,7 +7,7 @@ from ibm_cloud_networking_services import ZonesV1, GlobalLoadBalancerPoolsV0, Gl
 class DeleteWorkspace:
     
 
-    def __init__(self, crn, zone_id, cis_domain, api_endpoint, schematics_url: str, apikey: str, token) -> None:
+    def __init__(self, crn, zone_id, cis_domain, api_endpoint, schematics_url: str, apikey: str, token, ce: bool, iks: bool) -> None:
         self.crn = crn
         self.zone_id = zone_id
         self.cis_domain = cis_domain
@@ -15,22 +15,29 @@ class DeleteWorkspace:
         self.schematics_url = schematics_url
         self.apikey = apikey
         self.token = token
+        self.ce = ce
+        self.iks = iks
         self.w_ids = []
 
     def delete_workspace(self):
         execute = input("Delete all associated Schematics workspaces and connected CIS resources? Input 'y' or 'yes' to execute: ").lower()
+        print()
         if execute == 'y' or execute == 'yes':
             
             authenticator = IAMAuthenticator(self.apikey)
             schematics_service = SchematicsV1(authenticator = authenticator)
             schematics_service.set_service_url(self.schematics_url)
             workspace_response_list = schematics_service.list_workspaces().get_result()
-
             # retrieving the workspaces relating to our github repo
             for workspace in workspace_response_list['workspaces']:
                 if workspace['template_repo']['url'] == 'https://github.com/IBM/cis-integration':
-                    w_info = {'id': workspace['id'], 'status': workspace['status'], 'created_at': workspace['created_at']}
-                    self.w_ids.append(w_info)
+                    for var in workspace['template_data'][0]['variablestore']:
+                        if self.iks and var['name'] == 'create_iks' and var['value'] == 'true':
+                            w_info = {'id': workspace['id'], 'status': workspace['status']}
+                            self.w_ids.append(w_info)
+                        if self.ce and var['name'] == 'create_ce' and var['value'] == 'true':
+                            w_info = {'id': workspace['id'], 'status': workspace['status']}
+                            self.w_ids.append(w_info)
             
             # search CIS instance for GLB
             glb_info = self.glb_check()
@@ -48,11 +55,12 @@ class DeleteWorkspace:
             # if any of the resources are missing, the Schematics workspace destroy function will fail
             if glb_info is None or len(edge_ids) == 0 or len(dns_ids) == 0:
                 check_cis = False
-                print("Some resources connected to the Schematics workspace have already been modified or destroyed.")
-                print("Please use the Python delete option to delete any remaining resources on your CIS instance.")
+                print(Color.YELLOW + "WARNING: Some resources connected to the Schematics workspace have already been modified or destroyed.")
+                print("Please use the Python delete option to delete any remaining resources on your CIS instance." + Color.END)
                 execute = input("Would you like to continue with deleting the associated workspaces? Input 'y' or 'yes' to execute: ").lower()
                 if  not execute == 'y' and not execute == 'yes':
                     keepgoing = False
+                print()
             
             root_dns_found = False
             www_dns_found = False
@@ -71,11 +79,12 @@ class DeleteWorkspace:
             # if there are no active workspaces, we can't delete any resources 
             if destroyer is None:
                 check_cis = False
-                print("Could not find any active workspaces connected to the resources on your CIS instance")
-                print("Please use the Python delete option to delete any remaining resources on your CIS instance.")
+                print(Color.YELLOW + "WARNING: Could not find any active workspaces connected to the resources on your CIS instance")
+                print("Please use the Python delete option to delete any remaining resources on your CIS instance." + Color.END)
                 execute = input("Would you like to continue with deleting the associated workspaces? Input 'y' or 'yes' to execute: ").lower()
                 if  not execute == 'y' and not execute == 'yes':
                     keepgoing = False
+                print()
             elif check_cis: # we need to check the workspace that it contains all the resources we're looking for
                 # retrieving the template ID of the workspace
                 destroyer_response = schematics_service.get_workspace(
@@ -127,11 +136,12 @@ class DeleteWorkspace:
                 and monitor_found and www_dns_found and root_dns_found 
                 and edge_action and edge_trigger_1 and edge_trigger_2 and edge_trigger_3):
                 check_cis = False
-                print("Some resources connected to the Schematics workspace have already been modified or destroyed.")
-                print("Please use the Python delete option to delete any remaining resources on your CIS instance.")
+                print(Color.YELLOW + "WARNING: Some resources connected to the Schematics workspace have already been modified or destroyed.")
+                print("Please use the Python delete option to delete any remaining resources on your CIS instance." + Color.END)
                 execute = input("Would you like to continue with deleting the associated workspaces? Input 'y' or 'yes' to execute: ").lower()
                 if  not execute == 'y' and not execute == 'yes':
                     keepgoing = False
+                print()
 
             if check_cis and (glb_found and cert_found and pool_found 
                 and monitor_found and www_dns_found and root_dns_found 
@@ -140,6 +150,7 @@ class DeleteWorkspace:
                 execute = input("Deleted workspaces and resources cannot be recovered. Input 'y' or 'yes' to execute: ").lower()
                 if not execute == 'y' and not execute == 'yes':
                     keepgoing = False
+                print()
 
             if keepgoing:
             
@@ -154,6 +165,7 @@ class DeleteWorkspace:
                                     destroy_resources=True,
                                     refresh_token=self.token['refresh_token']
                                 )
+                                print(Color.GREEN + "SUCCESS: Workspace destroy action now executing" + Color.END)
                             else:
                                 workspace_delete_response = schematics_service.delete_workspace(
                                     w_id=id['id'],
@@ -161,7 +173,7 @@ class DeleteWorkspace:
                                 )
                             if workspace_delete_response.status_code == 200:
                                 num_deleted += 1
-                                print("Deleted workspace " + id['id'])
+                                print(Color.GREEN + "SUCCESS: Deleted workspace " + id['id'] + Color.END)
                             keepgoing = False
                         except ApiException as ae:
                             # Error 409 means that the workspace is still busy, we just have to wait for it to finish
