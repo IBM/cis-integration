@@ -50,7 +50,7 @@ def handle_args(args):
             print("You did not specify an IKS cluster ID.")
             sys.exit(1)
 
-    # iks_info = UserInfo.get_iks_info()
+    iks_info = UserInfo.get_iks_info()
 
     UserInfo.cis_domain = args.cis_domain
     if UserInfo.cis_domain is None:
