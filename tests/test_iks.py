@@ -282,7 +282,7 @@ def test_iks_terraform(monkeypatch):
     args = MockArgs(True, True, False, "fake_cluster_id", "fake_cis_domain",
                     "fake_resource_group", "fake_name", "fake_crn", None, "fake_namespace", "fake_service_name", "fake_service_port")
 
-    with patch("src.common.create_terraform_workspace.WorkspaceCreator.create_terraform_workspace", mock_create_terraform_workspace):
+    with patch("src.iks.create_terraform_workspace.WorkspaceCreator.create_terraform_workspace", mock_create_terraform_workspace):
         iks(args)
 
 
