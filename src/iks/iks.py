@@ -35,16 +35,10 @@ def handle_args(args):
 
     if args.delete:
         UserInfo.delete = True
-<<<<<<< HEAD
-    
-    # determining API key 
-    UserInfo.cis_api_key = getpass.getpass(prompt="Enter CIS Services API Key: ")
-=======
 
     # determining API key
     UserInfo.cis_api_key = getpass.getpass(
         prompt="Enter CIS Services API Key: ")
->>>>>>> public-master
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
 
     # common arguments
