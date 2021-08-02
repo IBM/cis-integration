@@ -78,6 +78,7 @@ class IntegrationInfo:
     terraforming = False
     verbose = False
     delete = False
+    standard = False
     token = None
 
     # loads .env file if it exists
