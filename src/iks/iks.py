@@ -125,16 +125,16 @@ def handle_args(args):
 
 def iks(args):
     UserInfo = handle_args(args)
-    if UserInfo.delete:
-        delete_dns = DeleteDNS(
-            UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+    if UserInfo.delete and not UserInfo.terraforming:
+        delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_dns.delete_dns()
 
-        if UserInfo.terraforming:
-            delete_workspaces = DeleteWorkspace(
-                UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
-            delete_workspaces.delete_workspace()
-    elif UserInfo.terraforming:  # handle the case of using terraform
+    elif UserInfo.delete and UserInfo.terraforming:
+        delete_workspaces = DeleteWorkspace(UserInfo.crn, UserInfo.zone_id,
+        UserInfo.cis_domain, UserInfo.api_endpoint,
+        UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token, ce=False, iks=True)
+        delete_workspaces.delete_workspace()
+    elif UserInfo.terraforming: # handle the case of using terraform
         work_creator = WorkspaceCreator(
             UserInfo.cis_api_key, UserInfo.schematics_url,
             UserInfo.cis_name, UserInfo.resource_group,
