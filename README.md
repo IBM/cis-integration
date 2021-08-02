@@ -150,7 +150,7 @@ If you created your resources using the `--terraform` global option, then a Sche
 3. If you're using Docker, build and run your Docker image with the above commands
 4. Input the following generic command:
 ```
-cis-integration iks -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS SERVICE PORT]
+cis-integration iks -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS TARGET PORT]
 ```
 ### Arguments:
 * **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
@@ -159,9 +159,9 @@ cis-integration iks -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CL
     Example: `example.com`
 * **IKS CLUSTER ID:** the ID associated with your IKS cluster. Found in the "Details" section in the "Overview" tab of your IKS cluster.
     Example: `g3jk284d008l7s14gcsg` 
-* **IKS NAMESPACE:**
-* **IKS SERVICE NAME:**
-* **IKS SERVICE PORT:**
+* **IKS NAMESPACE:** the name of the virtual cluster using your physical IKS cluster resources. Found by opening your kubernetes dashboard and clicking the "Namespaces" tab in the "Cluster" section.
+* **IKS SERVICE NAME:** the name of the Service exposing your application by rerouting incoming traffic to pods. Found by opening your kubernetes dashboard and clicking on the "Services" tab in the "Service" section.
+* **IKS TARGET PORT:** the target port of your Service that every incoming port is mapped to. Found be opening your kubernetes dashboard, clicking the "Services" tab in the "Service" section, and clicking the "edit" button in the top-right corner.
 
 ### To deploy resources using Terraform scripts:
 1. Install the tool using the [installation](#installation) instructions listed above
@@ -169,7 +169,7 @@ cis-integration iks -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CL
 3. If you're using Docker, build and run your Docker image with the above commands
 4. Input the following generic command:
 ```
-cis-integration iks --terraform -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS SERVICE PORT]
+cis-integration iks --terraform -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS TARGET PORT]
 ```
 ### Arguments:
 * **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
@@ -178,9 +178,9 @@ cis-integration iks --terraform -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN
     Example: `example.com`
 * **IKS CLUSTER ID:** the ID associated with your IKS cluster. Found in the "Details" section in the "Overview" tab of your IKS cluster.
     Example: `g3jk284d008l7s14gcsg` 
-* **IKS NAMESPACE:**
-* **IKS SERVICE NAME:**
-* **IKS SERVICE PORT:**
+* **IKS NAMESPACE:** the name of the virtual cluster using your physical IKS cluster resources. Found by opening your kubernetes dashboard and clicking the "Namespaces" tab in the "Cluster" section.
+* **IKS SERVICE NAME:** the name of the Service exposing your application by rerouting incoming traffic to pods. Found by opening your kubernetes dashboard and clicking on the "Services" tab in the "Service" section.
+* **IKS TARGET PORT:** the target port of your Service that every incoming port is mapped to. Found be opening your kubernetes dashboard, clicking the "Services" tab in the "Service" section, and clicking the "edit" button in the top-right corner.
 
 ## Resources
 - [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
