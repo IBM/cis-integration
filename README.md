@@ -144,6 +144,15 @@ cis-integration code-engine --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAI
 If you created your resources using the `--terraform` global option, then a Schematics workspace was created on your IBM Cloud account to execute the terraform scripts that built your resources. By adding the `--terraform` option to the `--delete` command, the resources will be deleted using the workspace's internal `destroy` action. The workspace will then be deleted along with the rest of the resources.
 
 ## IKS Usage
+For general information on how to use the tool, run the following command in the terminal on your computer: 
+```
+$ cis-integration iks --help
+```
+
+This tool offers two options to connect the CIS instance to the cluster. You may choose to build the resources needed for your CIS instance using either Python or [Terraform](https://www.terraform.io/) scripts. If you choose to use Terraform, this tool will build an [IBM Schematics](https://cloud.ibm.com/docs/schematics?topic=schematics-about-schematics) workspace to run the Terraform code. 
+
+Regardless of the option you choose, the tool will require you to input some information about your CIS instance and IKS cluster. You can find this information by going to https://cloud.ibm.com and logging into your IBM Cloud account. Navigate to the "Resource list" tab and locate your CIS instance and IKS cluster.
+
 ### To deploy resources using Python scripts:
 1. Install the tool using the [installation](#installation) instructions listed above
 2. Access the command terminal on your computer 
