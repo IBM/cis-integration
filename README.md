@@ -5,7 +5,11 @@
 ## Overview
 The goal of this project is to automate CIS integration for IBM Cloud application platforms. We will produce a command line tool that customers can use to simplify this process.
 
-This command line tool currently supports [Code Engine](https://www.ibm.com/cloud/code-engine) applications and has been configured for MacOS. In order to connect a Code Engine app to a CIS instance, numerous resources must be set up within CIS, namely: DNS records, a TLS certificate, a Global Load Balancer, Origin Pool, and Health Check Monitor, and an Edge Function.
+This command line tool currently supports [Code Engine](https://www.ibm.com/cloud/code-engine) applications and [IBM Cloud Kubernetes Service](https://www.ibm.com/cloud/kubernetes-service) clusters, and has been configured for MacOS. 
+
+In order to connect a Code Engine app to a CIS instance, numerous resources must be set up within CIS, namely: DNS records, a TLS certificate, a Global Load Balancer, Origin Pool, and Health Check Monitor, and an Edge Function.
+
+To connect a Kubernetes cluster to a CIS instance, DNS records must be created in the CIS instance, a TLS Certificate must be created by the Kubernetes Certificate Manager and imported to your IKS cluster as a secret, and ACL rules must be configured and an Ingress must be created in your IKS cluster.
 
 Before using this application, make sure you have an existing Code Engine app and a CIS instance with a domain name:
 * [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
@@ -52,7 +56,7 @@ or
 ci -u
 ```
 
-## Usage
+## Code Engine Usage
 For general information on how to use the tool, run the following command in the terminal on your computer: 
 ```
 $ cis-integration code-engine --help
@@ -135,9 +139,48 @@ or
 ```
 cis-integration code-engine --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]
 ```
-You will prompted at each stage to confirm the deletion of the selected resource(s). Input 'y' or 'yes' to confirm (NOT case sensitive). 
+**Note:** If you do not use the `--terraform` option, you will prompted at each stage to confirm the deletion of the selected resource(s). Input 'y' or 'yes' to confirm (NOT case sensitive). 
 
-If you created your resources using the `--terraform` global option, then a Schematics workspace was created on your IBM Cloud account to execute the terraform scripts that built your resources. By adding the `--terraform` option to the `--delete` command, you can delete this workspace along with the rest of the resources.
+If you created your resources using the `--terraform` global option, then a Schematics workspace was created on your IBM Cloud account to execute the terraform scripts that built your resources. By adding the `--terraform` option to the `--delete` command, the resources will be deleted using the workspace's internal `destroy` action. The workspace will then be deleted along with the rest of the resources.
+
+## IKS Usage
+### To deploy resources using Python scripts:
+1. Install the tool using the [installation](#installation) instructions listed above
+2. Access the command terminal on your computer 
+3. If you're using Docker, build and run your Docker image with the above commands
+4. Input the following generic command:
+```
+cis-integration iks -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS SERVICE PORT]
+```
+### Arguments:
+* **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
+* **CIS NAME:** the name of your CIS instance.
+* **CIS DOMAIN:** the domain name connected to your CIS instance. Found near the top of your CIS resource page. 
+    Example: `example.com`
+* **IKS CLUSTER ID:** the ID associated with your IKS cluster. Found in the "Details" section in the "Overview" tab of your IKS cluster.
+    Example: `g3jk284d008l7s14gcsg` 
+* **IKS NAMESPACE:**
+* **IKS SERVICE NAME:**
+* **IKS SERVICE PORT:**
+
+### To deploy resources using Terraform scripts:
+1. Install the tool using the [installation](#installation) instructions listed above
+2. Access the command terminal on your computer 
+3. If you're using Docker, build and run your Docker image with the above commands
+4. Input the following generic command:
+```
+cis-integration iks --terraform -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS SERVICE PORT]
+```
+### Arguments:
+* **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
+* **CIS NAME:** the name of your CIS instance.
+* **CIS DOMAIN:** the domain name connected to your CIS instance. Found near the top of your CIS resource page. 
+    Example: `example.com`
+* **IKS CLUSTER ID:** the ID associated with your IKS cluster. Found in the "Details" section in the "Overview" tab of your IKS cluster.
+    Example: `g3jk284d008l7s14gcsg` 
+* **IKS NAMESPACE:**
+* **IKS SERVICE NAME:**
+* **IKS SERVICE PORT:**
 
 ## Resources
 - [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
