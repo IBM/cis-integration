@@ -17,7 +17,7 @@ From IBM Kubernetes Service navigate to the Kubernetes dashboard to deploy a ser
 ![Internal IKS Service](./images/iks-service.png)
 
 ## 4. Importing CIS DNS Certificate into IKS Cluster
-Now we import the CIS DNS certificate into our IKS Cluster using the command below. If you have this certificate in a certificate mananger already then simply populate the fields as needed and run the below curl command. If you need to still obtain this certificate then navigate to to the certificate manager which is automatically created when an IKS Cluster is created.
+Now we import the CIS DNS certificate into our IKS Cluster using the command below. If you have this certificate in a certificate manager already then simply populate the fields as needed and run the below curl command. If you need to still obtain this certificate then navigate to to the certificate manager which is automatically created when an IKS Cluster is created.
 
 ![IKS Certificate Manager](./images/iks-cert-manager.png)
 
