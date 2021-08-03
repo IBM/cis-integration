@@ -2,7 +2,7 @@
 This document outlines the manual steps that are needed to connect IBM Cloud Internet Services (CIS) and IBM Kubernetes Service
 
 ## 1. Adding Domain Name to CIS Instance
-Within the CIS console in the **Overview** tab add your domain name and then configure DNS records with the ingress subdomain present on your IKS Cluster. DNS records are optional during this step and can be done later in the **Reliability** tab in CIS. In our situation two CNAME DNS records were added to CIS named `@` and `www` with each of their values being the ingress subdomain from the IKS Cluster wanting to be connected.
+Within the CIS console in the **Overview** tab add your domain name and then configure DNS records with the ingress subdomain present on your IKS Cluster. DNS records are optional during this step but must be done later in the **Reliability** tab in CIS if not done now. In our situation two CNAME DNS records were added to CIS named `@` and `www` with each of their values being the ingress subdomain from the IKS Cluster wanting to be connected.
 
 ![DNS Records in CIS Console](./images/dns-records-iks.png)
 
