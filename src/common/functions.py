@@ -75,6 +75,7 @@ class IntegrationInfo:
     cert_name= ''
     cis_domain = ''
     schematics_url = 'https://us.schematics.cloud.ibm.com'
+    iks_master_url = ''
     terraforming = False
     verbose = False
     delete = False
@@ -143,6 +144,7 @@ class IntegrationInfo:
 
             data=json.loads(response.text)
             self.app_url=data["ingress"]["hostname"]
+            self.iks_master_url=data["serviceEndpoints"]["publicServiceEndpointURL"]
             return data
         except:
             print(Color.RED+"ERROR: Unable to get cluster's data"+Color.END)

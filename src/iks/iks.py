@@ -22,10 +22,11 @@ def print_help():
 
 
 def handle_args(args):
+    
     if args.help:
         print_help()
         sys.exit(1)
-
+    
     UserInfo = IntegrationInfo()
     UserInfo.terraforming = False
     if args.terraform:
@@ -36,28 +37,28 @@ def handle_args(args):
 
     if args.delete:
         UserInfo.delete = True
-
+    
     # determining API key
     UserInfo.cis_api_key = getpass.getpass(
         prompt="Enter CIS Services API Key: ")
     os.environ["CIS_SERVICES_APIKEY"] = UserInfo.cis_api_key
-
+    
     # common arguments
     UserInfo.request_token()
-
+    
     if not UserInfo.delete:
         UserInfo.iks_cluster_id = args.iks_cluster_id
         if UserInfo.iks_cluster_id is None:
             print("You did not specify an IKS cluster ID.")
             sys.exit(1)
-
+    
     iks_info = UserInfo.get_iks_info()
-
+    
     UserInfo.cis_domain = args.cis_domain
     if UserInfo.cis_domain is None:
         print("You did not specify a CIS Domain.")
         sys.exit(1)
-
+    
     # terraforming vs. not terraforming
     if UserInfo.terraforming and not UserInfo.delete:
         UserInfo.resource_group = args.resource_group
@@ -73,8 +74,7 @@ def handle_args(args):
             sys.exit(1)
 
         if not UserInfo.get_crn_and_zone():
-            print(
-                "Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
+            print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
             sys.exit(1)
 
     else:
@@ -112,19 +112,18 @@ def handle_args(args):
             UserInfo.cis_name = args.name
 
             if UserInfo.cis_name is None:
-                print(
-                    "Please specify the name of your CIS instance or both the CIS CRN and CIS Zone ID")
+                print("Please specify the name of your CIS instance or both the CIS CRN and CIS Zone ID")
                 sys.exit(1)
 
             if not UserInfo.get_crn_and_zone():
-                print(
-                    "Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
+                print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
                 sys.exit(1)
     
     return UserInfo
 
 
 def iks(args):
+    
     UserInfo = handle_args(args)
     if UserInfo.delete and not UserInfo.terraforming:
         delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
@@ -143,8 +142,10 @@ def iks(args):
             UserInfo.verbose, UserInfo.token)
         work_creator.create_terraform_workspace()
     else:
+        
         # handle the case of using python
         # 1. Domain Name and DNS
+        '''
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id,
                               UserInfo.api_endpoint, UserInfo.app_url)
 
@@ -156,10 +157,11 @@ def iks(args):
         resource_group_id = UserInfo.get_resource_id()
         user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
-        
+        '''
         # 2. Generate certificate in manager if necessary
-        UserInfo.cert_name="cis-cert"
         
+        UserInfo.cert_name="cis-cert"
+        '''
         cms_id = UserInfo.get_cms()
         # print("\n"+cms_id)
         user_cert = SecretCertificateCreator(
@@ -174,8 +176,9 @@ def iks(args):
         user_cert.create_secret()
 
        
-        
+        '''
         #3 generate ingress
+        
         UserInfo.secret_name=UserInfo.cert_name
         user_ingress = IngressCreator(
             clusterNameOrID=UserInfo.iks_cluster_id,
@@ -186,9 +189,11 @@ def iks(args):
             servicePort=UserInfo.service_port, 
             accessToken=UserInfo.token["access_token"], 
             refreshToken=UserInfo.token["refresh_token"],
-            ingressSubdomain=UserInfo.app_url
+            ingressSubdomain=UserInfo.app_url,
+            iks_master_url=UserInfo.iks_master_url
         )
         user_ingress.create_ingress()
+        
         
         
     if not UserInfo.delete:
