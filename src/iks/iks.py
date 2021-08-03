@@ -5,6 +5,7 @@ from src.iks.create_terraform_workspace import WorkspaceCreator
 from src.common.functions import Color, IntegrationInfo, healthCheck
 from src.common.delete_dns import DeleteDNS
 from src.ce.delete_workspaces import DeleteWorkspace
+from src.ce.certcreate import CertificateCreator
 
 import sys
 import getpass
@@ -141,7 +142,10 @@ def iks(args):
                               UserInfo.api_endpoint, UserInfo.app_url)
 
         user_DNS.create_records()
-        
+
+        user_edge_cert = CertificateCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        user_edge_cert.create_certificate()
+
         # 2. Generate certificate in manager if necessary
         UserInfo.cert_name="cis-cert"
         
