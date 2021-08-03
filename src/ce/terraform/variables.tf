@@ -47,3 +47,8 @@ variable pool_name {
     error_message = "This is not a valid pool-name for the CIS Instance."
     }
 }
+
+variable standard {
+   type = bool
+   description = "Determines whether or not the Standard Plan is being used"
+}

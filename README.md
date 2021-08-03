@@ -7,6 +7,8 @@ The goal of this project is to automate CIS integration for IBM Cloud applicatio
 
 This command line tool currently supports [Code Engine](https://www.ibm.com/cloud/code-engine) applications and has been configured for MacOS. In order to connect a Code Engine app to a CIS instance, numerous resources must be set up within CIS, namely: DNS records, a TLS certificate, a Global Load Balancer, Origin Pool, and Health Check Monitor, and an Edge Function.
 
+**IMPORTANT:** Due to plan restrictions, if you select any plan lower than the Enterprise Plan for your CIS instance, we will be unable to automatically create the Edge Function for you. If you use the `--standard` flag when using our CLI tool, we can create everything except the Edge Function, and you can follow our [Manual Steps document](https://github.com/IBM/cis-integration/blob/master/cis_manual_steps.md) to create the Edge Function yourself.
+
 Before using this application, make sure you have an existing Code Engine app and a CIS instance with a domain name:
 * [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
 * [Deploy a Code Engine application](https://cloud.ibm.com/docs/codeengine?topic=codeengine-deploy-app-tutorial) 
@@ -139,6 +141,41 @@ You will prompted at each stage to confirm the deletion of the selected resource
 
 If you created your resources using the `--terraform` global option, then a Schematics workspace was created on your IBM Cloud account to execute the terraform scripts that built your resources. By adding the `--terraform` option to the `--delete` command, you can delete this workspace along with the rest of the resources.
 
+## Network ACL Rule Requirement
+For integration between Cloud Internet Services (CIS) and IBM Kubernetes Service (IKS) some network ACL rules will need to be present. These rules are present in the [VPC Infrastructure - Access Control List](https://cloud.ibm.com/vpc-ext/network/acl) section in IBM Cloud. These rules are used to secure incoming traffic for the VPC. Below are the required rules.
+
+#### General Rules
+
+Description                           | Source CIDR             | Destination CIDR | Action | Direction
+--------------------------------------|-------------------------|------------------|--------|-----------
+Allow all traffic from peer subnet 1  | 10.10.10.0/24 (default) | Any              | Allow  | Inbound
+Allow all traffic from peer subnet 2  | 10.10.20.0/24 (default) | Any              | Allow  | Inbound
+Allow all traffic from peer subnet 3  | 10.10.30.0/24 (default) | Any              | Allow  | Inbound
+IKS Create Worker Nodes               | 161.26.0.0/16           | Any              | Allow  | Inbound
+IKS Create Worker Nodes               | 161.26.0.0/16           | Any              | Allow  | Inbound
+Allow all outbound traffic            | Any                     | Any              | Allow  | Outbound
+Deny all inbound traffic              | Any                     | Any              | Allow  | Inbound
+
+#### Cloudflare ACL Rules
+
+Description                           | Source CIDR             | Destination CIDR | Port | Action | Direction
+--------------------------------------|-------------------------|------------------|------|--------|-----------
+Cloudflare IP 1                       | 103.21.244.0/22         | Any              | 443  | Allow  | Inbound
+Cloudflare IP 2                       | 173.245.48.0/20         | Any              | 443  | Allow  | Inbound
+Cloudflare IP 3                       | 103.22.200.0/22         | Any              | 443  | Allow  | Inbound
+Cloudflare IP 4                       | 103.31.4.0/22           | Any              | 443  | Allow  | Inbound
+Cloudflare IP 5                       | 141.101.64.0/18         | Any              | 443  | Allow  | Inbound
+Cloudflare IP 6                       | 108.162.192.0/18        | Any              | 443  | Allow  | Inbound
+Cloudflare IP 7                       | 190.93.240.0/20         | Any              | 443  | Allow  | Inbound
+Cloudflare IP 8                       | 188.114.96.0/20         | Any              | 443  | Allow  | Inbound
+Cloudflare IP 9                       | 197.234.240.0/22        | Any              | 443  | Allow  | Inbound
+Cloudflare IP 10                      | 162.158.0.0/15          | Any              | 443  | Allow  | Inbound
+Cloudflare IP 11                      | 104.16.0.0/12           | Any              | 443  | Allow  | Inbound
+Cloudflare IP 12                      | 172.64.0.0/13           | Any              | 443  | Allow  | Inbound
+Cloudflare IP 13                      | 131.0.72.0/22           | Any              | 443  | Allow  | Inbound
+Cloudflare IP 14                      | 198.41.128.0/17         | Any              | 443  | Allow  | Inbound
+
+For more information about ACL rules please refer to this [documentation](https://cloud.ibm.com/docs/containers?topic=containers-vpc-network-policy#acls). For more information on these specific ACL rules see this VPC ACL section in [this](https://github.com/Cloud-Schematics/multizone-secure-iks-with-cis#vpc-acls) GitHub repo. 
 ## Resources
 - [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
 - [Deploy Code Engine application](https://cloud.ibm.com/docs/codeengine?topic=codeengine-deploy-app-tutorial)
