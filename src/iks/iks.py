@@ -4,7 +4,9 @@ from src.common.dns_creator import DNSCreator
 from src.iks.create_terraform_workspace import WorkspaceCreator
 from src.common.functions import Color, IntegrationInfo, healthCheck
 from src.common.delete_dns import DeleteDNS
+from src.iks.create_acl_rules import AclRuleCreator
 from src.ce.delete_workspaces import DeleteWorkspace
+from src.ce.certcreate import CertificateCreator
 
 import sys
 import getpass
@@ -76,6 +78,12 @@ def handle_args(args):
             sys.exit(1)
 
     else:
+        #vpc name
+        UserInfo.vpc_name = args.vpc_name
+        if UserInfo.vpc_name is None:
+            print("You did not specify a VPC instance name.")
+            sys.exit(1)
+
         UserInfo.resource_group = args.resource_group
         if UserInfo.resource_group is None:
             print("You did not specify a resource group.")
@@ -110,24 +118,23 @@ def handle_args(args):
             if not UserInfo.get_crn_and_zone():
                 print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
                 sys.exit(1)
-
+    
     return UserInfo
 
 
 def iks(args):
     
     UserInfo = handle_args(args)
-    
-    if UserInfo.delete:
-        delete_dns = DeleteDNS(
-            UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+    if UserInfo.delete and not UserInfo.terraforming:
+        delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_dns.delete_dns()
 
-        if UserInfo.terraforming:
-            delete_workspaces = DeleteWorkspace(
-                UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
-            delete_workspaces.delete_workspace()
-    elif UserInfo.terraforming:  # handle the case of using terraform
+    elif UserInfo.delete and UserInfo.terraforming:
+        delete_workspaces = DeleteWorkspace(UserInfo.crn, UserInfo.zone_id,
+        UserInfo.cis_domain, UserInfo.api_endpoint,
+        UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token, ce=False, iks=True)
+        delete_workspaces.delete_workspace()
+    elif UserInfo.terraforming: # handle the case of using terraform
         work_creator = WorkspaceCreator(
             UserInfo.cis_api_key, UserInfo.schematics_url,
             UserInfo.cis_name, UserInfo.resource_group,
@@ -143,6 +150,13 @@ def iks(args):
                               UserInfo.api_endpoint, UserInfo.app_url)
 
         user_DNS.create_records()
+
+        user_edge_cert = CertificateCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        user_edge_cert.create_certificate()
+
+        resource_group_id = UserInfo.get_resource_id()
+        user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
+        user_ACL.check_network_acl()
         
         # 2. Generate certificate in manager if necessary
         

@@ -79,7 +79,9 @@ class IntegrationInfo:
     terraforming = False
     verbose = False
     delete = False
+    standard = False
     token = None
+    vpc_name = ''
 
     # loads .env file if it exists
     def read_envfile(self, filename):
