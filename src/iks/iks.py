@@ -6,6 +6,7 @@ from src.common.functions import Color, IntegrationInfo, healthCheck
 from src.common.delete_dns import DeleteDNS
 from src.iks.create_acl_rules import AclRuleCreator
 from src.ce.delete_workspaces import DeleteWorkspace
+from src.ce.certcreate import CertificateCreator
 
 import sys
 import getpass
@@ -148,6 +149,9 @@ def iks(args):
                               UserInfo.api_endpoint, UserInfo.app_url)
 
         user_DNS.create_records()
+
+        user_edge_cert = CertificateCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        user_edge_cert.create_certificate()
 
         resource_group_id = UserInfo.get_resource_id()
         user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
