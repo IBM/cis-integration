@@ -145,7 +145,7 @@ cis-integration code-engine --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAI
 
 If you created your resources using the `--terraform` global option, then a Schematics workspace was created on your IBM Cloud account to execute the terraform scripts that built your resources. By adding the `--terraform` option to the `--delete` command, the resources will be deleted using the workspace's internal `destroy` action. The workspace will then be deleted along with the rest of the resources.
 
-## IKS Usage
+## IBM Kubernetes Service Usage
 For general information on how to use the tool, run the following command in the terminal on your computer: 
 ```
 $ cis-integration iks --help
@@ -161,13 +161,14 @@ Regardless of the option you choose, the tool will require you to input some inf
 3. If you're using Docker, build and run your Docker image with the above commands
 4. Input the following generic command:
 ```
-cis-integration iks -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS TARGET PORT]
+cis-integration iks -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -p [VPC NAME] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS TARGET PORT]
 ```
 ### Arguments:
 * **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
 * **CIS NAME:** the name of your CIS instance.
 * **CIS DOMAIN:** the domain name connected to your CIS instance. Found near the top of your CIS resource page. 
     Example: `example.com`
+* **VPC NAME:** the name of the VPC instance which your IKS cluster is running on.
 * **IKS CLUSTER ID:** the ID associated with your IKS cluster. Found in the "Details" section in the "Overview" tab of your IKS cluster.
     Example: `g3jk284d008l7s14gcsg` 
 * **IKS NAMESPACE:** the name of the virtual cluster using your physical IKS cluster resources. Found by opening your kubernetes dashboard and clicking the "Namespaces" tab in the "Cluster" section.
@@ -180,20 +181,21 @@ cis-integration iks -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CL
 3. If you're using Docker, build and run your Docker image with the above commands
 4. Input the following generic command:
 ```
-cis-integration iks --terraform -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS TARGET PORT]
+cis-integration iks --terraform -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -p [VPC NAME] -i [IKS CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS TARGET PORT]
 ```
 ### Arguments:
 * **RESOURCE GROUP:** the resource group connected to the CIS instance. Found by navigating to your CIS resource page and clicking on "Details".
 * **CIS NAME:** the name of your CIS instance.
 * **CIS DOMAIN:** the domain name connected to your CIS instance. Found near the top of your CIS resource page. 
     Example: `example.com`
+* **VPC NAME:** the name of the VPC instance which your IKS cluster is running on.
 * **IKS CLUSTER ID:** the ID associated with your IKS cluster. Found in the "Details" section in the "Overview" tab of your IKS cluster.
     Example: `g3jk284d008l7s14gcsg` 
 * **IKS NAMESPACE:** the name of the virtual cluster using your physical IKS cluster resources. Found by opening your kubernetes dashboard and clicking the "Namespaces" tab in the "Cluster" section.
 * **IKS SERVICE NAME:** the name of the Service exposing your application by rerouting incoming traffic to pods. Found by opening your kubernetes dashboard and clicking on the "Services" tab in the "Service" section.
 * **IKS TARGET PORT:** the target port of your Service that every incoming port is mapped to. Found be opening your kubernetes dashboard, clicking the "Services" tab in the "Service" section, and clicking the "edit" button in the top-right corner.
 
-## Network ACL Rule Requirement
+### Network ACL Rule Requirement
 For integration between Cloud Internet Services (CIS) and IBM Kubernetes Service (IKS) some network ACL rules will need to be present. These rules are present in the [VPC Infrastructure - Access Control List](https://cloud.ibm.com/vpc-ext/network/acl) section in IBM Cloud. These rules are used to secure incoming traffic for the VPC. Below are the required rules.
 
 #### General Rules
@@ -227,7 +229,8 @@ Cloudflare IP 12                      | 172.64.0.0/13           | Any           
 Cloudflare IP 13                      | 131.0.72.0/22           | Any              | 443  | Allow  | Inbound
 Cloudflare IP 14                      | 198.41.128.0/17         | Any              | 443  | Allow  | Inbound
 
-For more information about ACL rules please refer to this [documentation](https://cloud.ibm.com/docs/containers?topic=containers-vpc-network-policy#acls). For more information on these specific ACL rules see this VPC ACL section in [this](https://github.com/Cloud-Schematics/multizone-secure-iks-with-cis#vpc-acls) GitHub repo. 
+For more information about ACL rules please refer to this [documentation](https://cloud.ibm.com/docs/containers?topic=containers-vpc-network-policy#acls). For more information on these specific ACL rules see this VPC ACL section in [this](https://github.com/Cloud-Schematics/multizone-secure-iks-with-cis#vpc-acls) GitHub repo.
+
 ## Resources
 - [Deploy CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
 - [Deploy Code Engine application](https://cloud.ibm.com/docs/codeengine?topic=codeengine-deploy-app-tutorial)
