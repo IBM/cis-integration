@@ -6,6 +6,7 @@ module ibm_cis_ce_integration {
     app_url = var.app_url
     cis_domain = var.cis_domain
     pool_name = var.pool_name
+    standard = var.standard
     count = (var.create_ce) ? 1 : 0
 }
 
