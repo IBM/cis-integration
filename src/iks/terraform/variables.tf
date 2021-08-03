@@ -15,19 +15,12 @@ variable cis_name {
       error_message = "Not a valid CIS Name."
   }
 }
+
 variable resource_group {
     type = string
     description = "Name of the group the resource was created under"
 }
-variable app_url {
-    type = string
-    description = "URL generated for the code engine app"
-    validation {
-    # regex(...) fails if it cannot find a match
-    condition     = can(regex("^([^[:ascii:]]|[a-zA-Z0-9-._: ])+$", var.app_url))
-    error_message = "This is not a valid url for the code engine app."
-  }
-}
+
 variable cis_domain {
     type = string
     description = "Domain name that you want to be attached to the CIS Instance and Code Engine app"
@@ -38,12 +31,7 @@ variable cis_domain {
   }
 }
 
-variable pool_name {
+variable cluster_id {
     type = string
-    description = "Name of the pool attached to the CIS Instance"
-    validation {
-      #regex(...) fails if it cannot find a match
-    condition     = can(regex("default-pool-{0,1}[0-9]*", var.pool_name))
-    error_message = "This is not a valid pool-name for the CIS Instance."
-    }
+    description = "Cluster ID of the IKS instance"
 }

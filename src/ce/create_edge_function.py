@@ -1,15 +1,16 @@
 import requests, json
-from src.functions import Color as Color
+from src.common.functions import Color as Color
 
 class EdgeFunctionCreator:
-    def __init__(self, crn, app_url, apikey, zone_id, domain):
+    def __init__(self, crn, app_url, apikey, zone_id, domain, token):
         self.crn = crn
         self.app_url = app_url
         self.apikey = apikey
         self.zone_id = zone_id
         self.domain = domain
         self.fn_name = self.domain.replace('.', '-') # The name of the edge function action
-        self.token = self.request_token(self.apikey)
+        self.token = token
+        #self.token = self.request_token(self.apikey)
 
     def create_edge_function_action(self):
 
@@ -113,6 +114,7 @@ class EdgeFunctionCreator:
 
         return trigger_response_3.json
 
+    '''
     def request_token(self, apikey: str):
         """
         Requests an access token for the client so that we can execute the plan and apply commands in
@@ -128,3 +130,4 @@ class EdgeFunctionCreator:
         url="https://iam.cloud.ibm.com/identity/token"
         token = requests.post(url=url, data=data, headers=headers)
         return token.json()["access_token"] 
+    '''

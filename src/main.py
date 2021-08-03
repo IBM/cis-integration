@@ -1,7 +1,8 @@
 import os
 import sys
 import argparse
-from src.codeEngine import CodeEngine
+from src.ce.codeEngine import CodeEngine
+from src.iks.iks import iks
 import subprocess
 
 def execute(cmd):
@@ -16,6 +17,7 @@ def execute(cmd):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--uninstall", help="uninstalls cis-integration from your system", action="store_true",)
+    parser.add_argument("-s", "--sudo", help="adds sudo privileges for uninstall process", action="store_true",)
 
     subparsers = parser.add_subparsers(dest="command")
     
@@ -25,7 +27,7 @@ def main():
     ce_parser.add_argument("-c","--crn")
     ce_parser.add_argument("-z","--zone_id")
     ce_parser.add_argument("-d","--cis_domain")
-    ce_parser.add_argument("-a","--app_url")
+    ce_parser.add_argument("-a","--app")
     ce_parser.add_argument("-t","--terraform", action='store_true')
     ce_parser.add_argument("-r","--resource_group")
     ce_parser.add_argument("-n","--name")
@@ -33,12 +35,24 @@ def main():
     ce_parser.add_argument("-h","--help", action='store_true')
     ce_parser.add_argument("-v","--verbose", action='store_true')
     ce_parser.add_argument("--delete", action='store_true')
+    ce_parser.add_argument("--standard",action='store_true')
 
     #created iks sub-command as an example for to structure the next platform
     ks_parser = subparsers.add_parser("iks", aliases=['ks'], add_help=False)
-    ks_parser.add_argument("-a")
-    ks_parser.add_argument("-b")
-    ks_parser.add_argument("-c")
+    ks_parser.add_argument("-c","--crn")
+    ks_parser.add_argument("-z","--zone_id")
+    ks_parser.add_argument("-d","--cis_domain")
+    ks_parser.add_argument("-t","--terraform", action='store_true')
+    ks_parser.add_argument("-r","--resource_group")
+    ks_parser.add_argument("-n","--name")
+    ks_parser.add_argument("--namespace")
+    ks_parser.add_argument("--service_name")
+    ks_parser.add_argument("--service_port")
+    ks_parser.add_argument("-h","--help", action='store_true')
+    ks_parser.add_argument("-v","--verbose", action='store_true')
+    ks_parser.add_argument("--delete", action='store_true')
+    ks_parser.add_argument("-i","--iks_cluster_id")
+    ks_parser.add_argument("-p", "--vpc_name")
 
     args = parser.parse_args()
 
@@ -46,12 +60,23 @@ def main():
         #removes the ci and cis-integration command from system
         confirm = input("Are you sure you wish to uninstall? (y/n): ").lower()
         if confirm == 'y' or confirm == 'yes':
-            bash_cmd = "pip3 uninstall -y -r requirements.txt"
-            for item in execute(bash_cmd):
-                print(item, end="")
-            if os.path.isfile("/usr/local/bin/cis-integration") and os.path.isfile("/usr/local/bin/ci"):
-                os.remove("/usr/local/bin/cis-integration")
-                os.remove("/usr/local/bin/ci")
+            try:
+                bash_cmd = ""
+                if args.sudo:
+                    bash_cmd = "sudo pip3 uninstall -y -r requirements.txt"
+                else:
+                    bash_cmd = "pip3 uninstall -y -r requirements.txt"
+                for item in execute(bash_cmd):
+                    print(item, end="")
+            except Exception as e:
+                reinstall_cmd = "pip3 install -r requirements.txt"
+                subprocess.Popen(reinstall_cmd.split(), stdout=subprocess.PIPE)
+                print("Uninstall failed, try again using the sudo option.")
+                print(e)
+            else:
+                if os.path.isfile("/usr/local/bin/cis-integration") and os.path.isfile("/usr/local/bin/ci"):
+                    os.remove("/usr/local/bin/cis-integration")
+                    os.remove("/usr/local/bin/ci")
         else:
             sys.exit(1)
 
@@ -59,7 +84,7 @@ def main():
         CodeEngine(args)
 
     elif args.command=="iks" or args.command=="ks":
-        print("running iks command")
+        iks(args)
 
 if __name__ == "__main__":
     main()

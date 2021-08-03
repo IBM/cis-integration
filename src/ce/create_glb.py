@@ -2,7 +2,7 @@ from ibm_cloud_networking_services import GlobalLoadBalancerPoolsV0
 from ibm_cloud_networking_services import GlobalLoadBalancerV1
 from ibm_cloud_networking_services import GlobalLoadBalancerMonitorV1
 from ibm_cloud_networking_services import *
-from src.functions import Color as Color
+from src.common.functions import Color as Color
 
 class GLB:
     def __init__(self, crn, zone_identifier, api_endpoint, domain):

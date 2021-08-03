@@ -32,7 +32,8 @@ def edge_function():
         app_url="test-url.com",
         apikey="testString",
         zone_id="testString",
-        domain="test-domain.com"
+        domain="test-domain.com",
+        token="test-token"
     )
 
 

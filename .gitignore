@@ -47,3 +47,14 @@ __pycache__/
 # Build Files #
 ###############
 build/*
+
+# Terraform #
+#############
+terraform.tfvars
+.terraform*
+
+# Other #
+#########
+ingress.yaml
+config.txt
+

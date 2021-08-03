@@ -1,3 +1,4 @@
+LICENSE
 README.md
 setup.py
 main.py.egg-info/PKG-INFO
@@ -7,10 +8,17 @@ main.py.egg-info/entry_points.txt
 main.py.egg-info/top_level.txt
 src/__init__.py
 src/certcreate.py
+src/certcreate_iks.py
 src/codeEngine.py
 src/create_edge_function.py
 src/create_glb.py
 src/create_terraform_workspace.py
+src/delete_certs.py
+src/delete_dns.py
+src/delete_edge.py
+src/delete_glb.py
+src/delete_workspaces.py
 src/dns_creator.py
 src/functions.py
+src/iks.py
 src/main.py

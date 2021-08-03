@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from ibm_cloud_networking_services import DnsRecordsV1
 from ibm_cloud_sdk_core.api_exception import ApiException
-from src.functions import Color
+from src.common.functions import Color
 
 def get_input(text):
     return input(text)
