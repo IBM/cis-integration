@@ -16,30 +16,7 @@ class IngressCreator:
         self.ingressSubdomain=ingressSubdomain
         self.iks_master_url=iks_master_url
 
-    def getKubeConfig(self):
-
-        url = "https://containers.cloud.ibm.com/global/v2/getKubeconfig?cluster="+self.clusterNameOrID
-
-        payload = ""
-        headers = {
-            'X-Auth-Resource-Group': self.resourceGroupID,
-            'X-Auth-Refresh-Token': self.refreshToken,
-            'Authorization': self.accessToken,
-            'accept': 'application/json'
-        }
-        try:
-            response = requests.request("GET", url, headers=headers, data=payload)
-            text_file = open("config.txt", "w")
-            n = text_file.write(response.text)
-            text_file.close()
-            os.environ['KUBECONFIG'] = "config.txt"
-            print(Color.GREEN+"SUCCESS: Installed kube config file"+Color.END)
-            
-        except:
-            print(Color.RED+"ERROR: Unable to Install kube config file"+Color.END)
-
     def create_ingress(self):
-
       if self.iks_master_url =="":
         print(Color.RED+"ERROR: Public service endpoint for IKS Cluster is not enabled"+Color.END)
       #1. get id token to make kubernetes API calls

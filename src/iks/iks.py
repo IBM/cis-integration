@@ -145,7 +145,7 @@ def iks(args):
         
         # handle the case of using python
         # 1. Domain Name and DNS
-        
+        '''
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id,
                               UserInfo.api_endpoint, UserInfo.app_url)
 
@@ -157,11 +157,11 @@ def iks(args):
         resource_group_id = UserInfo.get_resource_id()
         user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
-        
+        '''
         # 2. Generate certificate in manager if necessary
         
         UserInfo.cert_name="cis-cert"
-        
+        '''
         cms_id = UserInfo.get_cms()
         # print("\n"+cms_id)
         user_cert = SecretCertificateCreator(
@@ -176,7 +176,7 @@ def iks(args):
         user_cert.create_secret()
 
        
-        
+        '''
         #3 generate ingress
         
         UserInfo.secret_name=UserInfo.cert_name
