@@ -8,13 +8,15 @@ from src.common.functions import Color as Color
 
 
 class WorkspaceCreator:
-    def __init__(self, cis_api_key, schematics_url, cis_name, resource_group, cis_domain, cluster_id, verbose, token):
+    def __init__(self, cis_api_key, schematics_url, cis_name, resource_group, cis_domain, cluster_id, ingress, cert_name, verbose, token):
         self.cis_api_key = cis_api_key
         self.schematics_url = schematics_url
         self.cis_name = cis_name
         self.resource_group = resource_group
         self.cis_domain = cis_domain
         self.cluster_id = cluster_id
+        self.ingress = ingress
+        self.cert_name = cert_name
         self.verbose = verbose
         self.token = token
 
@@ -49,6 +51,14 @@ class WorkspaceCreator:
             workspace_cluster_id_variable_request['name'] = 'cluster_id'
             workspace_cluster_id_variable_request['value'] = self.cluster_id
 
+            workspace_ingress_variable_request = {}
+            workspace_ingress_variable_request['name'] = 'ingress'
+            workspace_ingress_variable_request['value'] = self.ingress
+
+            workspace_cert_name_variable_request = {}
+            workspace_cert_name_variable_request['name'] = 'cert_name'
+            workspace_cert_name_variable_request['value'] = self.cert_name
+
             workspace_create_ce_variable_request = {}
             workspace_create_ce_variable_request['name'] = 'create_ce'
             workspace_create_ce_variable_request['value'] = 'false'
@@ -65,6 +75,8 @@ class WorkspaceCreator:
                                                                    workspace_resource_group_variable_request,
                                                                    workspace_cis_domain_variable_request,
                                                                    workspace_cluster_id_variable_request,
+                                                                   workspace_ingress_variable_request,
+                                                                   workspace_cert_name_variable_request,
                                                                    workspace_create_ce_variable_request,
                                                                    workspace_create_iks_variable_request]
 
