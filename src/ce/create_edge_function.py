@@ -112,7 +112,7 @@ class EdgeFunctionCreator:
         else:
             print(Color.RED+"ERROR: Failed to create edge function trigger with status code " + str(trigger_response_3.status_code)+Color.RED)
 
-        return trigger_response_3.json
+        return trigger_response_3
 
     '''
     def request_token(self, apikey: str):

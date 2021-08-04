@@ -49,8 +49,8 @@ def test_create_edge_action(monkeypatch):
 
     # apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "request", mock_put)
-    monkeypatch.setattr(create_edge_function.EdgeFunctionCreator,
-                        "request_token", mock_token().token)
+    # monkeypatch.setattr(create_edge_function.EdgeFunctionCreator,
+    #                     "request_token", mock_token().token)
 
     # app.get_json, which contains requests.get, uses the monkeypatch
     test_edge_function = edge_function()
@@ -69,8 +69,8 @@ def test_create_edge_trigger(monkeypatch):
 
     # apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "request", mock_put)
-    monkeypatch.setattr(create_edge_function.EdgeFunctionCreator,
-                        "request_token", mock_token().token)
+    # monkeypatch.setattr(create_edge_function.EdgeFunctionCreator,
+    #                     "request_token", mock_token().token)
 
     # app.get_json, which contains requests.get, uses the monkeypatch
     test_edge_function = edge_function()
@@ -89,8 +89,8 @@ def test_create_edge_www_trigger(monkeypatch):
 
     # apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "request", mock_put)
-    monkeypatch.setattr(create_edge_function.EdgeFunctionCreator,
-                        "request_token", mock_token().token)
+    # monkeypatch.setattr(create_edge_function.EdgeFunctionCreator,
+    #                     "request_token", mock_token().token)
 
     # app.get_json, which contains requests.get, uses the monkeypatch
     test_edge_function = edge_function()
@@ -109,8 +109,8 @@ def test_create_edge_wild_card_trigger(monkeypatch):
 
     # apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "request", mock_put)
-    monkeypatch.setattr(create_edge_function.EdgeFunctionCreator,
-                        "request_token", mock_token().token)
+    # monkeypatch.setattr(create_edge_function.EdgeFunctionCreator,
+    #                     "request_token", mock_token().token)
 
     # app.get_json, which contains requests.get, uses the monkeypatch
     test_edge_function = edge_function()
