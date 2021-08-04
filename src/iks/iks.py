@@ -79,6 +79,26 @@ def handle_args(args):
             print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
             sys.exit(1)
 
+        UserInfo.namespace = args.namespace
+        if UserInfo.namespace is None:         
+            print("You did not specify a namespace for IKS cluster.")
+            sys.exit(1)
+
+        UserInfo.service_name = args.service_name
+        if UserInfo.service_name is None:         
+            print("You did not specify a service name from the IKS cluster.")
+            sys.exit(1)
+
+        UserInfo.service_port = args.service_port
+        if UserInfo.service_port is None:         
+            print("You did not specify the target port of the service from the IKS cluster.")
+            sys.exit(1)
+        
+        UserInfo.vpc_name = args.vpc_name
+        if UserInfo.vpc_name is None:
+            print("You did not specify a VPC instance name.")
+            sys.exit(1)
+
     else:
         #vpc name
         UserInfo.vpc_name = args.vpc_name
