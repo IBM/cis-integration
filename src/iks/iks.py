@@ -141,10 +141,38 @@ def iks(args):
         UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token, ce=False, iks=True)
         delete_workspaces.delete_workspace()
     elif UserInfo.terraforming: # handle the case of using terraform
+        print("Currently using the default secret in IKS, but a new TLS certificate can be ordered and imported as a secret if you wish.")
+        execute = input("Would you like to create a new secret? Input 'y' or 'yes' to execute:").lower()
+        if execute == 'y' or execute == 'yes':
+            UserInfo.cert_name = 'cis_cert'
+        else:
+            secret = UserInfo.app_url.split('.')
+            UserInfo.cert_name = secret[0]
+
+        resource_group_id = UserInfo.get_resource_id()
+        user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
+        user_ACL.check_network_acl()
+        
+        UserInfo.secret_name=UserInfo.cert_name
+        user_ingress = IngressCreator(
+            clusterNameOrID=UserInfo.iks_cluster_id,
+            resourceGroupID=UserInfo.resource_id, 
+            namespace=UserInfo.namespace, 
+            secretName=UserInfo.secret_name, 
+            serviceName=UserInfo.service_name, 
+            servicePort=UserInfo.service_port, 
+            accessToken=UserInfo.token["access_token"], 
+            refreshToken=UserInfo.token["refresh_token"],
+            ingressSubdomain=UserInfo.app_url,
+            iks_master_url=UserInfo.iks_master_url
+        )
+        user_ingress.create_ingress()
+
         work_creator = WorkspaceCreator(
             UserInfo.cis_api_key, UserInfo.schematics_url,
             UserInfo.cis_name, UserInfo.resource_group,
             UserInfo.cis_domain, UserInfo.iks_cluster_id,
+            UserInfo.app_url, UserInfo.cert_name,
             UserInfo.verbose, UserInfo.token)
         work_creator.create_terraform_workspace()
     else:
@@ -157,14 +185,16 @@ def iks(args):
 
         user_DNS.create_records()
 
+        # 2. Order Edge Certificate from CIS
         user_edge_cert = CertificateCreator(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         user_edge_cert.create_certificate()
 
+        # 3. Check ACL Rules
         resource_group_id = UserInfo.get_resource_id()
         user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
         
-        # 2. Generate certificate in manager if necessary
+        # 4. Generate certificate in manager if necessary
         print("Currently using the default secret in IKS, but a new TLS certificate can be ordered and imported as a secret if you wish.")
         execute = input("Would you like to create a new secret? Input 'y' or 'yes' to execute:").lower()
         if execute == 'y' or execute == 'yes':
@@ -182,10 +212,13 @@ def iks(args):
                 cert_name=UserInfo.cert_name
                 )
             user_cert.create_secret()
+        else:
+            secret = UserInfo.app_url.split('.')
+            UserInfo.cert_name = secret[0]
 
        
         
-        # 3. generate ingress
+        # 5. generate ingress
         UserInfo.secret_name=UserInfo.cert_name
         user_ingress = IngressCreator(
             clusterNameOrID=UserInfo.iks_cluster_id,
@@ -201,10 +234,7 @@ def iks(args):
         )
         user_ingress.create_ingress()
 
-        # 4. Order Edge Certificate from CIS
-        cert_creator = CertificateCreator(
-            UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
-        cert_creator.create_certificate()
+        
         
         
         

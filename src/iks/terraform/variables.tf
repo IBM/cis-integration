@@ -35,3 +35,18 @@ variable cluster_id {
     type = string
     description = "Cluster ID of the IKS instance"
 }
+
+variable ingress {
+    type = string
+    description = "Ingress subdomain of IKS cluster"
+    validation {
+    # regex(...) fails if it cannot find a match
+    condition     = can(regex("^([^[:ascii:]]|[a-zA-Z0-9-._: ])+$", var.ingress))
+    error_message = "This is not a valid url for the ingress subdomain."
+  }
+}
+
+variable cert_name {
+    type = string
+    description = "Name of certificate/secret in IKS"
+}

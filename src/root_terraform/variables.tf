@@ -47,7 +47,6 @@ variable cluster_id {
 variable standard {
     type = bool
     description = "Determines whether the CIS instance is using the Standard Plan"
-    type            = string
 }
 
 variable create_ce {
