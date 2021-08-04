@@ -9,7 +9,7 @@ This command line tool currently supports [Code Engine](https://www.ibm.com/clou
 
 In order to connect a Code Engine app to a CIS instance, numerous resources must be set up within CIS, namely: DNS records, a TLS certificate, a Global Load Balancer, Origin Pool, and Health Check Monitor, and an Edge Function.
 
-To connect a Kubernetes cluster to a CIS instance, DNS records must be created in the CIS instance, a TLS Certificate must be created by the Kubernetes Certificate Manager and imported to your IKS cluster as a secret, and ACL rules must be configured and an Ingress must be created in your IKS cluster.
+To connect a Kubernetes cluster to a CIS instance, DNS records must be created in the CIS instance, a TLS Edge Certificate must be created in CIS, a TLS certificate can be ordered by the Kubernetes Certificate Manager and imported to your IKS cluster as a secret (optional), and ACL rules must be configured and an Ingress must be created in your IKS cluster.
 
 Before using this application, make sure you have an existing Code Engine app and a CIS instance with a domain name:
 * [Deploy a CIS instance](https://cloud.ibm.com/docs/cis?topic=cis-getting-started)
