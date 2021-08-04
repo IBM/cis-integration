@@ -1,4 +1,4 @@
-# Manual Steps
+# CIS Manual Steps
 This document outlines the manual steps that were needed to connect IBM CIS and Code Engine.
 
 ## 1. Adding Domain Name to CIS Instance
