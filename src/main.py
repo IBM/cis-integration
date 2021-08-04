@@ -35,6 +35,7 @@ def main():
     ce_parser.add_argument("-h","--help", action='store_true')
     ce_parser.add_argument("-v","--verbose", action='store_true')
     ce_parser.add_argument("--delete", action='store_true')
+    ce_parser.add_argument("--standard",action='store_true')
 
     #created iks sub-command as an example for to structure the next platform
     ks_parser = subparsers.add_parser("iks", aliases=['ks'], add_help=False)
@@ -51,6 +52,7 @@ def main():
     ks_parser.add_argument("-v","--verbose", action='store_true')
     ks_parser.add_argument("--delete", action='store_true')
     ks_parser.add_argument("-i","--iks_cluster_id")
+    ks_parser.add_argument("-p", "--vpc_name")
 
     args = parser.parse_args()
 
