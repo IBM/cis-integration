@@ -126,10 +126,6 @@ def iks(args):
     delete_dns = None
     delete_workspaces = None 
     work_creator = None 
-    user_DNS = None
-    user_edge_cert = None 
-    user_ACL = None
-    user_cert = None
     user_ingress = None
 
     UserInfo = handle_args(args)
@@ -213,4 +209,4 @@ def iks(args):
 
         healthCheck(hostUrl)
 
-    return delete_dns, delete_workspaces, work_creator, user_DNS, user_edge_cert, user_ACL, user_cert, user_ingress
+    return delete_dns, delete_workspaces, work_creator, user_ingress

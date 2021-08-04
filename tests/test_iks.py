@@ -38,7 +38,7 @@ class MockArgs():
 
 
 class MockIntegrationInfoObj():
-    def set_attr(self, terraform, verbose, delete, iks_cluster_id, cis_domain, resource_group, name, crn, zone_id, namespace, service_name, service_port, vpc_name):
+    def set_attr(self, terraform, verbose, delete, iks_cluster_id, cis_domain, resource_group, name, crn, zone_id, namespace, service_name, service_port, vpc_name, iks_master_url):
         self.crn = crn
         self.zone_id = zone_id
         self.api_endpoint = 'https://api.cis.cloud.ibm.com'
@@ -59,6 +59,7 @@ class MockIntegrationInfoObj():
         self.service_name = service_name
         self.service_port = service_port
         self.vpc_name = vpc_name
+        self.iks_master_url = iks_master_url
 
     def get_cms(arg):
         return "123456789"
@@ -85,22 +86,22 @@ def get_no_crn_and_zone(self):
 
 def mock_handle_args_delete_terr(args):
     integration_info = MockIntegrationInfoObj()
-    integration_info.set_attr(True, True, True, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace", "fake_service_name", "fake_service_port", "fake_vpc")
+    integration_info.set_attr(True, True, True, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace", "fake_service_name", "fake_service_port", "fake_vpc", "fake_master_url")
     return integration_info
 
 def mock_handle_args_delete_not_terr(args):
     integration_info = MockIntegrationInfoObj()
-    integration_info.set_attr(False, True, True, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace", "fake_service_name", "fake_service_port", "fake_vpc")
+    integration_info.set_attr(False, True, True, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace", "fake_service_name", "fake_service_port", "fake_vpc", "fake_master_url")
     return integration_info
 
 def mock_handle_args_terr(args):
     integration_info = MockIntegrationInfoObj()
-    integration_info.set_attr(True, True, False, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace", "fake_service_name", "fake_service_port", "fake_vpc")
+    integration_info.set_attr(True, True, False, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace", "fake_service_name", "fake_service_port", "fake_vpc", "fake_master_url")
     return integration_info
 
 def mock_handle_args_reg(args):
     integration_info = MockIntegrationInfoObj()
-    integration_info.set_attr(False, False, False, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace", "fake_service_name", "fake_service_port", "fake_vpc")
+    integration_info.set_attr(False, False, False, "fake_cluster_id", "fake_cis_domain", "fake_resource_group", "fake_name", "fake_crn", "fake_zone_id", "fake_namespace", "fake_service_name", "fake_service_port", "fake_vpc", "fake_master_url")
     return integration_info
 
 def mock_delete_dns(arg):
@@ -282,13 +283,9 @@ def test_iks_delete_terr(monkeypatch):
 
     with patch("src.common.delete_dns.DeleteDNS.delete_dns", mock_delete_dns):
         with patch("src.ce.delete_workspaces.DeleteWorkspace.delete_workspace", mock_delete_workspace):
-            delete_dns, delete_workspaces, work_creator, user_DNS, user_edge_cert, user_ACL, user_cert, user_ingress = iks(args)
+            delete_dns, delete_workspaces, work_creator, user_ingress = iks(args)
 
     assert work_creator == None
-    assert user_DNS == None
-    assert user_edge_cert == None
-    assert user_ACL == None
-    assert user_cert == None
     assert user_ingress == None
     assert delete_dns == None
     assert delete_workspaces.crn == "fake_crn"
@@ -309,15 +306,11 @@ def test_iks_delete_not_terr(monkeypatch):
     
     with patch("src.common.delete_dns.DeleteDNS.delete_dns", mock_delete_dns):
         with patch("src.ce.delete_workspaces.DeleteWorkspace.delete_workspace", mock_delete_workspace):
-            delete_dns, delete_workspaces, work_creator, user_DNS, user_edge_cert, user_ACL, user_cert, user_ingress = iks(args)
+            delete_dns, delete_workspaces, work_creator, user_ingress = iks(args)
 
 
     assert delete_workspaces == None
     assert work_creator == None
-    assert user_DNS == None
-    assert user_edge_cert == None
-    assert user_ACL == None
-    assert user_cert == None
     assert user_ingress == None
     assert delete_dns.crn == "fake_crn"
     assert delete_dns.zone_id == "fake_zone_id"
@@ -333,7 +326,7 @@ def test_iks_terraform(monkeypatch):
 
     with patch("src.iks.create_terraform_workspace.WorkspaceCreator.create_terraform_workspace", mock_create_terraform_workspace):
         with patch("src.ce.delete_workspaces.DeleteWorkspace.delete_workspace", mock_delete_workspace):
-            delete_dns, delete_workspaces, work_creator, user_DNS, user_edge_cert, user_ACL, user_cert, user_ingress = iks(args)
+            delete_dns, delete_workspaces, work_creator, user_ingress = iks(args)
 
     assert work_creator.cis_api_key == "fake_key"
     assert work_creator.schematics_url == 'https://us.schematics.cloud.ibm.com'
@@ -343,10 +336,7 @@ def test_iks_terraform(monkeypatch):
     assert work_creator.cluster_id == "fake_cluster_id"
     assert work_creator.token == {"access_token": "123456789",
                       "refresh_token": "testingRefresh"}
-    assert user_DNS == None
-    assert user_edge_cert == None
-    assert user_ACL == None
-    assert user_cert == None
+
     assert user_ingress == None
     assert delete_dns == None
     assert delete_workspaces == None
@@ -365,25 +355,9 @@ def test_iks_regular(monkeypatch):
                 with patch("src.ce.delete_workspaces.DeleteWorkspace.delete_workspace", mock_delete_workspace):
                     with patch("src.iks.create_ingress.IngressCreator.create_ingress", mock_create_ingress):
                         with patch("src.iks.create_acl_rules.AclRuleCreator.check_network_acl", mock_check_network_acl):
-                            delete_dns, delete_workspaces, work_creator, user_DNS, user_edge_cert, user_ACL, user_cert, user_ingress = iks(args)
+                            delete_dns, delete_workspaces, work_creator, user_ingress = iks(args)
 
     assert work_creator == None
-    assert user_DNS.crn == "fake_crn"
-    assert user_DNS.zone_id == "fake_zone_id"
-    assert user_DNS.endpoint == 'https://api.cis.cloud.ibm.com'
-    assert user_DNS.content == "test_url"
-    assert user_edge_cert.crn == "fake_crn"
-    assert user_edge_cert.zone_id == "fake_zone_id"
-    assert user_edge_cert.endpoint == 'https://api.cis.cloud.ibm.com'
-    assert user_edge_cert.hostNames == ["fake_cis_domain", "*."+"fake_cis_domain"]
-    assert user_ACL.vpc_name == "fake_vpc"
-    assert user_ACL.api_key == "fake_key"
-    assert user_cert.cis_crn == "fake_crn"
-    assert user_cert.cluster_id == "fake_cluster_id"
-    assert user_cert.cis_domain == "fake_cis_domain"
-    assert user_cert.cert_manager_crn == "123456789"
-    assert user_cert.token == "123456789"
-    assert user_cert.cert_name == "cis-cert"
     assert user_ingress.clusterNameOrID == "fake_cluster_id"
     assert user_ingress.resourceGroupID == "fake_resource_group"
     assert user_ingress.namespace == "fake_namespace"
@@ -393,5 +367,6 @@ def test_iks_regular(monkeypatch):
     assert user_ingress.accessToken == "123456789"
     assert user_ingress.refreshToken == "testingRefresh"
     assert user_ingress.ingressSubdomain == "test_url"
+    assert user_ingress.iks_master_url == "fake_master_url"
     assert delete_dns == None
     assert delete_workspaces == None
