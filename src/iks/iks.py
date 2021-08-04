@@ -160,7 +160,7 @@ def iks(args):
         user_ACL.check_network_acl()
         
         # 2. Generate certificate in manager if necessary
-        print("Can order a new TLS Certificate and import as a secret to IKS or use the default secret already in IKS")
+        print("Currently using the default secret in IKS, but a new TLS certificate can be ordered and imported as a secret if you wish.")
         execute = input("Would you like to create a new secret? Input 'y' or 'yes' to execute:").lower()
         if execute == 'y' or execute == 'yes':
             UserInfo.cert_name="cis-cert"
