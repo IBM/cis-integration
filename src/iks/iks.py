@@ -6,6 +6,8 @@ from src.common.functions import Color, IntegrationInfo, healthCheck
 from src.common.delete_dns import DeleteDNS
 from src.iks.create_acl_rules import AclRuleCreator
 from src.ce.delete_workspaces import DeleteWorkspace
+from src.common.certcreate import CertificateCreator
+from src.common.delete_certs import DeleteCerts
 
 import sys
 import getpass
@@ -129,6 +131,10 @@ def iks(args):
         delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_dns.delete_dns()
 
+        delete_certs = DeleteCerts(
+            UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        delete_certs.delete_certs()
+
     elif UserInfo.delete and UserInfo.terraforming:
         delete_workspaces = DeleteWorkspace(UserInfo.crn, UserInfo.zone_id,
         UserInfo.cis_domain, UserInfo.api_endpoint,
@@ -154,24 +160,27 @@ def iks(args):
         user_ACL.check_network_acl()
         
         # 2. Generate certificate in manager if necessary
-        UserInfo.cert_name="cis-cert"
-        
-        cms_id = UserInfo.get_cms()
-        # print("\n"+cms_id)
-        user_cert = SecretCertificateCreator(
-            cis_crn=UserInfo.crn,
-            cluster_id=UserInfo.iks_cluster_id,
-            cis_domain=UserInfo.cis_domain,
-            cert_manager_crn=cms_id,
+        print("Can order a new TLS Certificate and import as a secret to IKS or use the default secret already in IKS")
+        execute = input("Would you like to create a new secret? Input 'y' or 'yes' to execute:").lower()
+        if execute == 'y' or execute == 'yes':
+            UserInfo.cert_name="cis-cert"
+            
+            cms_id = UserInfo.get_cms()
+            # print("\n"+cms_id)
+            user_cert = SecretCertificateCreator(
+                cis_crn=UserInfo.crn,
+                cluster_id=UserInfo.iks_cluster_id,
+                cis_domain=UserInfo.cis_domain,
+                cert_manager_crn=cms_id,
 
-            token=UserInfo.token["access_token"],
-            cert_name=UserInfo.cert_name
-            )
-        user_cert.create_secret()
+                token=UserInfo.token["access_token"],
+                cert_name=UserInfo.cert_name
+                )
+            user_cert.create_secret()
 
        
         
-        #3 generate ingress
+        # 3. generate ingress
         UserInfo.secret_name=UserInfo.cert_name
         user_ingress = IngressCreator(
             clusterNameOrID=UserInfo.iks_cluster_id,
@@ -185,6 +194,11 @@ def iks(args):
             ingressSubdomain=UserInfo.app_url
         )
         user_ingress.create_ingress()
+
+        # 4. Order Edge Certificate from CIS
+        cert_creator = CertificateCreator(
+            UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
+        cert_creator.create_certificate()
         
         
     if not UserInfo.delete:

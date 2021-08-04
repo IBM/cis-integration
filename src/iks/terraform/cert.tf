@@ -46,3 +46,19 @@ curl -X POST https://containers.cloud.ibm.com/global/ingress/v2/secret/createSec
     }
     
 }
+
+# Setting TLS mode to strict
+# Setting minimum TLS version to 1.2
+resource "ibm_cis_domain_settings" "test" {
+    cis_id          = data.ibm_cis.cis_instance.id
+    domain_id       = data.ibm_cis_domain.cis_instance_domain.domain_id 
+    ssl             = "strict"
+    min_tls_version = "1.2"
+}
+
+# Ordering a TLS certificate
+resource ibm_cis_certificate_order test {
+    cis_id    = data.ibm_cis.cis_instance.id          
+    domain_id = data.ibm_cis_domain.cis_instance_domain.domain_id  
+    hosts     = [var.cis_domain, "*.${var.cis_domain}"]   
+}
