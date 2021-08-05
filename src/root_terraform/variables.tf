@@ -40,8 +40,9 @@ variable pool_name {
 }
 
 variable cluster_id {
-    type = string
-    description = "Cluster ID of the IKS instance"
+    type            = string
+    description     = "Cluster ID of the IKS instance"
+    default         = "null"
 }
 
 variable standard {
@@ -65,9 +66,11 @@ variable create_iks {
 variable ingress {
     type            = string
     description     = "Ingress subdomain of IKS cluster"
+    default         = "null"
 }
 
 variable cert_name {
     type            = string
     description     = "Name of certificate/secret in IKS"
+    default         = "null"
 }
