@@ -1,6 +1,7 @@
 import requests
 import os
 import json
+import urllib3
 from src.common.functions import Color as Color
 
 class IngressCreator:
@@ -17,6 +18,8 @@ class IngressCreator:
         self.iks_master_url=iks_master_url
 
     def create_ingress(self):
+      urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+      
       if self.iks_master_url =="":
         print(Color.RED+"ERROR: Public service endpoint for IKS Cluster is not enabled"+Color.END)
       #1. get id token to make kubernetes API calls

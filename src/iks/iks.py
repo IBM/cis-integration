@@ -53,8 +53,8 @@ def handle_args(args):
         if UserInfo.iks_cluster_id is None:
             print("You did not specify an IKS cluster ID.")
             sys.exit(1)
-    
-    iks_info = UserInfo.get_iks_info()
+        else:
+            iks_info = UserInfo.get_iks_info()
     
     UserInfo.cis_domain = args.cis_domain
     if UserInfo.cis_domain is None:
@@ -99,7 +99,7 @@ def handle_args(args):
             print("You did not specify a VPC instance name.")
             sys.exit(1)
 
-    else:
+    elif not UserInfo.delete:
         #vpc name
         UserInfo.vpc_name = args.vpc_name
         if UserInfo.vpc_name is None:
@@ -124,6 +124,27 @@ def handle_args(args):
         UserInfo.service_port = args.service_port
         if UserInfo.service_port is None:         
             print("You did not specify the target port of the service from the IKS cluster.")
+            sys.exit(1)
+
+        UserInfo.get_resource_id()
+
+        UserInfo.crn = args.crn
+        UserInfo.zone_id = args.zone_id
+        if UserInfo.crn is None or UserInfo.zone_id is None:
+            UserInfo.cis_name = args.name
+
+            if UserInfo.cis_name is None:
+                print("Please specify the name of your CIS instance or both the CIS CRN and CIS Zone ID")
+                sys.exit(1)
+
+            if not UserInfo.get_crn_and_zone():
+                print("Failed to retrieve CRN and Zone ID. Check the name of your CIS instance and try again")
+                sys.exit(1)
+                
+    elif UserInfo.delete:
+        UserInfo.resource_group = args.resource_group
+        if UserInfo.resource_group is None:
+            print("You did not specify a resource group.")
             sys.exit(1)
 
         UserInfo.get_resource_id()
