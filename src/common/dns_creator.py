@@ -66,6 +66,7 @@ class DNSCreator:
         return (root_record, www_record)
 
     def create_root_record(self, record, record_type, root_name):
+        # need to fix, maybe curl?
         root_record = record.create_dns_record(type=record_type, name=root_name, content=self.content, proxied=True)
         return root_record
 
