@@ -35,32 +35,46 @@ resource null_resource create_cert_secret_via_api {
 
     provisioner local-exec {
         command = <<BASH
-      i=0
-      while [ $i -lt 10 ]
+      URL_ENCODED_CMS_ID=$(echo ${ibm_certificate_manager_order.cert[0].id} | sed 's/:/%3A/g' | sed 's/\//%2F/g')
+      REGION=$(echo ${ibm_certificate_manager_order.cert[0].id} | cut -d'.' -f 1)
+
+      CERT=$(curl -X GET https://$REGION.certificate-manager.cloud.ibm.com/api/v2/certificate/$URL_ENCODED_CMS_ID
+          -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}"
+        )
+      STATUS=$(
+          echo $CERT | jq -r ".status"
+        )
+
+      while [ "$STATUS" == "pending" ]
       do
-        if [ "${ibm_certificate_manager_order.cert[0].status}" == "valid" ]; then
-          RESPONSE=$(curl -X POST https://containers.cloud.ibm.com/global/ingress/v2/secret/createSecret \
-            -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}" \
-            -d '{
-                "cluster" : "${var.cluster_id}",
-                "crn" : "${ibm_certificate_manager_order.cert[0].id}",
-                "name" : "${var.cert_name}",
-                "namespace" : "default",
-                "persistence" : true
-            }'
-          )
-
-          ERROR=$(echo $RESPONSE | jq -r ".incidentID")
-
-          if [ "$ERROR" != "null" ]; then
-            echo $ERROR
-            exit 2
-          fi
-        else
-          i=$(( $i + 1 ))
-          sleep 2
-        fi
+        CERT=$(curl -X GET https://$REGION.certificate-manager.cloud.ibm.com/api/v2/certificate/$URL_ENCODED_CMS_ID
+          -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}"
+        )
+        STATUS=$(
+          echo $CERT | jq -r ".status"
+        )
       done
+
+      if [ "$STATUS" == "valid" ]; then
+        RESPONSE=$(curl -X POST https://containers.cloud.ibm.com/global/ingress/v2/secret/createSecret \
+          -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}" \
+          -d '{
+              "cluster" : "${var.cluster_id}",
+              "crn" : "${ibm_certificate_manager_order.cert[0].id}",
+              "name" : "${var.cert_name}",
+              "namespace" : "default",
+              "persistence" : true
+          }'
+        )
+
+        ERROR=$(echo $RESPONSE | jq -r ".incidentID")
+
+        if [ "$ERROR" != "null" ]; then
+          echo $ERROR
+          exit 2
+        fi
+      fi
+      
         BASH 
     }
     
