@@ -130,9 +130,7 @@ def iks(args):
         delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_dns.delete_dns()
         '''
-        UserInfo.request_token()
-        UserInfo.get_resource_id()
-        UserInfo.get_iks_info()
+
         UserInfo.get_id_token()
         delete_ingress = DeleteIngress(UserInfo.namespace,UserInfo.id_token,UserInfo.iks_master_url)
         delete_ingress.delete_ingress()
@@ -202,6 +200,7 @@ def iks(args):
             iks_master_url=UserInfo.iks_master_url,
             idToken=UserInfo.id_token
         )
+        
         user_ingress.create_ingress()
         
         

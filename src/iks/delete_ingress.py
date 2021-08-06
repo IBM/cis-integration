@@ -1,7 +1,5 @@
 import requests
-import os
 import json
-import sys 
 from src.common.functions import Color as Color
 
 class DeleteIngress:
@@ -27,4 +25,3 @@ class DeleteIngress:
             print(Color.GREEN+"SUCCESS: Deleted ingress file"+Color.END)
         else:
             print(Color.RED+"ERROR: Unable to delete ingress file"+Color.END)
-

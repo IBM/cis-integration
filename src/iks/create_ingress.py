@@ -1,5 +1,4 @@
 import requests
-import os
 import json
 from src.common.functions import Color as Color
 
@@ -16,7 +15,7 @@ class IngressCreator:
         self.ingressSubdomain=ingressSubdomain
         self.iks_master_url=iks_master_url
         self.idToken=idToken
-
+        
     def create_ingress(self):
       if self.iks_master_url =="":
         print(Color.RED+"ERROR: Public service endpoint for IKS Cluster is not enabled"+Color.END)   
