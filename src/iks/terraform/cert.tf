@@ -38,7 +38,7 @@ resource null_resource create_cert_secret_via_api {
       URL_ENCODED_CMS_ID=$(echo ${ibm_certificate_manager_order.cert[0].id} | sed 's/:/%3A/g' | sed 's/\//%2F/g')
       REGION=$(echo ${ibm_certificate_manager_order.cert[0].id} | cut -d'.' -f 1)
 
-      CERT=$(curl -X GET https://$REGION.certificate-manager.cloud.ibm.com/api/v2/certificate/$URL_ENCODED_CMS_ID
+      CERT=$(curl -X GET https://$REGION.certificate-manager.cloud.ibm.com/api/v2/certificate/$URL_ENCODED_CMS_ID \
           -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}"
         )
       STATUS=$(
@@ -48,7 +48,7 @@ resource null_resource create_cert_secret_via_api {
       while [ "$STATUS" == "pending" ]
       do
         sleep 30
-        CERT=$(curl -X GET https://$REGION.certificate-manager.cloud.ibm.com/api/v2/certificate/$URL_ENCODED_CMS_ID
+        CERT=$(curl -X GET https://$REGION.certificate-manager.cloud.ibm.com/api/v2/certificate/$URL_ENCODED_CMS_ID \
           -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}"
         )
         STATUS=$(
