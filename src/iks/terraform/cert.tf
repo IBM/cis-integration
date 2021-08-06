@@ -35,15 +35,32 @@ resource null_resource create_cert_secret_via_api {
 
     provisioner local-exec {
         command = <<BASH
-curl -X POST https://containers.cloud.ibm.com/global/ingress/v2/secret/createSecret \
-    -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}" \
-    -d '{
-        "cluster" : "${var.cluster_id}",
-        "crn" : "${ibm_certificate_manager_order.cert[0].id}",
-        "name" : "${var.cert_name}",
-        "namespace" : "default",
-        "persistence" : true
-    }'
+      i=0
+      while [ $i -lt 10 ]
+      do
+        if [ "${ibm_certificate_manager_order.cert[0].status}" == "valid" ]; then
+          RESPONSE=$(curl -X POST https://containers.cloud.ibm.com/global/ingress/v2/secret/createSecret \
+            -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}" \
+            -d '{
+                "cluster" : "${var.cluster_id}",
+                "crn" : "${ibm_certificate_manager_order.cert[0].id}",
+                "name" : "${var.cert_name}",
+                "namespace" : "default",
+                "persistence" : true
+            }'
+          )
+
+          ERROR=$(echo $RESPONSE | jq -r ".incidentID")
+
+          if [ "$ERROR" != "null" ]; then
+            echo $ERROR
+            exit 2
+          fi
+        else
+          i=$(( $i + 1 ))
+          sleep 2
+        fi
+      done
         BASH 
     }
     
