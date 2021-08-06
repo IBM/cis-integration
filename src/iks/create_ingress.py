@@ -4,7 +4,7 @@ import json
 from src.common.functions import Color as Color
 
 class IngressCreator:
-    def __init__(self, clusterNameOrID, resourceGroupID, namespace, secretName, serviceName, servicePort, accessToken, refreshToken, ingressSubdomain, iks_master_url):
+    def __init__(self, clusterNameOrID, resourceGroupID, namespace, secretName, serviceName, servicePort, accessToken, refreshToken, ingressSubdomain, iks_master_url, idToken):
         self.clusterNameOrID=clusterNameOrID
         self.resourceGroupID=resourceGroupID
         self.namespace=namespace
@@ -15,58 +15,19 @@ class IngressCreator:
         self.refreshToken=refreshToken
         self.ingressSubdomain=ingressSubdomain
         self.iks_master_url=iks_master_url
-
-    def getKubeConfig(self):
-
-        url = "https://containers.cloud.ibm.com/global/v2/getKubeconfig?cluster="+self.clusterNameOrID
-
-        payload = ""
-        headers = {
-            'X-Auth-Resource-Group': self.resourceGroupID,
-            'X-Auth-Refresh-Token': self.refreshToken,
-            'Authorization': self.accessToken,
-            'accept': 'application/json'
-        }
-        try:
-            response = requests.request("GET", url, headers=headers, data=payload)
-            text_file = open("config.txt", "w")
-            n = text_file.write(response.text)
-            text_file.close()
-            os.environ['KUBECONFIG'] = "config.txt"
-            print(Color.GREEN+"SUCCESS: Installed kube config file"+Color.END)
-            
-        except:
-            print(Color.RED+"ERROR: Unable to Install kube config file"+Color.END)
+        self.idToken=idToken
 
     def create_ingress(self):
-
       if self.iks_master_url =="":
-        print(Color.RED+"ERROR: Public service endpoint for IKS Cluster is not enabled"+Color.END)
-      #1. get id token to make kubernetes API calls
-      url = "https://iam.cloud.ibm.com/identity/token"
+        print(Color.RED+"ERROR: Public service endpoint for IKS Cluster is not enabled"+Color.END)   
 
-      payload="grant_type=urn%3Aibm%3Aparams%3Aoauth%3Agrant-type%3Aapikey&apikey="+os.getenv("CIS_SERVICES_APIKEY")
-      headers = {
-        'content-type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic a3ViZTprdWJl',
-        'cache-control': 'no-cache'
-      }
-      try:
-        response = requests.request("POST", url, headers=headers, data=payload)
-        data=json.loads(response.text)
-        idToken=data["id_token"]
-      except:
-        print(Color.RED+"ERROR: Unable to get id token"+Color.END)
-
-      
-
-      #2. apply yaml file through kubernetes API
+      #1. apply ingress file with the Kubernetes API
       url = self.iks_master_url+"/apis/networking.k8s.io/v1beta1/namespaces/"+self.namespace+"/ingresses"
       payload = json.dumps({
         "apiVersion": "networking.k8s.io/v1beta1",
         "kind": "Ingress",
         "metadata": {
-          "name": "cis-cert",
+          "name": "cis-ingress",
           "annotations": {
             "nginx.ingress.kubernetes.io/ssl-redirect": "false"
           }
@@ -99,13 +60,13 @@ class IngressCreator:
         }
       })
       headers = {
-        'Authorization': 'bearer'+' '+idToken,
+        'Authorization': 'bearer'+' '+self.idToken,
         'Content-Type': 'application/json'
       }
       try:
         response = requests.request("POST", url, headers=headers, data=payload, verify=False)
         print(Color.GREEN+"SUCCESS: Created ingress file"+Color.END)
-        
+
       except:
         print(Color.RED+"ERROR: Unable to create ingress file"+Color.END)
 

@@ -43,7 +43,8 @@ def print_help():
     print("\t--delete \t\t removes resources created using this tool")
     print("\t--env, -e \t\t gets arguments from a credentials.env file")
     print("\t--terraform, -t \t build resources for CIS instance using terraform")
-    print("\t--verbose, -v \t\t prints a detailed log from the Schematics workspace if --terraform is selected\n")
+    print("\t--verbose, -v \t\t prints a detailed log from the Schematics workspace if --terraform is selected")
+    print("\t--standard \t\t creates everything except the edge function, according to Standard Plan permissions\n")
 
     print(Color.BOLD + "OPTIONAL ARGUMENTS:" + Color.END)
     print("\t--crn, -c \t\t CRN of the CIS instance")
@@ -64,6 +65,7 @@ def handle_args(args):
 
     UserInfo = IntegrationInfo()
     UserInfo.terraforming = False
+    UserInfo.standard = args.standard
     if args.terraform:
         UserInfo.terraforming = True
 
@@ -145,7 +147,7 @@ def handle_args(args):
 def CodeEngine(args):
     UserInfo = handle_args(args)
 
-    if UserInfo.delete:
+    if UserInfo.delete and not UserInfo.terraforming:
         delete_glb = DeleteGLB(
             UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_glb.delete_glb()
@@ -162,10 +164,11 @@ def CodeEngine(args):
                                  UserInfo.cis_domain, UserInfo.cis_api_key, UserInfo.token["access_token"])
         delete_edge.delete_edge()
 
-        if UserInfo.terraforming:
-            delete_workspaces = DeleteWorkspace(
-                UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token)
-            delete_workspaces.delete_workspace()
+    elif UserInfo.delete and UserInfo.terraforming:
+        delete_workspaces = DeleteWorkspace(UserInfo.crn, UserInfo.zone_id,
+            UserInfo.cis_domain, UserInfo.api_endpoint,
+            UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token, ce=True, iks=False)
+        delete_workspaces.delete_workspace()
 
     elif UserInfo.terraforming:  # handle the case of using terraform
         work_creator = WorkspaceCreator(
@@ -179,7 +182,8 @@ def CodeEngine(args):
             UserInfo.crn,
             UserInfo.zone_id,
             UserInfo.verbose,
-            UserInfo.token)
+            UserInfo.token,
+            UserInfo.standard)
         work_creator.create_terraform_workspace()
     else:  # handle the case of using python
         # 1. Domain Name and DNS
@@ -200,14 +204,18 @@ def CodeEngine(args):
         cert_creator.create_certificate()
 
         # 4. Edge Functions
-        userEdgeFunction = EdgeFunctionCreator(
-            UserInfo.crn, UserInfo.app_url,
-            UserInfo.cis_api_key, UserInfo.zone_id,
-            UserInfo.cis_domain, UserInfo.token["access_token"])
-        userEdgeFunction.create_edge_function_action()
-        userEdgeFunction.create_edge_function_trigger()
-        userEdgeFunction.create_edge_function_wild_card_trigger()
-        userEdgeFunction.create_edge_function_www_trigger()
+        if not UserInfo.standard:
+            userEdgeFunction = EdgeFunctionCreator(
+                UserInfo.crn, UserInfo.app_url,
+                UserInfo.cis_api_key, UserInfo.zone_id,
+                UserInfo.cis_domain, UserInfo.token["access_token"])
+            userEdgeFunction.create_edge_function_action()
+            userEdgeFunction.create_edge_function_trigger()
+            userEdgeFunction.create_edge_function_wild_card_trigger()
+            userEdgeFunction.create_edge_function_www_trigger()
+        else:
+            print("\nEdge function was not created with this tool since you are using the Standard Plan. You can still create the edge function manually.")
+            print("Follow Step 4 of this link for instructions: https://github.com/IBM/cis-integration/blob/master/cis_manual_steps.md#4-edge-functions \n")
 
     if not UserInfo.delete:
         hostUrl = "https://"+UserInfo.cis_domain

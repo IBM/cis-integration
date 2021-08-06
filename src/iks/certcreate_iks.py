@@ -52,7 +52,6 @@ class SecretCertificateCreator:
                 keepgoing = False
             elif cert_response.status_code == 500:
                 print("Waiting for a response from the certificate manager...")
-                print(cert_response.json())
                 time.sleep(2)
             else:
                 print(Color.RED+"ERROR: Failed to create secret for IKS with error code " +

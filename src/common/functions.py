@@ -5,7 +5,7 @@ import json
 from ibm_platform_services import ResourceControllerV2, ResourceManagerV2
 from ibm_cloud_networking_services import ZonesV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-
+import os
 
 class Color:
     PURPLE = '\033[95m'
@@ -79,7 +79,10 @@ class IntegrationInfo:
     terraforming = False
     verbose = False
     delete = False
+    standard = False
     token = None
+    vpc_name = ''
+    id_token = ''
 
     # loads .env file if it exists
     def read_envfile(self, filename):
@@ -108,6 +111,24 @@ class IntegrationInfo:
             self.app_url = env_vars["APP_DOMAIN"]
             self.cis_api_key = env_vars["CIS_SERVICES_APIKEY"]
             self.api_endpoint = env_vars["API_ENDPOINT"]
+    def get_id_token(self):
+        if self.iks_master_url =="":
+            print(Color.RED+"ERROR: Public service endpoint for IKS Cluster is not enabled"+Color.END)
+        #1. get id token to make Kubernetes API calls
+        url = "https://iam.cloud.ibm.com/identity/token"
+
+        payload="grant_type=urn%3Aibm%3Aparams%3Aoauth%3Agrant-type%3Aapikey&apikey="+os.getenv("CIS_SERVICES_APIKEY")
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic a3ViZTprdWJl',
+            'cache-control': 'no-cache'
+        }
+        try:
+            response = requests.request("POST", url, headers=headers, data=payload)
+            data=json.loads(response.text)
+            self.id_token = data["id_token"]
+        except:
+            print(Color.RED+"ERROR: Unable to get id token"+Color.END)
 
     def request_token(self):
         """
@@ -136,7 +157,7 @@ class IntegrationInfo:
           'Authorization': self.token["access_token"],
           'X-Auth-Resource-Group': self.resource_id
         }
-        
+
         try:
             response = requests.request("GET", url, headers=headers, data=payload)
 

@@ -13,7 +13,7 @@ from src.common.functions import Color as Color
 
 
 class WorkspaceCreator:
-    def __init__(self, cis_api_key, schematics_url, app_url, cis_domain, resource_group, cis_name, api_endpoint, crn, zone_id, verbose, token):
+    def __init__(self, cis_api_key, schematics_url, app_url, cis_domain, resource_group, cis_name, api_endpoint, crn, zone_id, verbose, token, standard: bool):
         self.cis_api_key = cis_api_key
         self.schematics_url = schematics_url
         self.app_url = app_url
@@ -25,6 +25,7 @@ class WorkspaceCreator:
         self.zone_id = zone_id
         self.verbose = verbose
         self.token = token
+        self.standard = standard
 
     def create_terraform_workspace(self):
         authenticator = IAMAuthenticator(self.cis_api_key)
@@ -36,7 +37,11 @@ class WorkspaceCreator:
         pool_name = self.pool_check()
         keepgoing = self.glb_check()
         keepgoing = self.dns_check(keepgoing)
-        keepgoing = self.edge_check(self.token["access_token"], keepgoing)
+        if not self.standard:
+            keepgoing = self.edge_check(self.token["access_token"], keepgoing)
+        else:
+            print("Edge function was not created with this tool since you are using the Standard Plan. You can still create the edge function manually.")
+            print("Follow Step 4 of this link for instructions: https://github.com/IBM/cis-integration/blob/master/cis_manual_steps.md#4-edge-functions \n")
 
         # Creating the workspace and connecting to the github repo
         if keepgoing:
@@ -66,6 +71,15 @@ class WorkspaceCreator:
             workspace_pool_variable_request['name'] = 'pool_name'
             workspace_pool_variable_request['value'] = pool_name
 
+            workspace_standard_variable_request = {}
+            workspace_standard_variable_request['name'] = 'standard'
+            workspace_standard_variable_request['type'] = 'bool'
+            if self.standard:
+                workspace_standard_variable_request['value'] = 'true'
+            else:
+                workspace_standard_variable_request['value'] = 'false'
+
+                
             workspace_create_ce_variable_request = {}
             workspace_create_ce_variable_request['name'] = 'create_ce'
             workspace_create_ce_variable_request['value'] = 'true'
@@ -84,7 +98,8 @@ class WorkspaceCreator:
                                                                    workspace_domain_variable_request,
                                                                    workspace_pool_variable_request,
                                                                    workspace_create_ce_variable_request,
-                                                                   workspace_create_iks_variable_request]
+                                                                   workspace_create_iks_variable_request,
+                                                                   workspace_standard_variable_request]
 
             template_repo_request_model = {}
             template_repo_request_model['url'] = 'https://github.com/IBM/cis-integration/tree/master/src/root_terraform'
