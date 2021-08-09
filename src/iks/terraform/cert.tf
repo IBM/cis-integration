@@ -35,25 +35,34 @@ resource null_resource create_cert_secret_via_api {
 
     provisioner local-exec {
         command = <<BASH
-      URL_ENCODED_CMS_ID=$(echo ${ibm_certificate_manager_order.cert[0].id} | sed 's/:/%3A/g' | sed 's/\//%2F/g')
-      REGION=$(echo ${ibm_certificate_manager_order.cert[0].id} | cut -d'.' -f 1)
+      
+      URL_ENCODED_CMS_ID=$(echo ${data.ibm_resource_instance.cm.id} | sed 's/:/%3A/g' | sed 's/\//%2F/g')
+      REGION=$(echo ${split(":", ibm_certificate_manager_order.cert[0].id)[5]})
 
-      CERT=$(curl -X GET https://$REGION.certificate-manager.cloud.ibm.com/api/v2/certificate/$URL_ENCODED_CMS_ID \
-          -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}"
-        )
-      STATUS=$(
-          echo $CERT | jq -r ".status"
-        )
+      get_certificates() {
+      curl -s -X GET \
+              "https://$REGION.certificate-manager.cloud.ibm.com/api/v3/$URL_ENCODED_CMS_ID/certificates" \
+                  -H 'Content-Type: application/json' \
+                  -H "authorization: Bearer ${data.ibm_iam_auth_token.token.iam_access_token}"
+      }
+      JSON_DATA=$(get_certificates)
+      CERT_COUNT=$(echo $JSON_DATA | jq '. | length')
+      CERT_LENGTH=$(($CERT_COUNT - 1))              
+      CERT_INDEX=-1
 
-      while [ "$STATUS" == "pending" ]
+      for i in $(seq 0 $CERT_LENGTH)
       do
-        sleep 30
-        CERT=$(curl -X GET https://$REGION.certificate-manager.cloud.ibm.com/api/v2/certificate/$URL_ENCODED_CMS_ID \
-          -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}"
-        )
-        STATUS=$(
-          echo $CERT | jq -r ".status"
-        )
+          CERT_NAME=$(echo $JSON_DATA | jq -r ".certificates[$i].name")
+          if [ $CERT_NAME == "cis_cert" ]; then
+              CERT_INDEX=$i
+          fi
+      done
+      CERT_STATUS=$(echo $JSON_DATA | jq -r ".certificates[$CERT_INDEX].status")
+
+      while [ "$CERT_STATUS" == "pending" ]
+      do
+      sleep 1m
+      CERT_STATUS=$(echo $(get_certificates) | jq -r ".certificates[$CERT_INDEX].status")
       done
 
       if [ "$STATUS" == "valid" ]; then
@@ -68,12 +77,6 @@ resource null_resource create_cert_secret_via_api {
           }'
         )
 
-        ERROR=$(echo $RESPONSE | jq -r ".incidentID")
-
-        if [ "$ERROR" != "null" ]; then
-          echo $ERROR
-          exit 2
-        fi
       fi
       
         BASH 
