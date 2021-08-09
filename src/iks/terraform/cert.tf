@@ -43,7 +43,7 @@ resource null_resource create_cert_secret_via_api {
       curl -s -X GET \
               "https://$REGION.certificate-manager.cloud.ibm.com/api/v3/$URL_ENCODED_CMS_ID/certificates" \
                   -H 'Content-Type: application/json' \
-                  -H "authorization: Bearer ${data.ibm_iam_auth_token.token.iam_access_token}"
+                  -H "authorization: ${data.ibm_iam_auth_token.token.iam_access_token}"
       }
       JSON_DATA=$(get_certificates)
       CERT_COUNT=$(echo $JSON_DATA | jq '. | length')
