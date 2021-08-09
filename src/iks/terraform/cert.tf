@@ -65,7 +65,7 @@ resource null_resource create_cert_secret_via_api {
       CERT_STATUS=$(echo $(get_certificates) | jq -r ".certificates[$CERT_INDEX].status")
       done
 
-      if [ "$STATUS" == "valid" ]; then
+      if [ "$CERT_STATUS" == "valid" ]; then
         RESPONSE=$(curl -X POST https://containers.cloud.ibm.com/global/ingress/v2/secret/createSecret \
           -H "Authorization: ${data.ibm_iam_auth_token.token.iam_access_token}" \
           -d '{
