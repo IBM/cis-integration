@@ -5,7 +5,7 @@ from src.iks.create_terraform_workspace import WorkspaceCreator
 from src.common.functions import Color, IntegrationInfo, healthCheck
 from src.common.delete_dns import DeleteDNS
 from src.iks.create_acl_rules import AclRuleCreator
-from src.ce.delete_workspaces import DeleteWorkspace
+from src.common.delete_workspaces import DeleteWorkspace
 from src.common.certcreate import CertificateCreator
 from src.common.delete_certs import DeleteCerts
 
