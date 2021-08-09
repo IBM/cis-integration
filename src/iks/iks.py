@@ -123,7 +123,11 @@ def handle_args(args):
 
 
 def iks(args):
-    
+    delete_dns = None
+    delete_workspaces = None 
+    work_creator = None 
+    user_ingress = None
+
     UserInfo = handle_args(args)
     if UserInfo.delete and not UserInfo.terraforming:
         delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
@@ -204,3 +208,5 @@ def iks(args):
         hostUrl = "https://www."+UserInfo.cis_domain
 
         healthCheck(hostUrl)
+
+    return delete_dns, delete_workspaces, work_creator, user_ingress
