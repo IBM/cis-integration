@@ -145,9 +145,9 @@ def iks(args):
         
         # handle the case of using python
         # 1. Domain Name and DNS
-        '''
+        
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id,
-                              UserInfo.api_endpoint, UserInfo.app_url)
+                              UserInfo.api_endpoint, UserInfo.app_url, token=UserInfo.token["access_token"])
 
         user_DNS.create_records()
 
@@ -157,7 +157,6 @@ def iks(args):
         resource_group_id = UserInfo.get_resource_id()
         user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
-        '''
         # 2. Generate certificate in manager if necessary
         
         UserInfo.cert_name="cis-cert"
