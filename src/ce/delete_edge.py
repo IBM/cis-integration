@@ -2,6 +2,9 @@
 import requests
 from src.common.functions import Color
 
+def get_input(text):
+    return input(text)
+
 class DeleteEdge:
     def __init__(self, crn: str, zone_id: str, cis_domain: str, apikey: str, token: str) -> None:
         self.crn = crn
@@ -11,7 +14,7 @@ class DeleteEdge:
         self.token = token
 
     def delete_edge(self):
-        execute = input("Delete edge function? Input 'y' or 'yes' to execute: ").lower()
+        execute = get_input("Delete edge function? Input 'y' or 'yes' to execute: ").lower()
         if execute == 'y' or execute == 'yes':
             action_name = self.cis_domain.replace('.','-')
             #token = self.request_token(self.apikey)
