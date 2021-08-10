@@ -19,7 +19,6 @@ class DNSCreator:
             crn=self.crn, zone_identifier=self.zone_id, service_name="cis_services")
         record.set_service_url(self.endpoint)
         
-        # dns_url = 'https://api.cis.cloud.ibm.com/v1/crn:v1:bluemix:public:internet-svcs:global:a/cdefe6d99f7ea459aacb25775fb88a33:d6097e79-fd41-4dd3-bdc9-342fe1b28073::/zones/f4604bfab1a024690e30bfd72ae36727/dns_records'
         dns_url = f'https://api.cis.cloud.ibm.com/v1/{self.crn}/zones/{self.zone_id}/dns_records'
         dns_record_headers = {
                     'content-type': 'application/json',
