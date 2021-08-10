@@ -21,7 +21,7 @@ data ibm_cis cis_instance {
 data ibm_iam_auth_token token {}
 
 resource ibm_certificate_manager_order cert {
-  count = var.cert_name == "cis_cert" ? 1 : 0
+  count = var.cert_name == "cis-cert" ? 1 : 0
   certificate_manager_instance_id = data.ibm_resource_instance.cm.id
   name                            = var.cert_name
   description                     = "Certificate for connecting CIS to IKS cluster"
@@ -31,7 +31,7 @@ resource ibm_certificate_manager_order cert {
 }
 
 resource null_resource create_cert_secret_via_api {
-    count = var.cert_name == "cis_cert" ? 1 : 0
+    count = var.cert_name == "cis-cert" ? 1 : 0
 
     provisioner local-exec {
         command = <<BASH
@@ -53,7 +53,7 @@ resource null_resource create_cert_secret_via_api {
       for i in $(seq 0 $CERT_LENGTH)
       do
           CERT_NAME=$(echo $JSON_DATA | jq -r ".certificates[$i].name")
-          if [ $CERT_NAME == "cis_cert" ]; then
+          if [ $CERT_NAME == "cis-cert" ]; then
               CERT_INDEX=$i
           fi
       done

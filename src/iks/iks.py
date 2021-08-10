@@ -185,7 +185,7 @@ def iks(args):
         print("Currently using the default secret in IKS, but a new TLS certificate can be ordered and imported as a secret if you wish.")
         execute = input("Would you like to create a new secret? Input 'y' or 'yes' to execute:").lower()
         if execute == 'y' or execute == 'yes':
-            UserInfo.cert_name = 'cis_cert'
+            UserInfo.cert_name = 'cis-cert'
         else:
             secret = UserInfo.app_url.split('.')
             UserInfo.cert_name = secret[0]
@@ -239,7 +239,7 @@ def iks(args):
         print("Currently using the default secret in IKS, but a new TLS certificate can be ordered and imported as a secret if you wish.")
         execute = input("Would you like to create a new secret? Input 'y' or 'yes' to execute:").lower()
         if execute == 'y' or execute == 'yes':
-            UserInfo.cert_name="cis_cert"
+            UserInfo.cert_name="cis-cert"
             
             cms_id = UserInfo.get_cms()
             # print("\n"+cms_id)
