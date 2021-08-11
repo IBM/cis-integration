@@ -43,6 +43,7 @@ variable cluster_id {
     type            = string
     description     = "Cluster ID of the IKS instance"
     default         = "null"
+
 }
 
 variable standard {

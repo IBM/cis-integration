@@ -188,7 +188,7 @@ def CodeEngine(args):
     else:  # handle the case of using python
         # 1. Domain Name and DNS
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id,
-                              UserInfo.api_endpoint, UserInfo.app_url)
+                              UserInfo.api_endpoint, UserInfo.app_url, token=UserInfo.token["access_token"])
         user_DNS.create_records()
 
         # 2. Global Load Balancer
