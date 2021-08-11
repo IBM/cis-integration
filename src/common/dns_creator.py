@@ -1,19 +1,31 @@
+import requests
+import json
 from ibm_cloud_networking_services import DnsRecordsV1
 from ibm_cloud_sdk_core import ApiException
+from requests.api import head
 from src.common.functions import Color as Color
 
 class DNSCreator:
-    def __init__(self, crn, zone_id, api_endpoint, app_url):
+    def __init__(self, crn, zone_id, api_endpoint, app_url, token):
         self.crn = crn
         self.zone_id = zone_id
         self.endpoint = api_endpoint
         self.content = app_url
+        self.token = token
     
     def create_records(self):
         # create instance
         record = DnsRecordsV1.new_instance(
             crn=self.crn, zone_identifier=self.zone_id, service_name="cis_services")
         record.set_service_url(self.endpoint)
+        
+        dns_url = f'https://api.cis.cloud.ibm.com/v1/{self.crn}/zones/{self.zone_id}/dns_records'
+        dns_record_headers = {
+                    'content-type': 'application/json',
+                    'accept': 'application/json',
+                    'x-auth-user-token': 'Bearer ' + self.token
+        }
+
         record_type = 'CNAME'
         root_name = '@' # creating a root DNS record
         www_name = 'www' # creating a www DNS record
@@ -22,6 +34,7 @@ class DNSCreator:
         create_www_record = True # determines whether we need to create a new www record
         www_record = None # the result of creating/updating the www record
         curr_records = record.list_all_dns_records() # get the DNS records from the CIS instance
+        
         # check if the DNS records we want to create already exist
         for item in curr_records.result["result"]:
             # checking for the root record
@@ -48,29 +61,43 @@ class DNSCreator:
         # create a new root record if one does not already exist
         if create_root_record:
             try:
-                root_record = self.create_root_record(record, record_type, root_name)
-                print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + root_record.result["result"]["name"] + "\nDNS Record ID: " + root_record.result["result"]["id"] + "\n")
+                root_dns_record_data = json.dumps({
+                    "name": "@",
+                    "type": "CNAME",
+                    "content": self.content,
+                    "proxied": True
+                })
+
+                dns_root_response = requests.request(
+                    "POST", url=dns_url, headers=dns_record_headers, data=root_dns_record_data)
+
+                if dns_root_response.status_code == 200:
+                    print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + dns_root_response.json()["result"]["name"] + "\nDNS Record ID: " + dns_root_response.json()["result"]["id"] + "\n")
+                else:
+                    print(Color.RED+"ERROR: Failed to create secret for IKS with error code " +
+                      str(dns_root_response.status_code) + Color.END)
+
             except ApiException as ae:
                 print(Color.RED + "ERROR: " + ae.message + "\nError occurred when trying to create '@' DNS record. Check your application URL and try again\n" + Color.END)
-        
         
 
         if create_www_record:
             try:
-                www_record = self.create_www_record(record, record_type, www_name)
-                print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + www_record.result["result"]["name"] + "\nDNS Record ID: " + www_record.result["result"]["id"] + "\n")
+                www_dns_record_data = json.dumps({
+                    "name": "www",
+                    "type": "CNAME",
+                    "content": self.content,
+                    "proxied": True
+                })
+
+                dns_www_response = requests.request(
+                    "POST", url=dns_url, headers=dns_record_headers, data=www_dns_record_data)
+
+                if dns_www_response.status_code == 200:
+                    print(Color.GREEN+"SUCCESS: DNS Record created!"+Color.END+"\nDNS Record name: " + dns_www_response.json()["result"]["name"] + "\nDNS Record ID: " + dns_www_response.json()["result"]["id"] + "\n")
+                else:
+                    print(Color.RED+"ERROR: Failed to create secret for IKS with error code " +
+                      str(dns_www_response.status_code) + Color.END)
+                      
             except ApiException as ae:
-                print(Color.RED + "ERROR: " + ae.message + "\nError occurred when trying to create 'www' DNS record. Check your application URL and try again\n" + Color.END)
-        
-
-        return (root_record, www_record)
-
-        return (root_record, www_record)
-
-    def create_root_record(self, record, record_type, root_name):
-        root_record = record.create_dns_record(type=record_type, name=root_name, content=self.content, proxied=True)
-        return root_record
-
-    def create_www_record(self, record, record_type, www_name):
-        www_record = record.create_dns_record(type=record_type, name=www_name, content=self.content, proxied=True)
-        return www_record
+                print(Color.RED + "ERROR: " + ae.message + "\nError occurred when trying to create '@' DNS record. Check your application URL and try again\n" + Color.END)
