@@ -12,6 +12,23 @@ class DeleteSecretCMS:
         self.cert_name = cert_name
         self.token = token
 
+    def delete_secret(self):
+        url = "https://containers.cloud.ibm.com/global/ingress/v2/secret/deleteSecret"
+        headers = {
+            'Authorization': 'Bearer ' + self.token
+        }
+        payload = {
+            "cluster": self.cluster_id,
+            "delete_cert": True,
+            "name": self.cert_name,
+            "namespace": "default"
+        }
+        response = requests.request("POST", url, headers=headers, data=payload)
+        if response.status_code == 200:
+            print(Color.GREEN + "SUCCESS: Deleted secret from IKS cluster" + Color.END)
+        else:
+            print(Color.RED + "ERROR: Failed to delete secret from IKS cluster" + Color.END)
+
     def delete_cms_cert(self):
         cert_id = self.check_certificate()
         if not cert_id is None:
@@ -26,11 +43,11 @@ class DeleteSecretCMS:
             response = requests.request("DELETE", url, headers=headers, data=payload)
             if response.status_code == 200:
 
-                print("Certificate successfully deleted")
+                print(Color.GREEN + "SUCCESS: Certificate successfully deleted" + Color.END)
             else:
-                print("Failed to remove certificate from Certificate Manager")
+                print(Color.RED + "ERROR: Failed to remove certificate from Certificate Manager" + Color.END)
         else:
-            print("Failed to find certificate in Certificate Manager")
+            print(Color.RED + "ERROR: Failed to find certificate in Certificate Manager" + Color.END)
 
     def check_certificate(self):
         url_cert_man_crn = self.URLify(self.cert_manager_crn)
