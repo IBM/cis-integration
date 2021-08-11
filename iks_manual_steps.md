@@ -16,7 +16,7 @@ From IBM Kubernetes Service navigate to the Kubernetes dashboard to deploy a ser
 
 ![Internal IKS Service](./images/iks-service.png)
 
-## 4. Importing CIS DNS Certificate into IKS Cluster
+## 4. (Optional) Importing CIS DNS Certificate into IKS Cluster
 Now we import the CIS DNS certificate into our IKS Cluster using the command below. If you have this certificate in a certificate manager already then simply populate the fields as needed and run the below curl command. If you need to still obtain this certificate then navigate to to the certificate manager which is automatically created when an IKS Cluster is created.
 
 ![IKS Certificate Manager](./images/iks-cert-manager.png)
@@ -97,4 +97,4 @@ spec:
           serviceName: <app1_service>  
           servicePort: 80
 ```
-Here you will need to fill in the missing information. For each `hosts:` section provide the ingress subdomain. For the `secretName:` provide the name of the secret created when importing the CIS DNS Certificate. For `serviceName:` and `servicePort:` provide your service name and port which you created in step three.
+Here you will need to fill in the missing information. For each `hosts:` section provide the ingress subdomain. For the `secretName:` provide the name of the secret created when importing the CIS DNS Certificate or provide the default IKS Certificate secret if you choose to skip step four. For `serviceName:` and `servicePort:` provide your service name and port which you created in step three.

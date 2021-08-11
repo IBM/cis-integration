@@ -40,14 +40,13 @@ variable pool_name {
 }
 
 variable cluster_id {
-    type = string
-    description = "Cluster ID of the IKS instance"
+    type            = string
+    description     = "Cluster ID of the IKS instance"
 }
 
 variable standard {
-    type = bool
-    description = "Determines whether the CIS instance is using the Standard Plan"
-    type            = string
+    type            = bool
+    description     = "Determines whether the CIS instance is using the Standard Plan"
 }
 
 variable create_ce {

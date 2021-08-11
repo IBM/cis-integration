@@ -19,7 +19,34 @@ def print_help():
     print("\tcis-integration - a command line tool used to connect a CIS instance with an application deployed on Code Engine")
     print("\t- call this tool with either 'cis-integration' or 'ci'\n")
 
-    print("IKS VERSION: PRINT HELP NOT FINISHED")
+    print(Color.BOLD + "USAGE:" + Color.END)
+    print("\t[python command]\t\tcis-integration [positional args] [global options] -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN] -i [CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS TARGET PORT] -p [VPC NAME]")
+    print("\t[alt python command]\t\tcis-integration [positional args] [global options] -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN] -i [CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS TARGET PORT] -p [VPC NAME]\n")
+    print("\t[terraform command]\t\tcis-integration [positional args] [global options] --terraform -r [RESOURCE GROUP] -n [CIS NAME] -d [CIS DOMAIN] -i [CLUSTER ID] --namespace [IKS NAMESPACE] --service_name [IKS SERVICE NAME] --service_port [IKS TARGET PORT] -p [VPC NAME]\n")
+    print("\t[delete command]\t\tcis-integration [positional args] [global options] --delete -n [CIS NAME] -r [RESOURCE GROUP] -d [CIS DOMAIN]")
+    print("\t[alt delete command]\t\tcis-integration [positional args] [global options] --delete -c [CIS CRN] -z [CIS ZONE ID] -d [CIS DOMAIN]\n")
+
+    print(Color.BOLD + "POSITIONAL ARGUMENTS:" + Color.END)
+    print("\tiks, ks \t\t connect a kubernetes cluster\n")
+
+    print(Color.BOLD + "GLOBAL OPTIONS:" + Color.END)
+    print("\t--help, -h \t\t show help")
+    print("\t--delete \t\t removes resources created using this tool")
+    print("\t--env, -e \t\t gets arguments from a credentials.env file")
+    print("\t--terraform, -t \t build resources for CIS instance using terraform")
+    print("\t--verbose, -v \t\t prints a detailed log from the Schematics workspace if --terraform is selected\n")
+
+    print(Color.BOLD + "OPTIONAL ARGUMENTS:" + Color.END)
+    print("\t--crn, -c \t\t CRN of the CIS instance")
+    print("\t--zone_id, -z \t\t Zone ID of the CIS instance")
+    print("\t--cis_domain, -d \t domain name of the CIS instance")
+    print("\t--iks_cluster_id, -j \t\t ID of IKS cluster")
+    print("\t--resource_group, -r \t resource group associated with the CIS instance")
+    print("\t--name, -n \t\t name of the CIS instance")
+    print("\t--namespace \t\t name of the virtual cluster using your physical IKS cluster resources")
+    print("\t--service_name \t\t the name of the IKS Service exposing your application by rerouting incoming traffic to pods.")
+    print("\t--service_port \t\t the target port of your Service that every incoming port is mapped to")
+    print("\t--vpc_name, -p \t\t name of the virtual private cloud")
 
 
 def handle_args(args):
@@ -118,7 +145,11 @@ def handle_args(args):
 
 
 def iks(args):
-    
+    delete_dns = None
+    delete_workspaces = None 
+    work_creator = None 
+    user_ingress = None
+
     UserInfo = handle_args(args)
     if UserInfo.delete and not UserInfo.terraforming:
         
@@ -148,7 +179,7 @@ def iks(args):
         # 1. Domain Name and DNS
         
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id,
-                              UserInfo.api_endpoint, UserInfo.app_url)
+                              UserInfo.api_endpoint, UserInfo.app_url, token=UserInfo.token["access_token"])
 
         user_DNS.create_records()
 
@@ -158,7 +189,6 @@ def iks(args):
         resource_group_id = UserInfo.get_resource_id()
         user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
-        
         # 2. Generate certificate in manager if necessary
         
         UserInfo.cert_name="cis-cert"
@@ -208,3 +238,5 @@ def iks(args):
         hostUrl = "https://www."+UserInfo.cis_domain
 
         healthCheck(hostUrl)
+
+    return delete_dns, delete_workspaces, work_creator, user_ingress
