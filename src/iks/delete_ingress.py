@@ -18,10 +18,13 @@ class DeleteIngress:
         'Authorization': 'bearer '+self.id_token
         }
         
-        response = requests.request("DELETE", url, headers=headers, data=payload, verify=False)
-        data=json.loads(response.text)
+        try:
+            response = requests.request("DELETE", url, headers=headers, data=payload, verify=False)
+            data=json.loads(response.text)
 
-        if data["status"]!="Failure":            
-            print(Color.GREEN+"SUCCESS: Deleted ingress file"+Color.END)
-        else:
+            if data["status"]!="Failure":            
+                print(Color.GREEN+"SUCCESS: Deleted ingress file"+Color.END)
+            else:
+                print(Color.RED+"ERROR: Unable to delete ingress file"+Color.END)
+        except:
             print(Color.RED+"ERROR: Unable to delete ingress file"+Color.END)

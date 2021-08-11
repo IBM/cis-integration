@@ -51,6 +51,13 @@ def handle_args(args):
     UserInfo.iks_cluster_id = args.iks_cluster_id
     if UserInfo.iks_cluster_id is None:
         print("You did not specify an IKS cluster ID.")
+        sys.exit(1)
+
+    UserInfo.resource_group = args.resource_group
+    if UserInfo.resource_group is None:
+        print("You did not specify a resource group.")
+        sys.exit(1)
+    UserInfo.get_resource_id()
     
     iks_info = UserInfo.get_iks_info()
     
@@ -61,13 +68,6 @@ def handle_args(args):
     
     # terraforming vs. not terraforming
     if UserInfo.terraforming and not UserInfo.delete:
-        UserInfo.resource_group = args.resource_group
-        if UserInfo.resource_group is None:
-            print("You did not specify a resource group.")
-            sys.exit(1)
-
-        UserInfo.get_resource_id()
-
         UserInfo.cis_name = args.name
         if UserInfo.cis_name is None:
             print("You did not specify a CIS Name.")
@@ -82,11 +82,6 @@ def handle_args(args):
         UserInfo.vpc_name = args.vpc_name
         if UserInfo.vpc_name is None:
             print("You did not specify a VPC instance name.")
-            sys.exit(1)
-
-        UserInfo.resource_group = args.resource_group
-        if UserInfo.resource_group is None:
-            print("You did not specify a resource group.")
             sys.exit(1)
 
         UserInfo.namespace = args.namespace
@@ -126,10 +121,10 @@ def iks(args):
     
     UserInfo = handle_args(args)
     if UserInfo.delete and not UserInfo.terraforming:
-        '''
+        
         delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_dns.delete_dns()
-        '''
+        
 
         UserInfo.get_id_token()
         delete_ingress = DeleteIngress(UserInfo.namespace,UserInfo.id_token,UserInfo.iks_master_url)
@@ -151,7 +146,7 @@ def iks(args):
         
         # handle the case of using python
         # 1. Domain Name and DNS
-        '''
+        
         user_DNS = DNSCreator(UserInfo.crn, UserInfo.zone_id,
                               UserInfo.api_endpoint, UserInfo.app_url)
 
@@ -163,11 +158,11 @@ def iks(args):
         resource_group_id = UserInfo.get_resource_id()
         user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
-        '''
+        
         # 2. Generate certificate in manager if necessary
         
         UserInfo.cert_name="cis-cert"
-        '''
+        
         cms_id = UserInfo.get_cms()
         # print("\n"+cms_id)
         user_cert = SecretCertificateCreator(
@@ -180,7 +175,7 @@ def iks(args):
             cert_name=UserInfo.cert_name
             )
         user_cert.create_secret()
-        '''
+        
        
         
         #3 Generate ingress file

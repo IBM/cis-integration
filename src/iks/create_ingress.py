@@ -16,9 +16,7 @@ class IngressCreator:
         self.iks_master_url=iks_master_url
         self.idToken=idToken
         
-    def create_ingress(self):
-      if self.iks_master_url =="":
-        print(Color.RED+"ERROR: Public service endpoint for IKS Cluster is not enabled"+Color.END)   
+    def create_ingress(self):  
 
       #1. apply ingress file with the Kubernetes API
       url = self.iks_master_url+"/apis/networking.k8s.io/v1beta1/namespaces/"+self.namespace+"/ingresses"
