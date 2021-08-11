@@ -1,3 +1,4 @@
+from src.iks.delete_ingress import DeleteIngress
 from src.iks.certcreate_iks import SecretCertificateCreator
 from src.iks.create_ingress import IngressCreator
 from src.common.dns_creator import DNSCreator
@@ -73,11 +74,17 @@ def handle_args(args):
     # common arguments
     UserInfo.request_token()
     
-    if not UserInfo.delete:
-        UserInfo.iks_cluster_id = args.iks_cluster_id
-        if UserInfo.iks_cluster_id is None:
-            print("You did not specify an IKS cluster ID.")
-            sys.exit(1)
+
+    UserInfo.iks_cluster_id = args.iks_cluster_id
+    if UserInfo.iks_cluster_id is None:
+        print("You did not specify an IKS cluster ID.")
+        sys.exit(1)
+
+    UserInfo.resource_group = args.resource_group
+    if UserInfo.resource_group is None:
+        print("You did not specify a resource group.")
+        sys.exit(1)
+    UserInfo.get_resource_id()
     
     iks_info = UserInfo.get_iks_info()
     
@@ -88,13 +95,6 @@ def handle_args(args):
     
     # terraforming vs. not terraforming
     if UserInfo.terraforming and not UserInfo.delete:
-        UserInfo.resource_group = args.resource_group
-        if UserInfo.resource_group is None:
-            print("You did not specify a resource group.")
-            sys.exit(1)
-
-        UserInfo.get_resource_id()
-
         UserInfo.cis_name = args.name
         if UserInfo.cis_name is None:
             print("You did not specify a CIS Name.")
@@ -109,11 +109,6 @@ def handle_args(args):
         UserInfo.vpc_name = args.vpc_name
         if UserInfo.vpc_name is None:
             print("You did not specify a VPC instance name.")
-            sys.exit(1)
-
-        UserInfo.resource_group = args.resource_group
-        if UserInfo.resource_group is None:
-            print("You did not specify a resource group.")
             sys.exit(1)
 
         UserInfo.namespace = args.namespace
@@ -157,8 +152,14 @@ def iks(args):
 
     UserInfo = handle_args(args)
     if UserInfo.delete and not UserInfo.terraforming:
+        
         delete_dns = DeleteDNS(UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_dns.delete_dns()
+        
+
+        UserInfo.get_id_token()
+        delete_ingress = DeleteIngress(UserInfo.namespace,UserInfo.id_token,UserInfo.iks_master_url)
+        delete_ingress.delete_ingress()
 
     elif UserInfo.delete and UserInfo.terraforming:
         delete_workspaces = DeleteWorkspace(UserInfo.crn, UserInfo.zone_id,
@@ -191,7 +192,7 @@ def iks(args):
         # 2. Generate certificate in manager if necessary
         
         UserInfo.cert_name="cis-cert"
-        '''
+        
         cms_id = UserInfo.get_cms()
         # print("\n"+cms_id)
         user_cert = SecretCertificateCreator(
@@ -204,11 +205,12 @@ def iks(args):
             cert_name=UserInfo.cert_name
             )
         user_cert.create_secret()
-
-       
-        '''
-        #3 generate ingress
         
+       
+        
+        #3 Generate ingress file
+        
+        UserInfo.get_id_token()
         UserInfo.secret_name=UserInfo.cert_name
         user_ingress = IngressCreator(
             clusterNameOrID=UserInfo.iks_cluster_id,
@@ -220,8 +222,10 @@ def iks(args):
             accessToken=UserInfo.token["access_token"], 
             refreshToken=UserInfo.token["refresh_token"],
             ingressSubdomain=UserInfo.app_url,
-            iks_master_url=UserInfo.iks_master_url
+            iks_master_url=UserInfo.iks_master_url,
+            idToken=UserInfo.id_token
         )
+        
         user_ingress.create_ingress()
         
         
