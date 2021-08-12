@@ -79,6 +79,9 @@ class MockIntegrationInfoObj():
     def get_resource_id(self):
         return self.resource_id
 
+    def get_id_token():
+        return "123456789"
+
 
 def get_no_crn_and_zone(self):
     return False
