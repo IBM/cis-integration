@@ -42,16 +42,19 @@ variable pool_name {
 variable cluster_id {
     type            = string
     description     = "Cluster ID of the IKS instance"
+    default         = "null"
+
 }
 
 variable standard {
     type            = bool
     description     = "Determines whether the CIS instance is using the Standard Plan"
+    default         = false
 }
 
 variable create_ce {
-    type = bool
-    description = "Whether or not to build the CodeEngine module"
+    type            = bool
+    description     = "Whether or not to build the CodeEngine module"
     default         = false
 }
 
@@ -59,4 +62,16 @@ variable create_iks {
     type            = bool
     description     = "Whether or not to build the IKS module"
     default         = false
+}
+
+variable ingress {
+    type            = string
+    description     = "Ingress subdomain of IKS cluster"
+    default         = "null"
+}
+
+variable cert_name {
+    type            = string
+    description     = "Name of certificate/secret in IKS"
+    default         = "null"
 }

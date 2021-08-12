@@ -17,5 +17,7 @@ module ibm_cis_iks_integration {
     resource_group = var.resource_group
     cis_domain = var.cis_domain
     cluster_id = var.cluster_id
+    ingress = var.ingress
+    cert_name = var.cert_name
     count = (var.create_iks) ? 1 : 0
 }
