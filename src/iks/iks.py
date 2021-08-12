@@ -213,11 +213,7 @@ def iks(args):
             UserInfo.cert_name="cis-cert"
             
             cms_id = UserInfo.get_cms()
-            print(UserInfo.iks_cluster_id)
-            print(UserInfo.cis_domain)
-            print(cms_id)
-            print(UserInfo.cert_name)
-            print(UserInfo.token['access_token'])
+
             delete_secret = DeleteSecretCMS(UserInfo.iks_cluster_id, UserInfo.cis_domain, cms_id, UserInfo.cert_name, UserInfo.token['access_token'])
             delete_secret.delete_cms_cert()
             delete_secret.delete_secret()
@@ -228,11 +224,7 @@ def iks(args):
             UserInfo.cert_name="cis-cert"
             
             cms_id = UserInfo.get_cms()
-            print(UserInfo.iks_cluster_id)
-            print(UserInfo.cis_domain)
-            print(cms_id)
-            print(UserInfo.cert_name)
-            print(UserInfo.token['access_token'])
+            
             delete_secret = DeleteSecretCMS(UserInfo.iks_cluster_id, UserInfo.cis_domain, cms_id, UserInfo.cert_name, UserInfo.token['access_token'])
             delete_secret.delete_secret()
 
