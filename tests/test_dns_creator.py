@@ -233,13 +233,9 @@ def test_neither_exist(monkeypatch):
     creator = dns_creator()
     root_record, www_record = creator.create_records()
 
-    assert root_record.result["result"]["type"] == "CNAME"
-    assert root_record.result["result"]["name"] == "@"
-    assert root_record.result["result"]["content"] == "test-url.com"
+    assert root_record == None
 
-    assert www_record.result["result"]["type"] == "CNAME"
-    assert www_record.result["result"]["name"] == "www"
-    assert root_record.result["result"]["content"] == "test-url.com"
+    assert www_record == None
 
 def test_one_exist(monkeypatch):
 
@@ -256,9 +252,7 @@ def test_one_exist(monkeypatch):
     assert root_record.result["result"]["name"] == "@"
     assert root_record.result["result"]["content"] == "test-url.com"
     
-    assert www_record.result["result"]["type"] == "CNAME"
-    assert www_record.result["result"]["name"] == "www"
-    assert www_record.result["result"]["content"] == "test-url.com"
+    assert www_record == None
 
 def test_both_exist(monkeypatch):
 
@@ -284,6 +278,7 @@ def dns_creator():
         crn="testString",
         zone_id="testString",
         api_endpoint="test-endpoint.com",
-        app_url="test-url.com"
+        app_url="test-url.com",
+        token="test_token"
     )
 

@@ -101,3 +101,5 @@ class DNSCreator:
                       
             except ApiException as ae:
                 print(Color.RED + "ERROR: " + ae.message + "\nError occurred when trying to create '@' DNS record. Check your application URL and try again\n" + Color.END)
+
+        return (root_record, www_record)
