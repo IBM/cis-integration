@@ -79,7 +79,7 @@ class MockIntegrationInfoObj():
     def get_resource_id(self):
         return self.resource_id
 
-    def get_id_token():
+    def get_id_token(self):
         return "123456789"
 
 
