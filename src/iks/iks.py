@@ -1,3 +1,4 @@
+from src.iks.delete_secret_cert import DeleteSecretCMS
 from src.iks.certcreate_iks import SecretCertificateCreator
 from src.iks.create_ingress import IngressCreator
 from src.common.dns_creator import DNSCreator
@@ -75,13 +76,12 @@ def handle_args(args):
     # common arguments
     UserInfo.request_token()
     
-    if not UserInfo.delete:
-        UserInfo.iks_cluster_id = args.iks_cluster_id
-        if UserInfo.iks_cluster_id is None:
-            print("You did not specify an IKS cluster ID.")
-            sys.exit(1)
-        else:
-            iks_info = UserInfo.get_iks_info()
+    UserInfo.iks_cluster_id = args.iks_cluster_id
+    if UserInfo.iks_cluster_id is None:
+        print("You did not specify an IKS cluster ID.")
+        sys.exit(1)
+    else:
+        iks_info = UserInfo.get_iks_info()
     
     UserInfo.cis_domain = args.cis_domain
     if UserInfo.cis_domain is None:
@@ -206,8 +206,36 @@ def iks(args):
         delete_certs = DeleteCerts(
             UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_certs.delete_certs()
-
+        
+        print("If you created a certificate in the certificate manager and imported it as a secret to your IKS cluster, you may delete them now.")
+        secret = input("Delete certificate and secret? Input 'y' or 'yes' to execute:").lower()
+        if secret == 'y' or secret == 'yes':
+            UserInfo.cert_name="cis-cert"
+            
+            cms_id = UserInfo.get_cms()
+            print(UserInfo.iks_cluster_id)
+            print(UserInfo.cis_domain)
+            print(cms_id)
+            print(UserInfo.cert_name)
+            print(UserInfo.token['access_token'])
+            delete_secret = DeleteSecretCMS(UserInfo.iks_cluster_id, UserInfo.cis_domain, cms_id, UserInfo.cert_name, UserInfo.token['access_token'])
+            delete_secret.delete_cms_cert()
+            delete_secret.delete_secret()
     elif UserInfo.delete and UserInfo.terraforming:
+        print("If you created a certificate in the certificate manager and imported it as a secret to your IKS cluster, you may delete them now.")
+        secret = input("Delete certificate and secret? Input 'y' or 'yes' to execute:").lower()
+        if secret == 'y' or secret == 'yes':
+            UserInfo.cert_name="cis-cert"
+            
+            cms_id = UserInfo.get_cms()
+            print(UserInfo.iks_cluster_id)
+            print(UserInfo.cis_domain)
+            print(cms_id)
+            print(UserInfo.cert_name)
+            print(UserInfo.token['access_token'])
+            delete_secret = DeleteSecretCMS(UserInfo.iks_cluster_id, UserInfo.cis_domain, cms_id, UserInfo.cert_name, UserInfo.token['access_token'])
+            delete_secret.delete_secret()
+
         delete_workspaces = DeleteWorkspace(UserInfo.crn, UserInfo.zone_id,
         UserInfo.cis_domain, UserInfo.api_endpoint,
         UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token, ce=False, iks=True)
@@ -216,7 +244,7 @@ def iks(args):
         print("Currently using the default secret in IKS, but a new TLS certificate can be ordered and imported as a secret if you wish.")
         execute = input("Would you like to create a new secret? Input 'y' or 'yes' to execute:").lower()
         if execute == 'y' or execute == 'yes':
-            UserInfo.cert_name = 'cis_cert'
+            UserInfo.cert_name = 'cis-cert'
         else:
             secret = UserInfo.app_url.split('.')
             UserInfo.cert_name = secret[0]
@@ -265,16 +293,12 @@ def iks(args):
         resource_group_id = UserInfo.get_resource_id()
         user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
-<<<<<<< HEAD
-=======
-        # 2. Generate certificate in manager if necessary
->>>>>>> public/master
-        
+
         # 4. Generate certificate in manager if necessary
         print("Currently using the default secret in IKS, but a new TLS certificate can be ordered and imported as a secret if you wish.")
         execute = input("Would you like to create a new secret? Input 'y' or 'yes' to execute:").lower()
         if execute == 'y' or execute == 'yes':
-            UserInfo.cert_name="cis_cert"
+            UserInfo.cert_name="cis-cert"
             
             cms_id = UserInfo.get_cms()
             # print("\n"+cms_id)

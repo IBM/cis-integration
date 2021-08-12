@@ -1,4 +1,4 @@
-import requests
+import requests, json
 from src.common.functions import Color as Color
 
 class DeleteSecretCMS:
@@ -17,17 +17,15 @@ class DeleteSecretCMS:
         headers = {
             'Authorization': 'Bearer ' + self.token
         }
-        payload = {
+        payload = json.dumps({
             "cluster": self.cluster_id,
             "delete_cert": True,
             "name": self.cert_name,
             "namespace": "default"
-        }
+        })
         response = requests.request("POST", url, headers=headers, data=payload)
-        if response.status_code == 200:
-            print(Color.GREEN + "SUCCESS: Deleted secret from IKS cluster" + Color.END)
-        else:
-            print(Color.RED + "ERROR: Failed to delete secret from IKS cluster" + Color.END)
+        print("Started delete process for secret in IKS cluster. Check your kubernetes dashboard for progress")
+        
 
     def delete_cms_cert(self):
         cert_id = self.check_certificate()
