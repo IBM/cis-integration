@@ -60,6 +60,7 @@ class MockIntegrationInfoObj():
         self.service_port = service_port
         self.vpc_name = vpc_name
         self.iks_master_url = iks_master_url
+        self.id_token = "123456789"
 
     def get_cms(arg):
         return "123456789"
