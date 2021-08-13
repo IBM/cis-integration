@@ -1,18 +1,3 @@
-from src.ce.delete_workspaces import DeleteWorkspace
-import os
-import sys
-import getpass
-
-
-from src.common.certcreate import CertificateCreator
-from src.common.functions import IntegrationInfo as IntegrationInfo
-from src.common.functions import Color as Color
-from src.common.functions import healthCheck as healthCheck
-from src.ce.create_glb import GLB
-from src.common.dns_creator import DNSCreator
-from src.ce.create_edge_function import EdgeFunctionCreator
-from src.ce.create_terraform_workspace import WorkspaceCreator
-from src.ce.delete_glb import DeleteGLB
 '''
 DISCLAIMER OF WARRANTIES:
 Permission is granted to copy this Tools or Sample code for internal use only, provided that this
@@ -28,6 +13,22 @@ SUPPLIERS BE LIABLE FOR ANY LOST REVENUE, LOST PROFITS OR DATA, OR FOR DIRECT, I
 CONSEQUENTIAL,INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
 EVEN IF IBM OR ITS LICENSORS OR SUPPLIERS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 '''
+from src.common.delete_workspaces import DeleteWorkspace
+import os
+import sys
+import getpass
+
+
+from src.common.certcreate import CertificateCreator
+from src.common.functions import IntegrationInfo as IntegrationInfo
+from src.common.functions import Color as Color
+from src.common.functions import healthCheck as healthCheck
+from src.ce.create_glb import GLB
+from src.common.dns_creator import DNSCreator
+from src.ce.create_edge_function import EdgeFunctionCreator
+from src.ce.create_terraform_workspace import WorkspaceCreator
+from src.ce.delete_glb import DeleteGLB
+
 
 from src.common.delete_dns import DeleteDNS
 from src.common.delete_certs import DeleteCerts

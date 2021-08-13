@@ -13,6 +13,8 @@ SUPPLIERS BE LIABLE FOR ANY LOST REVENUE, LOST PROFITS OR DATA, OR FOR DIRECT, I
 CONSEQUENTIAL,INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
 EVEN IF IBM OR ITS LICENSORS OR SUPPLIERS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 '''
+
+from src.iks.delete_secret_cert import DeleteSecretCMS
 from src.iks.delete_ingress import DeleteIngress
 from src.iks.certcreate_iks import SecretCertificateCreator
 from src.iks.create_ingress import IngressCreator
@@ -21,7 +23,7 @@ from src.iks.create_terraform_workspace import WorkspaceCreator
 from src.common.functions import Color, IntegrationInfo, healthCheck
 from src.common.delete_dns import DeleteDNS
 from src.iks.create_acl_rules import AclRuleCreator
-from src.ce.delete_workspaces import DeleteWorkspace
+from src.common.delete_workspaces import DeleteWorkspace
 from src.common.certcreate import CertificateCreator
 from src.common.delete_certs import DeleteCerts
 
@@ -222,8 +224,28 @@ def iks(args):
         delete_certs = DeleteCerts(
             UserInfo.crn, UserInfo.zone_id, UserInfo.api_endpoint, UserInfo.cis_domain)
         delete_certs.delete_certs()
+        
+        print("If you created a certificate in the certificate manager and imported it as a secret to your IKS cluster, you may delete them now.")
+        secret = input("Delete certificate and secret? Input 'y' or 'yes' to execute:").lower()
+        if secret == 'y' or secret == 'yes':
+            UserInfo.cert_name="cis-cert"
+            
+            cms_id = UserInfo.get_cms()
 
+            delete_secret = DeleteSecretCMS(UserInfo.iks_cluster_id, UserInfo.cis_domain, cms_id, UserInfo.cert_name, UserInfo.token['access_token'])
+            delete_secret.delete_cms_cert()
+            delete_secret.delete_secret()
     elif UserInfo.delete and UserInfo.terraforming:
+        print("If you created a certificate in the certificate manager and imported it as a secret to your IKS cluster, you may delete them now.")
+        secret = input("Delete certificate and secret? Input 'y' or 'yes' to execute:").lower()
+        if secret == 'y' or secret == 'yes':
+            UserInfo.cert_name="cis-cert"
+            
+            cms_id = UserInfo.get_cms()
+            
+            delete_secret = DeleteSecretCMS(UserInfo.iks_cluster_id, UserInfo.cis_domain, cms_id, UserInfo.cert_name, UserInfo.token['access_token'])
+            delete_secret.delete_secret()
+
         delete_workspaces = DeleteWorkspace(UserInfo.crn, UserInfo.zone_id,
         UserInfo.cis_domain, UserInfo.api_endpoint,
         UserInfo.schematics_url, UserInfo.cis_api_key, UserInfo.token, ce=False, iks=True)
@@ -303,9 +325,7 @@ def iks(args):
         else:
             secret = UserInfo.app_url.split('.')
             UserInfo.cert_name = secret[0]
-
-       
-        
+            
         # 5. generate ingress
         
         UserInfo.get_id_token()
