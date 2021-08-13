@@ -12,9 +12,10 @@ from src.common.functions import IntegrationInfo
 #             functions.healthCheck("www.cloud.ibm.com")
 #             assert fake_out.getvalue() == expected_out
 
+
 def test_read_envfile():
     test_integration = IntegrationInfo()
-    test_integration.read_envfile("test_var.env")
+    test_integration.read_envfile("./test_var.env")
 
     assert test_integration.app_url == "test_app_url.com"
     assert test_integration.cis_domain == "gcat-interns-test.com"
@@ -27,7 +28,7 @@ def test_read_envfile():
 def test_terraform_read_envfile():
     test_integration = IntegrationInfo()
     test_integration.terraforming = True
-    test_integration.read_envfile("test_var.env")
+    test_integration.read_envfile("./test_var.env")
 
     assert test_integration.app_url == "test_app_url.com"
     assert test_integration.cis_domain == "gcat-interns-test.com"
@@ -35,5 +36,3 @@ def test_terraform_read_envfile():
     assert test_integration.api_endpoint == "www.test_api_endpoint.com"
     assert test_integration.resource_group == "test-resource-group"
     assert test_integration.cis_name == "test_instance_name"
-
-
