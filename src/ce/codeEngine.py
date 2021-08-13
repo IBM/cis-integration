@@ -4,7 +4,7 @@ import sys
 import getpass
 
 
-from src.ce.certcreate import CertificateCreator
+from src.common.certcreate import CertificateCreator
 from src.common.functions import IntegrationInfo as IntegrationInfo
 from src.common.functions import Color as Color
 from src.common.functions import healthCheck as healthCheck
@@ -30,7 +30,7 @@ EVEN IF IBM OR ITS LICENSORS OR SUPPLIERS HAVE BEEN ADVISED OF THE POSSIBILITY O
 '''
 
 from src.common.delete_dns import DeleteDNS
-from src.ce.delete_certs import DeleteCerts
+from src.common.delete_certs import DeleteCerts
 from src.ce.delete_edge import DeleteEdge
 
 '''
