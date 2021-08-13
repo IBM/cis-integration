@@ -38,6 +38,7 @@ Thumbs.db
 
 ######################
 *.env
+!test_var.env
 *.egg
 
 __pycache__/
