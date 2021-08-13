@@ -40,20 +40,22 @@ class DeleteWorkspace:
                             self.w_ids.append(w_info)
             
             # search CIS instance for GLB
-            glb_info = self.glb_check()
+            if self.ce:
+                glb_info = self.glb_check()
             # search for origin pool and health check in CIS instance
-            if not glb_info is None:
+            if self.ce and not glb_info is None:
                 glb_info = self.pool_check(glb_info)
 
             # search for edge functions in CIS instance
-            edge_ids = self.edge_check(self.token['access_token'])   
+            if self.ce:
+                edge_ids = self.edge_check(self.token['access_token'])   
             dns_ids = self.dns_check()
             
 
             keepgoing = True
             check_cis = True
             # if any of the resources are missing, the Schematics workspace destroy function will fail
-            if glb_info is None or len(edge_ids) == 0 or len(dns_ids) == 0:
+            if (self.ce and (glb_info is None or len(edge_ids) == 0 or len(dns_ids) == 0)) or (self.iks and len(dns_ids) == 0):
                 check_cis = False
                 print(Color.YELLOW + "WARNING: Some resources connected to the Schematics workspace have already been modified or destroyed.")
                 print("Please use the Python delete option to delete any remaining resources on your CIS instance." + Color.END)
@@ -103,10 +105,10 @@ class DeleteWorkspace:
                     elif resource['name'] == 'test_dns_www_record':
                         if resource['instances'][0]['attributes']['record_id'] in dns_ids:
                             www_dns_found = True
-                    elif resource['name'] == 'test_action':
+                    elif self.ce and resource['name'] == 'test_action':
                         if resource['instances'][0]['attributes']['action_name'] == self.cis_domain.replace('.','-'):
                             edge_action = True
-                    elif resource['name'] == 'action_trigger':
+                    elif self.ce and resource['name'] == 'action_trigger':
                         for trigger in resource['instances']:
                             if trigger['attributes']['trigger_id'] in edge_ids:
                                 if trigger['attributes']['pattern_url'] == self.cis_domain:
@@ -115,13 +117,13 @@ class DeleteWorkspace:
                                     edge_trigger_2 = True
                                 elif trigger['attributes']['pattern_url'] == '*.' + self.cis_domain:
                                     edge_trigger_3 = True
-                    elif resource['name'] == 'example-glb':
+                    elif self.ce and resource['name'] == 'example-glb':
                         if resource['instances'][0]['attributes']['glb_id'] == glb_info['glb']:
                             glb_found = True
-                    elif resource['name'] == 'test' and resource['type'] == 'ibm_cis_healthcheck':
+                    elif self.ce and resource['name'] == 'test' and resource['type'] == 'ibm_cis_healthcheck':
                         if resource['instances'][0]['attributes']['monitor_id'] == glb_info['monitor']:
                             monitor_found = True
-                    elif resource['name'] == 'example' and resource['type'] == 'ibm_cis_origin_pool':
+                    elif self.ce and resource['name'] == 'example' and resource['type'] == 'ibm_cis_origin_pool':
                         if resource['instances'][0]['attributes']['pool_id'] == glb_info['pool']:
                             pool_found = True
                     elif resource['name'] == 'test' and resource['type'] == 'ibm_cis_certificate_order':
@@ -132,9 +134,9 @@ class DeleteWorkspace:
                                 cert_found = True
 
 
-            if keepgoing and check_cis and not (glb_found and cert_found and pool_found 
+            if keepgoing and check_cis and ((self.ce and not (glb_found and cert_found and pool_found 
                 and monitor_found and www_dns_found and root_dns_found 
-                and edge_action and edge_trigger_1 and edge_trigger_2 and edge_trigger_3):
+                and edge_action and edge_trigger_1 and edge_trigger_2 and edge_trigger_3)) or (self.iks and not (cert_found and www_dns_found and root_dns_found))):
                 check_cis = False
                 print(Color.YELLOW + "WARNING: Some resources connected to the Schematics workspace have already been modified or destroyed.")
                 print("Please use the Python delete option to delete any remaining resources on your CIS instance." + Color.END)
@@ -143,9 +145,9 @@ class DeleteWorkspace:
                     keepgoing = False
                 print()
 
-            if check_cis and (glb_found and cert_found and pool_found 
+            if check_cis and ((self.ce and glb_found and cert_found and pool_found 
                 and monitor_found and www_dns_found and root_dns_found 
-                and edge_action and edge_trigger_1 and edge_trigger_2 and edge_trigger_3):
+                and edge_action and edge_trigger_1 and edge_trigger_2 and edge_trigger_3) or (self.iks and cert_found and www_dns_found and root_dns_found)):
                 print("Ready to remove CIS resources and all associated Schematics workspaces. Are you sure you would like to continue?")
                 execute = input("Deleted workspaces and resources cannot be recovered. Input 'y' or 'yes' to execute: ").lower()
                 if not execute == 'y' and not execute == 'yes':

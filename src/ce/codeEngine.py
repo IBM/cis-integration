@@ -1,4 +1,4 @@
-from src.ce.delete_workspaces import DeleteWorkspace
+from src.common.delete_workspaces import DeleteWorkspace
 import os
 import sys
 import getpass
