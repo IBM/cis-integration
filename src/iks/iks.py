@@ -288,7 +288,7 @@ def iks(args):
         resource_group_id = UserInfo.get_resource_id()
         user_ACL = AclRuleCreator(resource_group_id, UserInfo.vpc_name, UserInfo.cis_api_key)
         user_ACL.check_network_acl()
-
+        
         # 4. Generate certificate in manager if necessary
         print("Currently using the default secret in IKS, but a new TLS certificate can be ordered and imported as a secret if you wish.")
         execute = input("Would you like to create a new secret? Input 'y' or 'yes' to execute:").lower()
@@ -314,7 +314,6 @@ def iks(args):
         # 5. generate ingress
         
         UserInfo.get_id_token()
-
         UserInfo.secret_name=UserInfo.cert_name
         user_ingress = IngressCreator(
             clusterNameOrID=UserInfo.iks_cluster_id,
